@@ -2,19 +2,20 @@
   "name": "runtime",
   "version": "1.0.0",
   "description": "The framework's runtime shipped to the browser to run the application.",
-  "type": "module",
   "main": "src/index.js",
   "files": [
     "src"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint src --fix"
   },
   "keywords": [],
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-terser": "^0.1.0",
+    "eslint": "^8.27.0",
     "rollup": "^3.2.5",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-filesize": "^9.1.2"
