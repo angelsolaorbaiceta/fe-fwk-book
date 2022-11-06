@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Code for the book \"Build a frontend framework from scratch\".",
   "workspaces": [
-    "packages/*"
+    "packages/runtime"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
