@@ -1,0 +1,22 @@
+{
+  "name": "fe-fwk-book",
+  "version": "1.0.0",
+  "description": "Code for the book \"Build a frontend framework from scratch\".",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelsolaorbaiceta/fe-fwk-book.git"
+  },
+  "keywords": ["js", "javascript", "frontend", "framework"],
+  "author": "Angel Sola Orbaiceta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
+  },
+  "homepage": "https://github.com/angelsolaorbaiceta/fe-fwk-book#readme"
+}
