@@ -1,7 +1,7 @@
 {
   "name": "runtime",
   "version": "1.0.0",
-  "description": "",
+  "description": "The framework's runtime shipped to the browser to run the application.",
   "type": "module",
   "main": "src/index.js",
   "files": [
