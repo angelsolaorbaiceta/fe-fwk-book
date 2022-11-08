@@ -6,13 +6,18 @@
     "packages/runtime"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve:examples": "npx http-server . -o ./examples/"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/angelsolaorbaiceta/fe-fwk-book.git"
   },
-  "keywords": ["js", "javascript", "frontend", "framework"],
+  "keywords": [
+    "js",
+    "javascript",
+    "frontend",
+    "framework"
+  ],
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "bugs": {
