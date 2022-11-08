@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        width: 500px;
+        margin: 2em auto;
+      }
+
+      li {
+        margin: 0.5em 0;
+      }
+
+      li > span {
+        cursor: pointer;
+        margin-inline-end: 0.5em;
+      }
+
+      li > input {
+        margin-inline-end: 0.5em;
+      }
+    </style>
+
+    <title>My TODOs</title>
+  </head>
+
+  <body>
+    <h1>My TODOs</h1>
+
+    <div>
+      <label for="todo-input">New TODO</label>
+      <input type="text" id="todo-input" />
+      <button id="add-todo-btn" disabled>Add</button>
+    </div>
+
+    <ul id="todos-list"></ul>
+
+    <script type="module" src="todos.js"></script>
+  </body>
+</html>
