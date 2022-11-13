@@ -9,6 +9,21 @@ const addTodoInput = document.getElementById('todo-input')
 const addTodoButton = document.getElementById('add-todo-btn')
 const todosList = document.getElementById('todos-list')
 
+// Initialize the view
+for (const todo of state.todos) {
+  todosList.appendChild(renderTodoInReadMode(todo))
+}
+
+addTodoInput.addEventListener('input', () => {
+  addTodoButton.disabled = addTodoInput.value.length < 3
+})
+
+addTodoButton.addEventListener('click', () => {
+  addTodo(addTodoInput.value)
+  addTodoInput.value = ''
+  addTodoButton.disabled = true
+})
+
 // Functions
 function renderTodoInReadMode(todo) {
   const li = document.createElement('li')
@@ -84,17 +99,3 @@ function updateTodo(index, description) {
   const todo = renderTodoInReadMode(description)
   todosList.replaceChild(todo, todosList.childNodes[index])
 }
-
-// Initialize the view
-for (const todo of state.todos) {
-  todosList.appendChild(renderTodoInReadMode(todo))
-}
-
-addTodoInput.addEventListener('input', () => {
-  addTodoButton.disabled = addTodoInput.value.length < 3
-})
-
-addTodoButton.addEventListener('click', () => {
-  addTodo(addTodoInput.value)
-  addTodoInput.value = ''
-})
