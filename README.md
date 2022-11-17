@@ -1,3 +1,3 @@
-# Build a frontend framework from scrach
+# Build a frontend framework from scratch
 
-Code for the book "Build a frontend framework from scratch". 
+Code for the book "Build a frontend framework from scratch".
