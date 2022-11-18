@@ -1,3 +1,4 @@
+import { assert } from './assert'
 import { DOM_TYPES } from './h'
 
 /**
@@ -31,7 +32,18 @@ export function mountDOM(vdom, parentEl) {
   }
 }
 
-function createTextNode(vdom, parentEl) {}
+function createTextNode(vdom, parentEl) {
+  const { type, value } = vdom
+
+  assert(type === DOM_TYPES.TEXT)
+
+  const textNode = document.createTextNode(value)
+  vdom.el = textNode
+
+  parentEl.appendChild(textNode)
+
+  return textNode
+}
 
 function createElementNode(vdom, parentEl) {}
 
