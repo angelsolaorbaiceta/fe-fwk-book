@@ -1,4 +1,5 @@
 import { assert } from './assert'
+import { setAttributes } from './attributes'
 import { DOM_TYPES } from './h'
 
 /**
@@ -45,9 +46,50 @@ function createTextNode(vdom, parentEl) {
   return textNode
 }
 
-function createElementNode(vdom, parentEl) {}
+function createElementNode(vdom, parentEl) {
+  const { type, tag, props, children } = vdom
 
-function createFragmentNode(vdom, parentEl) {}
+  assert(type === DOM_TYPES.ELEMENT)
+
+  const element = document.createElement(tag)
+  addProps(element, props)
+  vdom.el = element
+
+  children.forEach((child) => {
+    element.appendChild(mountDOM(child, element))
+  })
+
+  parentEl.appendChild(element)
+
+  return element
+}
+
+function addProps(el, props) {
+  const { on: events, ...attrs } = props
+
+  Object.entries(events ?? {}).forEach(([eventName, handler]) => {
+    el.addEventListener(eventName, handler)
+  })
+
+  setAttributes(el, attrs)
+}
+
+function createFragmentNode(vdom, parentEl) {
+  const { type, children } = vdom
+
+  assert(type === DOM_TYPES.FRAGMENT)
+
+  const fragment = document.createDocumentFragment()
+  vdom.el = parentEl
+
+  children.forEach((child) => {
+    fragment.appendChild(mountDOM(child, fragment))
+  })
+
+  parentEl.appendChild(fragment)
+
+  return fragment
+}
 
 function ensureIsValidParent(
   parentEl,
