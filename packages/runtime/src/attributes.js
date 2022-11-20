@@ -1,4 +1,4 @@
-import { toArray } from './arrays'
+import { toArray } from './utils/arrays'
 
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
 // https://www.w3.org/TR/SVGTiny12/attributeTable.html#PropertyTable

@@ -1,6 +1,6 @@
-import { assert } from './assert'
 import { setAttributes } from './attributes'
 import { DOM_TYPES } from './h'
+import { assert } from './utils/assert'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
