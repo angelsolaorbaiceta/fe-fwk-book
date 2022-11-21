@@ -1,8 +1,10 @@
+import { destroyDOM } from './destroy-dom'
 import { Dispatcher } from './dispatcher'
 import { mountDOM } from './mount-dom'
 
 export function createApp({ state, view, reducers = {} }) {
   let parentEl = null
+  let vdom = null
 
   const dispatcher = new Dispatcher()
   const subscriptions = [dispatcher.subscribeToAll(renderApp)]
@@ -21,8 +23,8 @@ export function createApp({ state, view, reducers = {} }) {
   }
 
   function renderApp() {
-    const oldVDom = view(state, emit)
-    mountDOM(oldVDom, parentEl)
+    vdom = view(state, emit)
+    mountDOM(vdom, parentEl)
   }
 
   return {
@@ -34,7 +36,7 @@ export function createApp({ state, view, reducers = {} }) {
     },
 
     unmount() {
-      parentEl.replaceChildren()
+      destroyDOM(vdom)
       subscriptions.forEach((unsubscribe) => unsubscribe())
     },
 
