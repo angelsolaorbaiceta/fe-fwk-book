@@ -56,6 +56,7 @@ function renderTodoInEditMode(todo) {
   const li = document.createElement('li')
 
   const input = document.createElement('input')
+  input.type = 'text'
   input.value = todo
   li.appendChild(input)
 

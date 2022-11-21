@@ -3,6 +3,7 @@ function renderTodoInEditMode(todo) {
 
   const input = document.createElement('input')
   input.value = todo
+  input.type = 'text'
   li.appendChild(input)
 
   const saveBtn = document.createElement('button')
