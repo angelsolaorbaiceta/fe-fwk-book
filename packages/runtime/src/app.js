@@ -37,6 +37,7 @@ export function createApp({ state, view, reducers = {} }) {
 
     unmount() {
       destroyDOM(vdom)
+      vdom = null
       subscriptions.forEach((unsubscribe) => unsubscribe())
     },
 
