@@ -1,8 +1,5 @@
 // State of the app
-const state = {
-  todos: ['Walk the dog', 'Water the plants', 'Sand the chairs'],
-  editingTodoIdx: null,
-}
+const todos = ['Walk the dog', 'Water the plants', 'Sand the chairs']
 
 // HTML element references
 const addTodoInput = document.getElementById('todo-input')
@@ -10,12 +7,20 @@ const addTodoButton = document.getElementById('add-todo-btn')
 const todosList = document.getElementById('todos-list')
 
 // Initialize the view
-for (const todo of state.todos) {
+for (const todo of todos) {
   todosList.appendChild(renderTodoInReadMode(todo))
 }
 
 addTodoInput.addEventListener('input', () => {
   addTodoButton.disabled = addTodoInput.value.length < 3
+})
+
+addTodoInput.addEventListener('keydown', ({ key }) => {
+  if (key === 'Enter') {
+    addTodo(addTodoInput.value)
+    addTodoInput.value = ''
+    addTodoButton.disabled = true
+  }
 })
 
 addTodoButton.addEventListener('click', () => {
@@ -31,8 +36,7 @@ function renderTodoInReadMode(todo) {
   const span = document.createElement('span')
   span.textContent = todo
   span.addEventListener('dblclick', () => {
-    const idx = state.todos.indexOf(todo)
-    state.editingTodoIdx = idx
+    const idx = todos.indexOf(todo)
 
     todosList.replaceChild(
       renderTodoInEditMode(todo),
@@ -44,7 +48,7 @@ function renderTodoInReadMode(todo) {
   const button = document.createElement('button')
   button.textContent = 'Done'
   button.addEventListener('click', () => {
-    const idx = state.todos.indexOf(todo)
+    const idx = todos.indexOf(todo)
     removeTodo(idx)
   })
   li.appendChild(button)
@@ -63,17 +67,15 @@ function renderTodoInEditMode(todo) {
   const saveBtn = document.createElement('button')
   saveBtn.textContent = 'Save'
   saveBtn.addEventListener('click', () => {
-    const idx = state.todos.indexOf(todo)
+    const idx = todos.indexOf(todo)
     updateTodo(idx, input.value)
-    state.editingTodoIdx = null
   })
   li.appendChild(saveBtn)
 
   const cancelBtn = document.createElement('button')
   cancelBtn.textContent = 'Cancel'
   cancelBtn.addEventListener('click', () => {
-    const idx = state.todos.indexOf(todo)
-    state.editingTodoIdx = null
+    const idx = todos.indexOf(todo)
     todosList.replaceChild(
       renderTodoInReadMode(todo),
       todosList.childNodes[idx]
@@ -85,18 +87,18 @@ function renderTodoInEditMode(todo) {
 }
 
 function addTodo(description) {
-  const idx = state.todos.push(description) - 1
+  const idx = todos.push(description) - 1
   const todo = renderTodoInReadMode(description)
   todosList.appendChild(todo)
 }
 
 function removeTodo(index) {
-  state.todos.splice(index, 1)
+  todos.splice(index, 1)
   todosList.removeChild(todosList.childNodes[index])
 }
 
 function updateTodo(index, description) {
-  state.todos[index] = description
+  todos[index] = description
   const todo = renderTodoInReadMode(description)
   todosList.replaceChild(todo, todosList.childNodes[index])
 }
