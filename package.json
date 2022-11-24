@@ -6,7 +6,7 @@
     "packages/runtime"
   ],
   "scripts": {
-    "serve:examples": "npx http-server . -o ./examples/"
+    "serve:examples": "npx http-server . -o ./examples/ -bg"
   },
   "repository": {
     "type": "git",
