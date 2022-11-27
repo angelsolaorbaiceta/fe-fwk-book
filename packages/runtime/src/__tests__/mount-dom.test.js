@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest'
 import { h, hFragment, hString } from '../h'
-import { mountDOM } from '../mount-dom'
+import { listenersKey, mountDOM } from '../mount-dom'
 
 afterEach(() => {
   document.body.innerHTML = ''
@@ -104,6 +104,7 @@ test('mount an element with event handlers', () => {
 
   expect(onClick).toBeCalledTimes(1)
   expect(onClick).toBeCalledWith(expect.any(MouseEvent))
+  expect(vdom.props[listenersKey]).toEqual({ click: expect.any(Function) })
 })
 
 test('mounts an element with styles', () => {

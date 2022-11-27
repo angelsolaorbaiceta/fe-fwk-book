@@ -1,6 +1,9 @@
 import { setAttributes } from './attributes'
 import { DOM_TYPES } from './h'
 import { assert } from './utils/assert'
+import { addEventListeners } from './events'
+
+export const listenersKey = '__listeners__'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
@@ -67,10 +70,7 @@ function createElementNode(vdom, parentEl) {
 function addProps(el, props) {
   const { on: events, ...attrs } = props
 
-  Object.entries(events ?? {}).forEach(([eventName, handler]) => {
-    el.addEventListener(eventName, handler)
-  })
-
+  props[listenersKey] = addEventListeners(events, el)
   setAttributes(el, attrs)
 }
 
