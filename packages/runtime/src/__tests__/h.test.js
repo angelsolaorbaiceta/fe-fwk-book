@@ -25,6 +25,21 @@ test('create an element vNode', () => {
   })
 })
 
+test('h() filters null children', () => {
+  const tag = 'div'
+  const props = { id: 'test' }
+  const children = [hString('test'), null]
+
+  const vNode = h(tag, props, children)
+
+  expect(vNode).toEqual({
+    tag,
+    props,
+    children: [{ type: DOM_TYPES.TEXT, value: 'test' }],
+    type: DOM_TYPES.ELEMENT,
+  })
+})
+
 test('create a component vNode', () => {
   class TestComponent {}
   const props = { id: 'test' }
@@ -42,6 +57,24 @@ test('create a component vNode', () => {
 
 test('create a fragment vNode', () => {
   const children = [h('div', { class: 'foo' }, [])]
+  const props = { id: 'test' }
+  const vNode = hFragment(children, props)
+
+  expect(vNode).toEqual({
+    type: DOM_TYPES.FRAGMENT,
+    children: [
+      {
+        type: DOM_TYPES.ELEMENT,
+        tag: 'div',
+        props: { class: 'foo', ...props },
+        children: [],
+      },
+    ],
+  })
+})
+
+test('hFragment() filters null children', () => {
+  const children = [h('div', { class: 'foo' }, []), null]
   const props = { id: 'test' }
   const vNode = hFragment(children, props)
 
