@@ -1,9 +1,7 @@
 import { setAttributes } from './attributes'
-import { DOM_TYPES } from './h'
+import { DOM_TYPES, listenersKey } from './h'
 import { assert } from './utils/assert'
 import { addEventListeners } from './events'
-
-export const listenersKey = '__listeners__'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and

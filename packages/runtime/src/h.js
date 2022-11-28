@@ -7,6 +7,8 @@ export const DOM_TYPES = {
   COMPONENT: 'component',
 }
 
+export const listenersKey = '__listeners__'
+
 /**
  * Hypertext.
  *
@@ -22,6 +24,8 @@ export function h(tag, props = {}, children = []) {
 
 /**
  * Creates a text virtual node.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/Text
  */
 export function hString(str) {
   return { type: DOM_TYPES.TEXT, value: str }

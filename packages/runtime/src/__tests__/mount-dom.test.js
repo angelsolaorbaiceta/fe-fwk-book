@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest'
-import { h, hFragment, hString } from '../h'
-import { listenersKey, mountDOM } from '../mount-dom'
+import { h, hFragment, hString, listenersKey } from '../h'
+import { mountDOM } from '../mount-dom'
 
 afterEach(() => {
   document.body.innerHTML = ''
