@@ -9,6 +9,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Compiled js
 dist/
 
+# Coverage reports
+coverage/
+
 # Dependency directories
 node_modules/
 

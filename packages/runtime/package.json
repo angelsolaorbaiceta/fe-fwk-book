@@ -9,13 +9,15 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint src --fix",
-    "test": "vitest"
+    "test": "vitest",
+    "ci": "npm run build && vitest run --coverage"
   },
   "keywords": [],
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-terser": "^0.1.0",
+    "@vitest/coverage-c8": "^0.25.3",
     "eslint": "^8.28.0",
     "jsdom": "^20.0.3",
     "rollup": "^3.5.0",
