@@ -8,9 +8,10 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "lint": "eslint src --fix",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "test": "vitest",
-    "ci": "npm run build && vitest run --coverage"
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "Angel Sola Orbaiceta",

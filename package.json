@@ -6,7 +6,6 @@
     "packages/runtime"
   ],
   "scripts": {
-    "ci:runtime": "npm run ci --workspace runtime",
     "serve:examples": "npx http-server . -o ./examples/ -bg"
   },
   "repository": {
