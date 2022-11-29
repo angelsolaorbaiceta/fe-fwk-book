@@ -5,13 +5,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -20,21 +19,21 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm install
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-    - name: Lint runtime
-      run: npm run lint --workspace runtime
+      - name: Install dependencies
+        run: npm install
 
-    - name: Build runtime
-      run: npm run build --workspace runtime
+      - name: Lint runtime
+        run: npm run lint --workspace runtime
 
-    -name: Test runtime
-      run: npm run test:coverage --workspace runtime
+      - name: Build runtime
+        run: npm run build --workspace runtime
+
+      - name: Test runtime
+        run: npm run test:coverage --workspace runtime
