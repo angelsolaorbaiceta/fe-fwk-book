@@ -1,14 +1,17 @@
-import { toArray } from './utils/arrays'
-
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
 // https://www.w3.org/TR/SVGTiny12/attributeTable.html#PropertyTable
-const propertyNames = new Set(['value', 'checked', 'selected', 'disabled'])
+// https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflecting-content-attributes-in-idl-attributes
 
 export function setAttribute(el, name, value) {
-  if (propertyNames.has(name)) {
-    el[name] = value
-  } else {
-    el.setAttribute(name, value)
+  el[name] = value
+}
+
+export function removeAttribute(el, name) {
+  try {
+    el[name] = null
+    el.removeAttribute(name)
+  } catch {
+    el.removeAttribute(name)
   }
 }
 
@@ -16,36 +19,48 @@ export function setStyle(el, name, value) {
   el.style[name] = value
 }
 
-export function removeAttribute(el, name) {
-  if (propertyNames.has(name)) {
-    el[name] = null
-  } else {
-    el.removeAttribute(name)
-  }
-}
-
 export function removeStyle(el, name) {
   el.style[name] = null
 }
 
-export function setAttributes(domEl, attrs) {
+/**
+ * Sets the attributes of an element.
+ *
+ * It doesn't remove attributes that are not present in the new attributes,
+ * except in the case of the `class` attribute.
+ *
+ * @param {HTMLElement} el target element
+ * @param {object} attrs attributes to set
+ */
+export function setAttributes(el, attrs) {
   const { class: className, style, ...otherAttrs } = attrs
 
   // Delete the "key" property if it exists
   delete otherAttrs.key
 
   if (className) {
-    domEl.className = ''
-    domEl.classList.add(...toArray(className))
+    setClass(el, className)
   }
 
   if (style) {
     Object.entries(style).forEach(([prop, value]) => {
-      setStyle(domEl, prop, value)
+      setStyle(el, prop, value)
     })
   }
 
   for (const [name, value] of Object.entries(otherAttrs)) {
-    setAttribute(domEl, name, value)
+    setAttribute(el, name, value)
+  }
+}
+
+function setClass(el, className) {
+  el.className = ''
+
+  if (typeof className === 'string') {
+    el.className = className
+  }
+
+  if (Array.isArray(className)) {
+    el.classList.add(...className)
   }
 }
