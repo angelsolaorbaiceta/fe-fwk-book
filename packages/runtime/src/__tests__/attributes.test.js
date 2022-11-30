@@ -39,6 +39,17 @@ test('updating styles', () => {
   expect(el.style.backgroundColor).toBe('blue')
 })
 
+test.each([
+  { name: 'hidden', value: true, expected: true },
+  { name: 'hidden', value: false, expected: false },
+  { name: 'hidden', value: null, expected: false },
+  { name: 'tabIndex', value: 1, expected: 1 },
+  { name: 'tabIndex', value: null, expected: 0 },
+])(`setting $name attribute to $value`, ({ name, value, expected }) => {
+  setAttributes(el, { [name]: value })
+  expect(el[name]).toBe(expected)
+})
+
 describe('attributes of an <input type="text">', () => {
   let input
 
