@@ -30,10 +30,10 @@ jobs:
         run: npm install
 
       - name: Lint runtime
-        run: npm run lint --workspace runtime
+        run: npm run lint --workspace fe-fwk
 
       - name: Build runtime
-        run: npm run build --workspace runtime
+        run: npm run build --workspace fe-fwk
 
       - name: Test runtime
-        run: npm run test:coverage --workspace runtime
+        run: npm run test:coverage --workspace fe-fwk
