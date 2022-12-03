@@ -1,10 +1,10 @@
 {
-  "name": "runtime",
-  "version": "1.0.0",
-  "description": "The framework's runtime shipped to the browser to run the application.",
+  "name": "fe-fwk",
+  "version": "0.1.0",
+  "description": "A frontend framework to teach web developers how frontend frameworks work.",
   "main": "src/index.js",
   "files": [
-    "src"
+    "dist/fe-fwk.js"
   ],
   "scripts": {
     "build": "rollup -c",
