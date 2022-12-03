@@ -11,13 +11,13 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.1.0",
     "@vitest/coverage-c8": "^0.25.3",
     "eslint": "^8.28.0",
     "jsdom": "^20.0.3",
