@@ -19,7 +19,7 @@
   "license": "MIT",
   "devDependencies": {
     "@vitest/coverage-c8": "^0.25.3",
-    "eslint": "^8.28.0",
+    "eslint": "^8.29.0",
     "jsdom": "^20.0.3",
     "rollup": "^3.5.1",
     "rollup-plugin-cleanup": "^3.2.1",
