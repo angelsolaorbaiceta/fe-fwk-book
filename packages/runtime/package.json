@@ -1,11 +1,23 @@
 {
   "name": "fe-fwk",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
+  "keywords": [
+    "frontend",
+    "framework",
+    "book",
+    "learning",
+    "web",
+    "development"
+  ],
   "main": "dist/fe-fwk.js",
   "files": [
     "dist/fe-fwk.js"
   ],
+  "homepage": "https://github.com/angelsolaorbaiceta/fe-fwk-book",
+  "bugs": {
+    "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
+  },
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint src",
@@ -14,7 +26,6 @@
     "test:coverage": "vitest run --coverage",
     "prepublish": "npm run build"
   },
-  "keywords": [],
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
