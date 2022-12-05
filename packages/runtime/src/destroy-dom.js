@@ -1,5 +1,5 @@
 import { removeEventListeners } from './events'
-import { DOM_TYPES, listenersKey } from './h'
+import { DOM_TYPES } from './h'
 import { assert } from './utils/assert'
 
 /**
@@ -11,7 +11,7 @@ import { assert } from './utils/assert'
  * @param {object} vdom the virtual DOM node to destroy
  */
 export function destroyDOM(vdom) {
-  const { type, el, children, props } = vdom
+  const { type, el, children, listeners } = vdom
 
   assert(!!el, 'Can only destroy DOM nodes that have been mounted')
 
@@ -27,8 +27,8 @@ export function destroyDOM(vdom) {
       assert(el instanceof HTMLElement)
       el.remove()
       children.forEach(destroyDOM)
-      if (props && props[listenersKey]) {
-        removeEventListeners(props[listenersKey], el)
+      if (listeners) {
+        removeEventListeners(listeners, el)
       }
 
       break

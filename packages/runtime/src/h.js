@@ -7,8 +7,6 @@ export const DOM_TYPES = {
   COMPONENT: 'component',
 }
 
-export const listenersKey = '__listeners__'
-
 /**
  * Hypertext.
  *

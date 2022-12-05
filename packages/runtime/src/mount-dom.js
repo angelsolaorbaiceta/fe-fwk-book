@@ -1,5 +1,5 @@
 import { setAttributes } from './attributes'
-import { DOM_TYPES, listenersKey } from './h'
+import { DOM_TYPES } from './h'
 import { assert } from './utils/assert'
 import { addEventListeners } from './events'
 
@@ -53,7 +53,7 @@ function createElementNode(vdom, parentEl) {
   assert(type === DOM_TYPES.ELEMENT)
 
   const element = document.createElement(tag)
-  addProps(element, props)
+  addProps(element, props, vdom)
   vdom.el = element
 
   children.forEach((child) => {
@@ -65,10 +65,10 @@ function createElementNode(vdom, parentEl) {
   return element
 }
 
-function addProps(el, props) {
+function addProps(el, props, vdom) {
   const { on: events, ...attrs } = props
 
-  props[listenersKey] = addEventListeners(events, el)
+  vdom.listeners = addEventListeners(events, el)
   setAttributes(el, attrs)
 }
 
