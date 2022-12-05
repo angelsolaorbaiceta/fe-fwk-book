@@ -2,27 +2,6 @@
 // https://www.w3.org/TR/SVGTiny12/attributeTable.html#PropertyTable
 // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflecting-content-attributes-in-idl-attributes
 
-export function setAttribute(el, name, value) {
-  el[name] = value
-}
-
-export function removeAttribute(el, name) {
-  try {
-    el[name] = null
-    el.removeAttribute(name)
-  } catch {
-    el.removeAttribute(name)
-  }
-}
-
-export function setStyle(el, name, value) {
-  el.style[name] = value
-}
-
-export function removeStyle(el, name) {
-  el.style[name] = null
-}
-
 /**
  * Sets the attributes of an element.
  *
@@ -51,6 +30,51 @@ export function setAttributes(el, attrs) {
   for (const [name, value] of Object.entries(otherAttrs)) {
     setAttribute(el, name, value)
   }
+}
+
+export function setAttribute(el, name, value) {
+  if (isInputValue(el, name)) {
+    el.value = value
+    return
+  }
+
+  if (value == null) {
+    el.removeAttribute(name)
+    return
+  }
+
+  if (typeof value === 'boolean') {
+    setBooleanAttribute(el, name, value)
+  } else {
+    el.setAttribute(name, value)
+  }
+}
+
+function isInputValue(el, name) {
+  return (
+    name === 'value' &&
+    (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')
+  )
+}
+
+function setBooleanAttribute(el, name, value) {
+  if (value) {
+    el.setAttribute(name, '')
+  } else {
+    el.removeAttribute(name)
+  }
+}
+
+export function removeAttribute(el, name) {
+  setAttribute(el, name, null)
+}
+
+export function setStyle(el, name, value) {
+  el.style[name] = value
+}
+
+export function removeStyle(el, name) {
+  el.style[name] = null
 }
 
 function setClass(el, className) {

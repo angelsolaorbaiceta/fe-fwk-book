@@ -42,9 +42,8 @@ test('updating styles', () => {
 test.each([
   { name: 'hidden', value: true, expected: true },
   { name: 'hidden', value: false, expected: false },
-  { name: 'hidden', value: null, expected: false },
   { name: 'tabIndex', value: 1, expected: 1 },
-  { name: 'tabIndex', value: null, expected: 0 },
+  { name: 'tabIndex', value: null, expected: -1 },
 ])(`setting $name attribute to $value`, ({ name, value, expected }) => {
   setAttributes(el, { [name]: value })
   expect(el[name]).toBe(expected)
@@ -67,9 +66,9 @@ describe('attributes of an <input type="text">', () => {
     },
     { name: 'disabled', values: [true, false], whenRemoved: false },
     { name: 'required', values: [true, false], whenRemoved: false },
-    { name: 'readonly', values: [true, false], whenRemoved: null },
-    { name: 'minlength', values: [1, 2], whenRemoved: null },
-    { name: 'maxlength', values: [1, 2], whenRemoved: null },
+    { name: 'readOnly', values: [true, false], whenRemoved: false },
+    { name: 'minLength', values: [1, 2], whenRemoved: 0 },
+    { name: 'maxLength', values: [1, 2], whenRemoved: 524288 },
     { name: 'size', values: [1, 2], whenRemoved: 20 },
     {
       name: 'autocomplete',
