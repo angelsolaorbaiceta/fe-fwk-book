@@ -1,4 +1,9 @@
-import { createApp, h, hString, hFragment } from './fe-fwk.js'
+import {
+  createApp,
+  h,
+  hString,
+  hFragment,
+} from 'https://unpkg.com/fe-fwk@1'
 
 const state = {
   currentTodo: '',
