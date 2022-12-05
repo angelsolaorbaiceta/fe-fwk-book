@@ -120,3 +120,42 @@ test.each([
     expect(input[attribute]).toBe(expectedWhenRemoved)
   }
 )
+
+describe('the "value" attribute of a <select>', () => {
+  let select
+
+  beforeEach(() => {
+    select = document.createElement('select')
+
+    const optionFoo = document.createElement('option')
+    optionFoo.value = 'foo'
+    select.appendChild(optionFoo)
+
+    const optionBar = document.createElement('option')
+    optionBar.value = 'bar'
+    select.appendChild(optionBar)
+  })
+
+  test('setting to a value that exists as an option', () => {
+    setAttributes(select, { value: 'foo' })
+    expect(select.value).toBe('foo')
+
+    setAttributes(select, { value: 'bar' })
+    expect(select.value).toBe('bar')
+  })
+
+  test('setting to a value that does not exist as an option', () => {
+    setAttributes(select, { value: 'baz' })
+    expect(select.value).toBe('')
+  })
+
+  test('setting to null', () => {
+    setAttributes(select, { value: null })
+    expect(select.value).toBe('')
+  })
+
+  test('removing it', () => {
+    removeAttribute(select, 'value')
+    expect(select.value).toBe('')
+  })
+})

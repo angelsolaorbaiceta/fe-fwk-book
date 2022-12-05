@@ -33,7 +33,7 @@ export function setAttributes(el, attrs) {
 }
 
 export function setAttribute(el, name, value) {
-  if (isInputValue(el, name)) {
+  if (name === 'value') {
     el.value = value
     return
   }
@@ -48,13 +48,6 @@ export function setAttribute(el, name, value) {
   } else {
     el.setAttribute(name, value)
   }
-}
-
-function isInputValue(el, name) {
-  return (
-    name === 'value' &&
-    (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')
-  )
 }
 
 function setBooleanAttribute(el, name, value) {
