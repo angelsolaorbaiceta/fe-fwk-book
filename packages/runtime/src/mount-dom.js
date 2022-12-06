@@ -1,5 +1,5 @@
 import { setAttributes } from './attributes'
-import { DOM_TYPES } from './h'
+import { DOM_TYPES, hString } from './h'
 import { assert } from './utils/assert'
 import { addEventListeners } from './events'
 
@@ -15,6 +15,7 @@ import { addEventListeners } from './events'
  */
 export function mountDOM(vdom, parentEl) {
   ensureIsValidParent(parentEl)
+  vdom = typeof vdom === 'string' ? hString(vdom) : vdom
 
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
@@ -77,6 +78,7 @@ function createElementNode(vdom, parentEl) {
   const { type, tag, props, children } = vdom
 
   assert(type === DOM_TYPES.ELEMENT)
+  assert(Array.isArray(children))
 
   const element = document.createElement(tag)
   addProps(element, props, vdom)
@@ -113,6 +115,7 @@ function createFragmentNode(vdom, parentEl) {
   const { type, children } = vdom
 
   assert(type === DOM_TYPES.FRAGMENT)
+  assert(Array.isArray(children))
 
   const fragment = document.createDocumentFragment()
   vdom.el = parentEl
