@@ -27,3 +27,7 @@ function renderTodoInEditMode(todo) {
 
   return li
 }
+
+function updateTodo(index, description) {
+  // TODO: implement me!
+}

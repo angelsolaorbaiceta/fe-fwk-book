@@ -23,3 +23,7 @@ function renderTodoInReadMode(todo) {
 
   return li
 }
+
+function removeTodo(index) {
+  // TODO: implement me!
+}
