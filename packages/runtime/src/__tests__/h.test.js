@@ -40,6 +40,16 @@ test('h() filters null children', () => {
   })
 })
 
+test('h() maps strings to text vNodes', () => {
+  const vNode = h('div', {}, ['test'])
+  expect(vNode).toEqual({
+    tag: 'div',
+    props: {},
+    children: [{ type: DOM_TYPES.TEXT, value: 'test' }],
+    type: DOM_TYPES.ELEMENT,
+  })
+})
+
 test('create a component vNode', () => {
   class TestComponent {}
   const props = { id: 'test' }
@@ -88,6 +98,14 @@ test('hFragment() filters null children', () => {
         children: [],
       },
     ],
+  })
+})
+
+test('hFraagment() maps strings to text vNodes', () => {
+  const vNode = hFragment(['test'])
+  expect(vNode).toEqual({
+    type: DOM_TYPES.FRAGMENT,
+    children: [{ type: DOM_TYPES.TEXT, value: 'test' }],
   })
 })
 

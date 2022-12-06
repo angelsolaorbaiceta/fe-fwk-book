@@ -17,7 +17,12 @@ export function h(tag, props = {}, children = []) {
   const type =
     typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
 
-  return { tag, props, children: withoutNulls(children), type }
+  return {
+    tag,
+    props,
+    children: mapTextNodes(withoutNulls(children)),
+    type,
+  }
 }
 
 /**
@@ -38,7 +43,7 @@ export function hFragment(vNodes, props = {}) {
     throw new Error('hFragment expects an array of vNodes')
   }
 
-  const children = withoutNulls(vNodes)
+  const children = mapTextNodes(withoutNulls(vNodes))
 
   for (const child of children) {
     if (child.type !== DOM_TYPES.TEXT) {
@@ -50,4 +55,14 @@ export function hFragment(vNodes, props = {}) {
     type: DOM_TYPES.FRAGMENT,
     children,
   }
+}
+
+function mapTextNodes(children) {
+  return children.map((child) => {
+    if (typeof child === 'string') {
+      return hString(child)
+    }
+
+    return child
+  })
 }
