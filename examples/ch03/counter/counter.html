@@ -39,13 +39,13 @@
 
       function View(state, emit) {
         return hFragment([
-          h('button', { on: { click: () => emit('sub') } }, [hString('-')]),
+          h('button', { on: { click: () => emit('sub') } }, ['-']),
           h(
             'span',
             { class: `${state.count < 0 ? 'negative' : 'positive'}` },
             [hString(state.count)]
           ),
-          h('button', { on: { click: () => emit('add') } }, [hString('+')]),
+          h('button', { on: { click: () => emit('add') } }, ['+']),
         ])
       }
 
