@@ -1,4 +1,4 @@
-import { filterNulls } from './utils/arrays'
+import { withoutNulls } from './utils/arrays'
 
 export const DOM_TYPES = {
   TEXT: 'text',
@@ -17,7 +17,7 @@ export function h(tag, props = {}, children = []) {
   const type =
     typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
 
-  return { tag, props, children: filterNulls(children), type }
+  return { tag, props, children: withoutNulls(children), type }
 }
 
 /**
@@ -38,7 +38,7 @@ export function hFragment(vNodes, props = {}) {
     throw new Error('hFragment expects an array of vNodes')
   }
 
-  const children = filterNulls(vNodes)
+  const children = withoutNulls(vNodes)
 
   for (const child of children) {
     if (child.type !== DOM_TYPES.TEXT) {
