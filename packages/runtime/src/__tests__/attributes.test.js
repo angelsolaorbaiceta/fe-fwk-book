@@ -57,7 +57,7 @@ describe('attributes of an <input type="text">', () => {
     input.type = 'text'
   })
 
-  test.each([
+  describe.each([
     { name: 'value', values: ['foo', 'bar'], whenRemoved: '' },
     {
       name: 'placeholder',
@@ -76,17 +76,23 @@ describe('attributes of an <input type="text">', () => {
       whenRemoved: '',
     },
   ])(`"$name" attribute`, ({ name, values, whenRemoved }) => {
-    for (const value of values) {
-      setAttributes(input, { [name]: value })
-      expect(input[name]).toBe(value)
-    }
+    test('setting a value', () => {
+      for (const value of values) {
+        setAttributes(input, { [name]: value })
+        expect(input[name]).toBe(value)
+      }
+    })
 
-    removeAttribute(input, name)
-    expect(input[name]).toBe(whenRemoved)
+    test('removing the attribute', () => {
+      setAttributes(input, { [name]: values[0] })
+
+      removeAttribute(input, name)
+      expect(input[name]).toBe(whenRemoved)
+    })
   })
 })
 
-test.each([
+describe.each([
   {
     type: 'number',
     attribute: 'value',
@@ -108,16 +114,24 @@ test.each([
 ])(
   'setting the <input type="$type" /> "$attribute" attribute',
   ({ type, attribute, values, expectedWhenRemoved }) => {
-    const input = document.createElement('input')
-    input.type = type
+    test('setting a value', () => {
+      const input = document.createElement('input')
+      input.type = type
 
-    for (const value of values) {
-      setAttributes(input, { [attribute]: value })
-      expect(input[attribute]).toBe(value)
-    }
+      for (const value of values) {
+        setAttributes(input, { [attribute]: value })
+        expect(input[attribute]).toBe(value)
+      }
+    })
 
-    removeAttribute(input, attribute)
-    expect(input[attribute]).toBe(expectedWhenRemoved)
+    test('removing the attribute', () => {
+      const input = document.createElement('input')
+      input.type = type
+      setAttributes(input, { [attribute]: values[0] })
+
+      removeAttribute(input, attribute)
+      expect(input[attribute]).toBe(expectedWhenRemoved)
+    })
   }
 )
 
@@ -160,7 +174,7 @@ describe('the "value" attribute of a <select>', () => {
   })
 })
 
-test.each([
+describe.each([
   {
     tag: 'a',
     name: 'href',
@@ -175,17 +189,37 @@ test.each([
   },
   { tag: 'a', name: 'download', values: ['foo', 'bar'], whenRemoved: '' },
   { tag: 'a', name: 'rel', values: ['foo', 'bar'], whenRemoved: '' },
+  {
+    tag: 'button',
+    name: 'disabled',
+    values: [true, false],
+    whenRemoved: false,
+  },
+  {
+    tag: 'span',
+    name: 'textContent',
+    values: ['foo', 'bar'],
+    whenRemoved: '',
+  },
 ])(
   `"$name" attribute of <$tag> element`,
   ({ tag, name, values, whenRemoved }) => {
-    const el = document.createElement(tag)
+    test('setting a value', () => {
+      const el = document.createElement(tag)
 
-    for (const value of values) {
-      setAttributes(el, { [name]: value })
-      expect(el[name]).toBe(value)
-    }
+      for (const value of values) {
+        setAttributes(el, { [name]: value })
+        expect(el[name]).toBe(value)
+      }
+    })
 
-    removeAttribute(el, name)
-    expect(el[name]).toBe(whenRemoved)
+    test('removing it', () => {
+      const el = document.createElement(tag)
+      setAttributes(el, { [name]: values[0] })
+
+      removeAttribute(el, name)
+
+      expect(el[name]).toBe(whenRemoved)
+    })
   }
 )

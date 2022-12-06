@@ -1,6 +1,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
 // https://www.w3.org/TR/SVGTiny12/attributeTable.html#PropertyTable
 // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflecting-content-attributes-in-idl-attributes
+// https://developer.mozilla.org/en-US/docs/Glossary/IDL
 
 /**
  * Sets the attributes of an element.
@@ -33,33 +34,29 @@ export function setAttributes(el, attrs) {
 }
 
 export function setAttribute(el, name, value) {
-  if (name === 'value') {
-    el.value = value
-    return
-  }
-
   if (value == null) {
-    el.removeAttribute(name)
-    return
-  }
-
-  if (typeof value === 'boolean') {
-    setBooleanAttribute(el, name, value)
+    removeAttribute(el, name)
   } else {
-    el.setAttribute(name, value)
+    el[name] = value
   }
 }
 
-function setBooleanAttribute(el, name, value) {
-  if (value) {
-    el.setAttribute(name, '')
-  } else {
-    el.removeAttribute(name)
-  }
-}
-
+/**
+ * Removes the attribute from the element.
+ *
+ * @param {Element} el the element where the attribute is set
+ * @param {string} name name of the attribute
+ */
 export function removeAttribute(el, name) {
-  setAttribute(el, name, null)
+  try {
+    el[name] = null
+  } catch {
+    // Setting 'size' to null on an <input> throws an error.
+    // Removing the attribute instead works. (Done below.)
+    console.warn(`Failed to set "${name}" to null on ${el.tagName}`)
+  }
+
+  el.removeAttribute(name)
 }
 
 export function setStyle(el, name, value) {
