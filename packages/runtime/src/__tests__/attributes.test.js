@@ -159,3 +159,33 @@ describe('the "value" attribute of a <select>', () => {
     expect(select.value).toBe('')
   })
 })
+
+test.each([
+  {
+    tag: 'a',
+    name: 'href',
+    values: ['http://www.foo.com/', 'http://www.bar.es/'],
+    whenRemoved: '',
+  },
+  {
+    tag: 'a',
+    name: 'target',
+    values: ['_blank', '_self'],
+    whenRemoved: '',
+  },
+  { tag: 'a', name: 'download', values: ['foo', 'bar'], whenRemoved: '' },
+  { tag: 'a', name: 'rel', values: ['foo', 'bar'], whenRemoved: '' },
+])(
+  `"$name" attribute of <$tag> element`,
+  ({ tag, name, values, whenRemoved }) => {
+    const el = document.createElement(tag)
+
+    for (const value of values) {
+      setAttributes(el, { [name]: value })
+      expect(el[name]).toBe(value)
+    }
+
+    removeAttribute(el, name)
+    expect(el[name]).toBe(whenRemoved)
+  }
+)
