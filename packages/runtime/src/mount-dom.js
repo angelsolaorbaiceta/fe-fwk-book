@@ -1,7 +1,7 @@
 import { setAttributes } from './attributes'
-import { DOM_TYPES, hString } from './h'
-import { assert } from './utils/assert'
 import { addEventListeners } from './events'
+import { DOM_TYPES } from './h'
+import { assert } from './utils/assert'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
@@ -15,7 +15,6 @@ import { addEventListeners } from './events'
  */
 export function mountDOM(vdom, parentEl) {
   ensureIsValidParent(parentEl)
-  vdom = typeof vdom === 'string' ? hString(vdom) : vdom
 
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {

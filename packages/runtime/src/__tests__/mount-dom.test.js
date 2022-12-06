@@ -18,11 +18,6 @@ test('mount a text element in a host element', () => {
   expect(document.body.innerHTML).toBe('hello')
 })
 
-test('mount a text element from a string', () => {
-  mountDOM('hello', document.body)
-  expect(document.body.innerHTML).toBe('hello')
-})
-
 test('save the created text element in the vdom', () => {
   const vdom = hString('hello')
   const el = mountDOM(vdom, document.body)
