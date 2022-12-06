@@ -11,7 +11,7 @@ function renderTodoInReadMode(todo) {
       todosList.childNodes[idx]
     )
   })
-  li.appendChild(span)
+  li.append(span)
 
   const button = document.createElement('button')
   button.textContent = 'Done'
@@ -19,7 +19,7 @@ function renderTodoInReadMode(todo) {
     const idx = todos.indexOf(todo)
     removeTodo(idx)
   })
-  li.appendChild(button)
+  li.append(button)
 
   return li
 }

@@ -1,6 +1,6 @@
 // Initialize the view
 for (const todo of todos) {
-  todosList.appendChild(renderTodoInReadMode(todo))
+  todosList.append(renderTodoInReadMode(todo))
 }
 
 addTodoInput.addEventListener('input', () => {

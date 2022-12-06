@@ -8,7 +8,7 @@ const todosList = document.getElementById('todos-list')
 
 // Initialize the view
 for (const todo of todos) {
-  todosList.appendChild(renderTodoInReadMode(todo))
+  todosList.append(renderTodoInReadMode(todo))
 }
 
 addTodoInput.addEventListener('input', () => {
@@ -43,7 +43,7 @@ function renderTodoInReadMode(todo) {
       todosList.childNodes[idx]
     )
   })
-  li.appendChild(span)
+  li.append(span)
 
   const button = document.createElement('button')
   button.textContent = 'Done'
@@ -51,7 +51,7 @@ function renderTodoInReadMode(todo) {
     const idx = todos.indexOf(todo)
     removeTodo(idx)
   })
-  li.appendChild(button)
+  li.append(button)
 
   return li
 }
@@ -62,7 +62,7 @@ function renderTodoInEditMode(todo) {
   const input = document.createElement('input')
   input.type = 'text'
   input.value = todo
-  li.appendChild(input)
+  li.append(input)
 
   const saveBtn = document.createElement('button')
   saveBtn.textContent = 'Save'
@@ -70,7 +70,7 @@ function renderTodoInEditMode(todo) {
     const idx = todos.indexOf(todo)
     updateTodo(idx, input.value)
   })
-  li.appendChild(saveBtn)
+  li.append(saveBtn)
 
   const cancelBtn = document.createElement('button')
   cancelBtn.textContent = 'Cancel'
@@ -81,20 +81,20 @@ function renderTodoInEditMode(todo) {
       todosList.childNodes[idx]
     )
   })
-  li.appendChild(cancelBtn)
+  li.append(cancelBtn)
 
   return li
 }
 
 function addTodo(description) {
-  const idx = todos.push(description) - 1
+  todos.push(description)
   const todo = renderTodoInReadMode(description)
-  todosList.appendChild(todo)
+  todosList.append(todo)
 }
 
 function removeTodo(index) {
   todos.splice(index, 1)
-  todosList.removeChild(todosList.childNodes[index])
+  todosList.childNodes[index].remove()
 }
 
 function updateTodo(index, description) {

@@ -4,7 +4,7 @@ function renderTodoInEditMode(todo) {
   const input = document.createElement('input')
   input.type = 'text'
   input.value = todo
-  li.appendChild(input)
+  li.append(input)
 
   const saveBtn = document.createElement('button')
   saveBtn.textContent = 'Save'
@@ -12,7 +12,7 @@ function renderTodoInEditMode(todo) {
     const idx = todos.indexOf(todo)
     updateTodo(idx, input.value)
   })
-  li.appendChild(saveBtn)
+  li.append(saveBtn)
 
   const cancelBtn = document.createElement('button')
   cancelBtn.textContent = 'Cancel'
@@ -23,7 +23,7 @@ function renderTodoInEditMode(todo) {
       todosList.childNodes[idx]
     )
   })
-  li.appendChild(cancelBtn)
+  li.append(cancelBtn)
 
   return li
 }
