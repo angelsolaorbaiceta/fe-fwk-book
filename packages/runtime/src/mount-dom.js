@@ -106,6 +106,7 @@ function addProps(el, props, vdom) {
  * Note that `DocumentFragment` is a subclass of `Node`, but not of `Element`.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment}
+ *
  * @param {object} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @returns {DocumentFragment} the created fragment
