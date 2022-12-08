@@ -3,10 +3,9 @@ import { Dispatcher } from './dispatcher'
 import { mountDOM } from './mount-dom'
 
 /**
- * Creates an application with the given top-level view, initial state and
- * reducers.
- * A reducer is a function that takes the current state and a payload and
- * returns the new state.
+ * Creates an application with the given top-level view, initial state and reducers.
+ * A reducer is a function that takes the current state and a payload and returns
+ * the new state.
  *
  * @param {object} config the configuration object, containing the view, reducers and initial state
  * @returns {object} the app object
@@ -16,9 +15,11 @@ export function createApp({ state, view, reducers = {} }) {
   let vdom = null
 
   const dispatcher = new Dispatcher()
-  const subscriptions = [dispatcher.subscribeToAll(renderApp)]
-  const emit = (eventName, payload) =>
+  const subscriptions = [dispatcher.afterEveryEvent(renderApp)]
+
+  function emit(eventName, payload) {
     dispatcher.dispatch(eventName, payload)
+  }
 
   // Attach reducers
   // Reducer = f(state, payload) => state
@@ -31,6 +32,13 @@ export function createApp({ state, view, reducers = {} }) {
     subscriptions.push(subs)
   }
 
+  /**
+   * Renders the application, by first destroying the previous DOM —if any— and
+   * then mounting the new view.
+   *
+   * In the next version, a _reconciliation algorithm_ will be used to update the
+   * DOM instead of destroying and mounting the whole view.
+   */
   function renderApp() {
     if (vdom) {
       destroyDOM(vdom)
@@ -55,7 +63,8 @@ export function createApp({ state, view, reducers = {} }) {
     },
 
     /**
-     * Unmounts the application from the host element.
+     * Unmounts the application from the host element by destroying the associated
+     * DOM and unsubscribing all subscriptions.
      */
     unmount() {
       destroyDOM(vdom)
