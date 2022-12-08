@@ -4,31 +4,42 @@ export const DOM_TYPES = {
   TEXT: 'text',
   ELEMENT: 'element',
   FRAGMENT: 'fragment',
-  COMPONENT: 'component',
 }
 
 /**
- * Hypertext.
+ * Hypertext function: creates a virtual node representing an element with
+ * the passed in tag.
  *
- * If tag is a string, it is assumed to be a DOM node.
- * If tag is a class (typeof == function), it is assumed to be a component.
+ * The props are added to the element as attributes.
+ * There are some special props:
+ * - `on`: an object containing event listeners to add to the element
+ * - `class`: a string or array of strings to add to the element's class list
+ * - `style`: an object containing CSS properties to add to the element's style
+ *
+ * The children are added to the element as child nodes.
+ * If a child is a string, it is converted to a text node using `hString()`.
+ *
+ * @param {string} tag the tag name of the element
+ * @param {object} props the props to add to the element
+ * @param {array} children the children to add to the element
+ * @returns {object} the virtual node
  */
 export function h(tag, props = {}, children = []) {
-  const type =
-    typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
-
   return {
     tag,
     props,
     children: mapTextNodes(withoutNulls(children)),
-    type,
+    type: DOM_TYPES.ELEMENT,
   }
 }
 
 /**
  * Creates a text virtual node.
  *
- * https://developer.mozilla.org/en-US/docs/Web/API/Text
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text}
+ *
+ * @param {string} str the text to add to the text node
+ * @returns {object} the virtual node
  */
 export function hString(str) {
   return { type: DOM_TYPES.TEXT, value: str }
@@ -37,6 +48,11 @@ export function hString(str) {
 /**
  * Wraps the virtual nodes in a fragment, adding the passed in props to the
  * individual nodes.
+ * If a child is a string, it is converted to a text node using `hString()`.
+ *
+ * @param {array} vNodes the virtual nodes to wrap in a fragment
+ * @param {object} props the props to add to the fragment's children
+ * @returns {object} the virtual node
  */
 export function hFragment(vNodes, props = {}) {
   if (!Array.isArray(vNodes)) {
