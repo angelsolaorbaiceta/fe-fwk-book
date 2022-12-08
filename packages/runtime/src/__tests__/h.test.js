@@ -50,21 +50,6 @@ test('h() maps strings to text vNodes', () => {
   })
 })
 
-test('create a component vNode', () => {
-  class TestComponent {}
-  const props = { id: 'test' }
-  const children = [hString('test')]
-
-  const vNode = h(TestComponent, props, children)
-
-  expect(vNode).toEqual({
-    tag: TestComponent,
-    props,
-    children: [{ type: DOM_TYPES.TEXT, value: 'test' }],
-    type: DOM_TYPES.COMPONENT,
-  })
-})
-
 test('create a fragment vNode', () => {
   const children = [h('div', { class: 'foo' }, [])]
   const props = { id: 'test' }
