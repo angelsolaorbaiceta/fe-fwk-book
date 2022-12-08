@@ -1,7 +1,12 @@
-function addTodo(description) {
+function addTodo() {
+  const description = addTodoInput.value
+
   todos.push(description)
   const todo = renderTodoInReadMode(description)
   todosList.append(todo)
+
+  addTodoInput.value = ''
+  addTodoButton.disabled = true
 }
 
 function removeTodo(index) {

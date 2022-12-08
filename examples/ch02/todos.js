@@ -17,16 +17,12 @@ addTodoInput.addEventListener('input', () => {
 
 addTodoInput.addEventListener('keydown', ({ key }) => {
   if (key === 'Enter') {
-    addTodo(addTodoInput.value)
-    addTodoInput.value = ''
-    addTodoButton.disabled = true
+    addTodo()
   }
 })
 
 addTodoButton.addEventListener('click', () => {
-  addTodo(addTodoInput.value)
-  addTodoInput.value = ''
-  addTodoButton.disabled = true
+  addTodo()
 })
 
 // Functions
@@ -86,10 +82,15 @@ function renderTodoInEditMode(todo) {
   return li
 }
 
-function addTodo(description) {
+function addTodo() {
+  const description = addTodoInput.value
+
   todos.push(description)
   const todo = renderTodoInReadMode(description)
   todosList.append(todo)
+
+  addTodoInput.value = ''
+  addTodoButton.disabled = true
 }
 
 function removeTodo(index) {

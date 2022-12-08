@@ -9,16 +9,12 @@ addTodoInput.addEventListener('input', () => {
 
 addTodoInput.addEventListener('keydown', ({ key }) => {
   if (key === 'Enter') {
-    addTodo(addTodoInput.value)
-    addTodoInput.value = ''
-    addTodoButton.disabled = true
+    addTodo()
   }
 })
 
 addTodoButton.addEventListener('click', () => {
-  addTodo(addTodoInput.value)
-  addTodoInput.value = ''
-  addTodoButton.disabled = true
+  addTodo()
 })
 
 // Functions
@@ -26,6 +22,6 @@ function renderTodoInReadMode(todo) {
   // TODO: implement me!
 }
 
-function addTodo(description) {
+function addTodo() {
   // TODO: implement me!
 }
