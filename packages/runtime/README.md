@@ -5,9 +5,15 @@ Code for the book "Build a frontend framework from scratch".
 This framework **isn't intended for production use**.
 Its intention is to **teach you how frontend frameworks work** by building one yourself, from scratch.
 
-## v1.0 — Chapter 3
+## [v1.0 — Chapter 3](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch3/packages/runtime)
 
 _See the example application in the [examples/ch03 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch03)_.
+
+To checkout this version of the code:
+
+```bash
+git checkout ch3
+```
 
 This version of the framework introduces the concept of a _Virtual DOM_.
 It implements the `h()`, `hString()` and `hFragment()` functions to create virtual nodes and the `mountDOM()` and `destroyDOM()` functions to turn the virtual DOM representing the view of the application into HTML elements in the browser.
