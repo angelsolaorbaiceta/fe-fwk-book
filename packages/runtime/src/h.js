@@ -1,4 +1,5 @@
 import { withoutNulls } from './utils/arrays'
+import { assert } from './utils/assert'
 
 export const DOM_TYPES = {
   TEXT: 'text',
@@ -55,9 +56,7 @@ export function hString(str) {
  * @returns {object} the virtual node
  */
 export function hFragment(vNodes, props = {}) {
-  if (!Array.isArray(vNodes)) {
-    throw new Error('hFragment expects an array of vNodes')
-  }
+  assert(Array.isArray(vNodes), 'hFragment expects an array of vNodes')
 
   const children = mapTextNodes(withoutNulls(vNodes))
 
@@ -74,11 +73,7 @@ export function hFragment(vNodes, props = {}) {
 }
 
 function mapTextNodes(children) {
-  return children.map((child) => {
-    if (typeof child === 'string') {
-      return hString(child)
-    }
-
-    return child
-  })
+  return children.map((child) =>
+    typeof child === 'string' ? hString(child) : child
+  )
 }
