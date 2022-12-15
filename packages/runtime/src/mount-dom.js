@@ -83,7 +83,7 @@ function createElementNode(vdom, parentEl) {
   addProps(element, props, vdom)
   vdom.el = element
 
-  element.append(...children.map((child) => mountDOM(child, element)))
+  children.forEach((child) => mountDOM(child, element))
   parentEl.append(element)
 
   return element
@@ -120,7 +120,7 @@ function createFragmentNode(vdom, parentEl) {
   const fragment = document.createDocumentFragment()
   vdom.el = parentEl
 
-  fragment.append(...children.map((child) => mountDOM(child, fragment)))
+  children.forEach((child) => mountDOM(child, fragment))
   parentEl.append(fragment)
 
   return fragment
