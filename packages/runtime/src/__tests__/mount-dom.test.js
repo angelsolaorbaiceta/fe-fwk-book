@@ -62,6 +62,16 @@ test('mount a fragment inside a host fragment', () => {
   expect(host.textContent).toBe('hello, world')
 })
 
+test('mount a fragment inside a fragment inside a host element', () => {
+  const vdom = hFragment([
+    h('p', {}, ['foo']),
+    hFragment([h('p', {}, ['bar']), h('p', {}, ['baz'])]),
+  ])
+  mountDOM(vdom, document.body)
+
+  expect(document.body.innerHTML).toBe('<p>foo</p><p>bar</p><p>baz</p>')
+})
+
 test('mount fragment with children and attributes', () => {
   const vdom = hFragment([
     h('span', { id: 'foo' }, [hString('hello, ')]),

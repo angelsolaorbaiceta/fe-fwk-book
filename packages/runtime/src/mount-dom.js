@@ -109,7 +109,7 @@ function addProps(el, props, vdom) {
  *
  * @param {object} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
- * @returns {DocumentFragment} the created fragment
+ * @returns {DocumentFragment} the parent element, where the fragment's children are appended
  */
 function createFragmentNode(vdom, parentEl) {
   const { type, children } = vdom
@@ -123,7 +123,7 @@ function createFragmentNode(vdom, parentEl) {
   children.forEach((child) => mountDOM(child, fragment))
   parentEl.append(fragment)
 
-  return fragment
+  return parentEl
 }
 
 function ensureIsValidParent(
