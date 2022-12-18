@@ -1,8 +1,8 @@
-import { afterEach, expect, test, vi } from 'vitest'
+import { beforeEach, expect, test, vi } from 'vitest'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 
-afterEach(() => {
+beforeEach(() => {
   document.body.innerHTML = ''
 })
 
