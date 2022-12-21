@@ -1,7 +1,6 @@
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
-import { assert } from './utils/assert'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
@@ -50,9 +49,7 @@ export function mountDOM(vdom, parentEl) {
  * @returns {Text} the created text node
  */
 function createTextNode(vdom, parentEl) {
-  const { type, value } = vdom
-
-  assert(type === DOM_TYPES.TEXT)
+  const { value } = vdom
 
   const textNode = document.createTextNode(value)
   vdom.el = textNode
@@ -74,10 +71,7 @@ function createTextNode(vdom, parentEl) {
  * @returns {HTMLElement} the created element
  */
 function createElementNode(vdom, parentEl) {
-  const { type, tag, props, children } = vdom
-
-  assert(type === DOM_TYPES.ELEMENT)
-  assert(Array.isArray(children))
+  const { tag, props, children } = vdom
 
   const element = document.createElement(tag)
   addProps(element, props, vdom)
@@ -112,10 +106,7 @@ function addProps(el, props, vdom) {
  * @returns {DocumentFragment} the parent element, where the fragment's children are appended
  */
 function createFragmentNode(vdom, parentEl) {
-  const { type, children } = vdom
-
-  assert(type === DOM_TYPES.FRAGMENT)
-  assert(Array.isArray(children))
+  const { children } = vdom
 
   const fragment = document.createDocumentFragment()
   vdom.el = parentEl
