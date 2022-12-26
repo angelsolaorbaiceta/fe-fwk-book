@@ -18,7 +18,7 @@ function renderTodoInEditMode(todo) {
   cancelBtn.textContent = 'Cancel'
   cancelBtn.addEventListener('click', () => { // --6--
     const idx = todos.indexOf(todo)
-    todosList.replaceChild( <7>
+    todosList.replaceChild( //--7--
       renderTodoInReadMode(todo),
       todosList.childNodes[idx]
     )
