@@ -58,9 +58,7 @@ export class Dispatcher {
    */
   dispatch(eventName, payload) {
     if (eventName in this.#subs) {
-      Array.from(this.#subs[eventName]).forEach((handler) =>
-        handler(payload)
-      )
+      this.#subs[eventName].forEach((handler) => handler(payload))
     } else {
       console.warn(`No handlers for event: ${eventName}`)
     }
