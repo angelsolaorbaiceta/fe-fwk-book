@@ -5,14 +5,14 @@ Code for the book "Build a frontend framework from scratch".
 This framework **isn't intended for production use**.
 Its intention is to **teach you how frontend frameworks work** by building one yourself, from scratch.
 
-## [v1.0 — Chapter 3](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch3/packages/runtime)
+## [v1.0 — Chapter 4](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch3/packages/runtime)
 
-_See the example application in the [examples/ch03 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch03)_.
+_See the example application in the [examples/ch04 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch04)_.
 
 To checkout this version of the code:
 
 ```bash
-git checkout ch3
+git checkout ch4
 ```
 
 This version of the framework introduces the concept of a _Virtual DOM_.
