@@ -27,7 +27,7 @@ const reducers = {
     todos: [...state.todos, state.currentTodo],
   }),
 
-  'click-todo': (state, idx) => ({
+  'start-editing-todo': (state, idx) => ({
     ...state,
     edit: {
       idx,
@@ -52,7 +52,7 @@ const reducers = {
     }
   },
 
-  'cancel-edit': (state) => ({
+  'cancel-editing-todo': (state) => ({
     ...state,
     edit: { idx: null, original: null, edited: null },
   }),
@@ -113,14 +113,16 @@ function TodoItem({ todo, i, edit }, emit) {
         h('button', { on: { click: () => emit('save-edited-todo') } }, [
           hString('Save'),
         ]),
-        h('button', { on: { click: () => emit('cancel-edit') } }, [
+        h('button', { on: { click: () => emit('cancel-editing-todo') } }, [
           hString('Cancel'),
         ]),
       ])
     : h('li', {}, [
-        h('span', { on: { dblclick: () => emit('click-todo', i) } }, [
-          hString(todo),
-        ]),
+        h(
+          'span',
+          { on: { dblclick: () => emit('start-editing-todo', i) } },
+          [hString(todo)]
+        ),
         h('button', { on: { click: () => emit('remove-todo', i) } }, [
           hString('Done'),
         ]),

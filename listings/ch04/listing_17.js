@@ -1,0 +1,1 @@
+createApp({ state, reducers, view: App }).mount(document.body)
