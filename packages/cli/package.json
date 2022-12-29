@@ -10,12 +10,11 @@
     "web",
     "development"
   ],
-  "main": "dist/fe-fwk.js",
   "bin": {
-    "fe-fwk": "dist/fe-fwk-cli.js"
+    "fe-fwk": "src/cli.js"
   },
   "files": [
-    "dist/fe-fwk-cli.js"
+    "src"
   ],
   "homepage": "https://github.com/angelsolaorbaiceta/fe-fwk-book",
   "bugs": {
@@ -27,9 +26,7 @@
   },
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
-  "devDependencies": {
-    "rollup": "^3.8.1",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-filesize": "^9.1.2"
+  "dependencies": {
+    "yargs": "^17.6.2"
   }
 }
