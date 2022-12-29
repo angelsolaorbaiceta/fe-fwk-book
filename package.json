@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Code for the book \"Build a frontend framework from scratch\".",
   "workspaces": [
-    "packages/runtime"
+    "packages/runtime",
+    "packages/cli"
   ],
   "scripts": {
     "serve:examples": "npx http-server . -o ./examples/ -bg"
