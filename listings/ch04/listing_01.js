@@ -18,8 +18,6 @@ export function createApp({ state, view }) { // --1--
     mount(_parentEl) { // --4--
       parentEl = _parentEl
       renderApp()
-
-      return this
     },
   }
 }
