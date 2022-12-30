@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
-const yargs = require('yargs/yargs')
-const { hideBin } = require('yargs/helpers')
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 
 yargs(hideBin(process.argv))
+  .scriptName('fe-fwk')
+  .usage('$0 <cmd> [args]')
   .command(
     'init [port]',
-    'Initialize an empty starter project for you to write the framework code',
+    'Initialize an empty starter project for you to write the code for your framework',
     (yargs) => {
       return yargs.positional('port', {
         describe: 'port to bind on',
@@ -23,6 +25,7 @@ yargs(hideBin(process.argv))
     type: 'boolean',
     description: 'Run with verbose logging',
   })
+  .help()
   .parse()
 
 console.log("I don't do much yet.")
