@@ -1,6 +1,7 @@
 {
   "name": "fe-fwk-book",
   "version": "1.0.0",
+  "private": true,
   "description": "Code for the book \"Build a frontend framework from scratch\".",
   "workspaces": [
     "packages/runtime",
