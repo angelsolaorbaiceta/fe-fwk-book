@@ -1,16 +1,16 @@
 const reducers = {
-  'update-current-todo': (state, currentTodo) => ({ // --1--
+  'update-current-todo': (state, currentTodo) => ({
     ...state,
     currentTodo,
   }),
 
-  'add-todo': (state) => ({ // --2--
+  'add-todo': (state) => ({
     ...state,
     currentTodo: '',
     todos: [...state.todos, state.currentTodo],
   }),
 
-  'start-editing-todo': (state, idx) => ({ // --3--
+  'start-editing-todo': (state, idx) => ({
     ...state,
     edit: {
       idx,
@@ -19,12 +19,12 @@ const reducers = {
     },
   }),
 
-  'edit-todo': (state, edited) => ({ // --4--
+  'edit-todo': (state, edited) => ({ 
     ...state,
     edit: { ...state.edit, edited },
   }),
 
-  'save-edited-todo': (state) => { // --5--
+  'save-edited-todo': (state) => { 
     const todos = [...state.todos]
     todos[state.edit.idx] = state.edit.edited
 
@@ -35,12 +35,12 @@ const reducers = {
     }
   },
 
-  'cancel-editing-todo': (state) => ({ // --6--
+  'cancel-editing-todo': (state) => ({ 
     ...state,
     edit: { idx: null, original: null, edited: null },
   }),
 
-  'remove-todo': (state, idx) => ({ // --7--
+  'remove-todo': (state, idx) => ({ 
     ...state,
     todos: state.todos.filter((_, i) => i !== idx),
   }),

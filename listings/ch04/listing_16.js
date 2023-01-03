@@ -4,24 +4,24 @@ function TodoItem({ todo, i, edit }, emit) {
   return isEditing
     ? h('li', {}, [ // --1--
         h('input', {
-          value: todo,
-          on: { input: (e) => emit('edit-todo', e.target.value) },
+          value: edit.edited,
+          on: { input: ({ target }) => emit('edit-todo', target.value) },
         }),
         h('button', { on: { click: () => emit('save-edited-todo') } }, [
-          hString('Save'),
+          'Save',
         ]),
         h('button', { on: { click: () => emit('cancel-editing-todo') } }, [
-          hString('Cancel'),
+          'Cancel',
         ]),
       ])
     : h('li', {}, [ // --2--
         h(
           'span',
           { on: { dblclick: () => emit('start-editing-todo', i) } },
-          [hString(todo)]
+          [todo]
         ),
         h('button', { on: { click: () => emit('remove-todo', i) } }, [
-          hString('Done'),
+          'Done',
         ]),
       ])
 }

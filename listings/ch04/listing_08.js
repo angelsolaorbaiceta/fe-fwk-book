@@ -8,8 +8,6 @@ export function createApp({ state, view, reducers = {} }) {
     mount(_parentEl) {
       parentEl = _parentEl
       renderApp()
-
-      return this
     },
 
     // --add-- //

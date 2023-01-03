@@ -1,9 +1,8 @@
 import {
   createApp,
   h,
-  hString,
   hFragment,
-} from '../../packages/runtime/dist/fe-fwk.js'
+} from '../../packages/runtime/dist/fe-fwk'
 
 const state = {
   currentTodo: '',

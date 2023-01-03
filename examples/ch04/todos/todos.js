@@ -1,9 +1,4 @@
-import {
-  createApp,
-  h,
-  hString,
-  hFragment,
-} from 'https://unpkg.com/fe-fwk@1'
+import { createApp, h, hFragment } from 'https://unpkg.com/fe-fwk@1'
 
 const state = {
   currentTodo: '',
@@ -65,7 +60,7 @@ const reducers = {
 
 function App(state, emit) {
   return hFragment([
-    h('h1', {}, [hString('My TODOs')]),
+    h('h1', {}, ['My TODOs']),
     CreateTodo(state, emit),
     TodoList(state, emit),
   ])
@@ -73,7 +68,7 @@ function App(state, emit) {
 
 function CreateTodo({ currentTodo }, emit) {
   return h('div', {}, [
-    h('label', { for: 'todo-input' }, [hString('New TODO')]),
+    h('label', { for: 'todo-input' }, ['New TODO']),
     h('input', {
       type: 'text',
       id: 'todo-input',
@@ -88,7 +83,7 @@ function CreateTodo({ currentTodo }, emit) {
         disabled: currentTodo.length < 3,
         on: { click: () => emit('add-todo') },
       },
-      [hString('Add')]
+      ['Add']
     ),
   ])
 }
@@ -107,24 +102,24 @@ function TodoItem({ todo, i, edit }, emit) {
   return isEditing
     ? h('li', {}, [
         h('input', {
-          value: todo,
-          on: { input: (e) => emit('edit-todo', e.target.value) },
+          value: edit.edited,
+          on: { input: ({ target }) => emit('edit-todo', target.value) },
         }),
         h('button', { on: { click: () => emit('save-edited-todo') } }, [
-          hString('Save'),
+          'Save',
         ]),
         h('button', { on: { click: () => emit('cancel-editing-todo') } }, [
-          hString('Cancel'),
+          'Cancel',
         ]),
       ])
     : h('li', {}, [
         h(
           'span',
           { on: { dblclick: () => emit('start-editing-todo', i) } },
-          [hString(todo)]
+          [todo]
         ),
         h('button', { on: { click: () => emit('remove-todo', i) } }, [
-          hString('Done'),
+          'Done',
         ]),
       ])
 }

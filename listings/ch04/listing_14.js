@@ -1,6 +1,6 @@
 function CreateTodo({ currentTodo }, emit) {
   return h('div', {}, [
-    h('label', { for: 'todo-input' }, [hString('New TODO')]),
+    h('label', { for: 'todo-input' }, ['New TODO']),
     h('input', {
       type: 'text',
       id: 'todo-input',
@@ -15,7 +15,7 @@ function CreateTodo({ currentTodo }, emit) {
         disabled: currentTodo.length < 3,
         on: { click: () => emit('add-todo') },
       },
-      [hString('Add')]
+      ['Add']
     ),
   ])
 }
