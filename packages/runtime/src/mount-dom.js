@@ -44,7 +44,7 @@ export function mountDOM(vdom, parentEl) {
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text}
  *
- * @param {object} vdom the virtual DOM node of type "text"
+ * @param {import('./h').TextVNode} vdom the virtual DOM node of type "text"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @returns {Text} the created text node
  */
@@ -66,7 +66,7 @@ function createTextNode(vdom, parentEl) {
  * If the vdom includes event listeners, these are added to the vdom object, under the
  * `listeners` property.
  *
- * @param {object} vdom the virtual DOM node of type "element"
+ * @param {import('./h').ElementVNode} vdom the virtual DOM node of type "element"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @returns {HTMLElement} the created element
  */
@@ -101,7 +101,7 @@ function addProps(el, props, vdom) {
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment}
  *
- * @param {object} vdom the virtual DOM node of type "fragment"
+ * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @returns {DocumentFragment} the parent element, where the fragment's children are appended
  */

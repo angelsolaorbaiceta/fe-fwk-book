@@ -2,6 +2,8 @@
  * Adds event listeners to an event target and returns an object containing
  * the added listeners.
  *
+ * FIXME: only one event listener per event name is supported
+ *
  * @param {object} listeners The event listeners to add
  * @param {EventTarget} el The element to add the listeners to
  * @returns {object} The added listeners
