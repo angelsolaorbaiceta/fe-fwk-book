@@ -63,7 +63,7 @@ export function h(tag, props = {}, children = []) {
  * @type {object}
  * @property {string} type - The type of the virtual node = 'text'.
  * @property {string} value - The text of the text node.
- * @property {Node|undefined} el - The mounted element.
+ * @property {(Node|undefined)} el - The mounted element.
  */
 
 /**
@@ -83,7 +83,7 @@ export function hString(str) {
  * @type {object}
  * @property {string} type - The type of the virtual node = 'fragment'.
  * @property {VNode[]} children - The children of the fragment.
- * @property {Node|undefined} el - The mounted element, typically the parent of the fragment.
+ * @property {(Node|undefined)} el - The mounted element, typically the parent of the fragment.
  */
 
 /**
