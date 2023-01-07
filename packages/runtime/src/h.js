@@ -8,6 +8,20 @@ export const DOM_TYPES = {
 }
 
 /**
+ * @typedef VNode
+ * @type {TextVNode|ElementVNode|FragmentVNode}
+ */
+
+/**
+ * @typedef ElementVNode
+ * @type {object}
+ * @property {string} tag - The tag of the element.
+ * @property {string} type - The type of the virtual node = 'element'.
+ * @property {object} props - The attributes of the element.
+ * @property {VNode[]} children - The children of the element.
+ */
+
+/**
  * Hypertext function: creates a virtual node representing an element with
  * the passed in tag.
  *
@@ -23,7 +37,7 @@ export const DOM_TYPES = {
  * @param {string} tag the tag name of the element
  * @param {object} props the props to add to the element
  * @param {array} children the children to add to the element
- * @returns {object} the virtual node
+ * @returns {ElementVNode} the virtual node
  */
 export function h(tag, props = {}, children = []) {
   return {
@@ -33,6 +47,13 @@ export function h(tag, props = {}, children = []) {
     type: DOM_TYPES.ELEMENT,
   }
 }
+
+/**
+ * @typedef TextVNode
+ * @type {object}
+ * @property {string} type - The type of the virtual node = 'text'.
+ * @property {string} value - The text of the text node.
+ */
 
 /**
  * Creates a text virtual node.
@@ -45,6 +66,13 @@ export function h(tag, props = {}, children = []) {
 export function hString(str) {
   return { type: DOM_TYPES.TEXT, value: str }
 }
+
+/**
+ * @typedef FragmentVNode
+ * @type {object}
+ * @property {string} type - The type of the virtual node = 'fragment'.
+ * @property {VNode[]} children - The children of the fragment.
+ */
 
 /**
  * Wraps the virtual nodes in a fragment, adding the passed in props to the

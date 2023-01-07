@@ -8,7 +8,7 @@ import { DOM_TYPES } from './h'
  *
  * It returns the created DOM element.
  *
- * @param {object} oldVDom the virtual DOM node to mount
+ * @param {import('./h').VNode} vdom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @returns {Node} the created node
  */
