@@ -17,10 +17,18 @@ export const DOM_TYPES = {
  * @type {object}
  * @property {string} tag - The tag of the element.
  * @property {string} type - The type of the virtual node = 'element'.
- * @property {object} props - The attributes of the element.
+ * @property {ElementVNodeProps} props - The attributes of the element.
  * @property {VNode[]} children - The children of the element.
  * @property {(Node|undefined)} el - The mounted element.
  * @property {(Object.<string,Function>|undefined)} listeners - The event listeners added to the element.
+ */
+
+/**
+ * @typedef ElementVNodeProps
+ * @type {object}
+ * @property {Object.<string,Function>} on - The event listeners to add to the element.
+ * @property {string|string[]} class - The class or classes to add to the element.
+ * @property {Object.<string,string>} style - The CSS properties to add to the element.
  */
 
 /**

@@ -83,6 +83,13 @@ function createElementNode(vdom, parentEl) {
   return element
 }
 
+/**
+ * Adds the attributes and event listeners to an element.
+ *
+ * @param {Element} el The element to add the attributes to
+ * @param {import('./h').ElementVNodeProps} props The props to add
+ * @param {import('./h').ElementVNode} vdom The vdom node
+ */
 function addProps(el, props, vdom) {
   const { on: events, ...attrs } = props
 
