@@ -218,7 +218,7 @@ describe('patch style', () => {
   })
 })
 
-describe.only('patch children', () => {
+describe('patch children', () => {
   describe('text vnode', () => {
     test('added at the end', () => {
       const oldVDom = h('div', {}, ['A'])
