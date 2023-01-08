@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { h, hString } from '../h'
+import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { patchDOM } from '../patch-dom'
 
@@ -8,68 +8,68 @@ beforeEach(() => {
 })
 
 test('no change', () => {
-  const oldVDom = h('div', {}, [hString('hello')])
-  const newVDom = h('div', {}, [hString('hello')])
+  const oldVdom = h('div', {}, [hString('hello')])
+  const newVdom = h('div', {}, [hString('hello')])
 
-  const vdom = patch(oldVDom, newVDom)
+  const vdom = patch(oldVdom, newVdom)
 
   expect(document.body.innerHTML).toEqual('<div>hello</div>')
-  expect(newVDom.el).toBe(vdom.el)
+  expect(newVdom.el).toBe(vdom.el)
 })
 
 test('change the root node', () => {
-  const oldVDom = h('div', {}, [hString('hello')])
-  const newVDom = h('span', {}, [hString('hello')])
+  const oldVdom = h('div', {}, [hString('hello')])
+  const newVdom = h('span', {}, [hString('hello')])
 
-  const vdom = patch(oldVDom, newVDom)
+  const vdom = patch(oldVdom, newVdom)
 
   expect(document.body.innerHTML).toEqual('<span>hello</span>')
   expect(vdom.el).toBeInstanceOf(HTMLSpanElement)
-  expect(newVDom.el).toBe(vdom.el)
+  expect(newVdom.el).toBe(vdom.el)
 })
 
 test('sets the el in the new vdom', () => {
-  const oldVDom = h('div', {}, ['hello'])
-  const newVDom = h('div', {}, ['hello'])
+  const oldVdom = h('div', {}, ['hello'])
+  const newVdom = h('div', {}, ['hello'])
 
-  const vdom = patch(oldVDom, newVDom)
+  const vdom = patch(oldVdom, newVdom)
 
-  expect(newVDom.el).toBe(vdom.el)
+  expect(newVdom.el).toBe(vdom.el)
 })
 
 test('patch text', () => {
-  const oldVDom = hString('foo')
-  const newVDom = hString('bar')
+  const oldVdom = hString('foo')
+  const newVdom = hString('bar')
 
-  patch(oldVDom, newVDom)
+  patch(oldVdom, newVdom)
 
   expect(document.body.innerHTML).toEqual('bar')
 })
 
 describe('patch attributes', () => {
   test('add attribute', () => {
-    const oldVDom = h('div', {})
-    const newVDom = h('div', { id: 'foo' })
+    const oldVdom = h('div', {})
+    const newVdom = h('div', { id: 'foo' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div id="foo"></div>')
   })
 
   test('remove attribute', () => {
-    const oldVDom = h('div', { id: 'foo' })
-    const newVDom = h('div', {})
+    const oldVdom = h('div', { id: 'foo' })
+    const newVdom = h('div', {})
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div></div>')
   })
 
   test('update the value of an attribute', () => {
-    const oldVDom = h('div', { id: 'foo' })
-    const newVDom = h('div', { id: 'bar' })
+    const oldVdom = h('div', { id: 'foo' })
+    const newVdom = h('div', { id: 'bar' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div id="bar"></div>')
   })
@@ -79,10 +79,10 @@ describe('patch class', () => {
   test('from empty string to string', () => {
     // Need to prevent an empty class to be removed from the classList (that throws an error)
     // `SyntaxError: The token provided must not be empty.`
-    const oldVDom = h('div', { class: '' })
-    const newVDom = h('div', { class: 'foo' })
+    const oldVdom = h('div', { class: '' })
+    const newVdom = h('div', { class: 'foo' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div class="foo"></div>')
   })
@@ -90,100 +90,100 @@ describe('patch class', () => {
   test('from string to empty string', () => {
     // Need to prevent an empty class to be removed from the classList (that throws an error)
     // `SyntaxError: The token provided must not be empty.`
-    const oldVDom = h('div', { class: 'foo' })
-    const newVDom = h('div', { class: '' })
+    const oldVdom = h('div', { class: 'foo' })
+    const newVdom = h('div', { class: '' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div class=""></div>')
   })
 
   test('from no class to string', () => {
-    const oldVDom = h('div', {})
-    const newVDom = h('div', { class: 'foo' })
+    const oldVdom = h('div', {})
+    const newVdom = h('div', { class: 'foo' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div class="foo"></div>')
   })
 
   test('from string to no class', () => {
-    const oldVDom = h('div', { class: 'foo' })
-    const newVDom = h('div', {})
+    const oldVdom = h('div', { class: 'foo' })
+    const newVdom = h('div', {})
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toEqual('<div class=""></div>')
   })
 
   test('change string value', () => {
-    const oldVDom = h('div', { class: 'foo' })
-    const newVDom = h('div', { class: 'bar' })
+    const oldVdom = h('div', { class: 'foo' })
+    const newVdom = h('div', { class: 'bar' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="bar"></div>')
   })
 
   test('from a string to an array of classes', () => {
-    const oldVDom = h('div', { class: 'foo' })
-    const newVDom = h('div', { class: ['foo', 'bar'] })
+    const oldVdom = h('div', { class: 'foo' })
+    const newVdom = h('div', { class: ['foo', 'bar'] })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo bar"></div>')
   })
 
   test('from an array of classes to a string', () => {
-    const oldVDom = h('div', { class: ['foo', 'bar'] })
-    const newVDom = h('div', { class: 'foo' })
+    const oldVdom = h('div', { class: ['foo', 'bar'] })
+    const newVdom = h('div', { class: 'foo' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo"></div>')
   })
 
   test('from an array of classes to a string', () => {
-    const oldVDom = h('div', { class: ['foo', 'bar'] })
-    const newVDom = h('div', { class: 'foo' })
+    const oldVdom = h('div', { class: ['foo', 'bar'] })
+    const newVdom = h('div', { class: 'foo' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo"></div>')
   })
 
   test('add class to array', () => {
-    const oldVDom = h('div', { class: ['foo'] })
-    const newVDom = h('div', { class: ['foo', 'bar'] })
+    const oldVdom = h('div', { class: ['foo'] })
+    const newVdom = h('div', { class: ['foo', 'bar'] })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo bar"></div>')
   })
 
   test('remove class from array', () => {
-    const oldVDom = h('div', { class: ['foo', 'bar'] })
-    const newVDom = h('div', { class: ['foo'] })
+    const oldVdom = h('div', { class: ['foo', 'bar'] })
+    const newVdom = h('div', { class: ['foo'] })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo"></div>')
   })
 
   test('add class to string', () => {
-    const oldVDom = h('div', { class: 'foo' })
-    const newVDom = h('div', { class: 'foo bar' })
+    const oldVdom = h('div', { class: 'foo' })
+    const newVdom = h('div', { class: 'foo bar' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo bar"></div>')
   })
 
   test('remove class from string', () => {
-    const oldVDom = h('div', { class: 'foo bar' })
-    const newVDom = h('div', { class: 'foo' })
+    const oldVdom = h('div', { class: 'foo bar' })
+    const newVdom = h('div', { class: 'foo' })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div class="foo"></div>')
   })
@@ -191,28 +191,28 @@ describe('patch class', () => {
 
 describe('patch style', () => {
   test('add a new style', () => {
-    const oldVDom = h('div')
-    const newVDom = h('div', { style: { color: 'red' } })
+    const oldVdom = h('div')
+    const newVdom = h('div', { style: { color: 'red' } })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div style="color: red;"></div>')
   })
 
   test('remove a style', () => {
-    const oldVDom = h('div', { style: { color: 'red' } })
-    const newVDom = h('div')
+    const oldVdom = h('div', { style: { color: 'red' } })
+    const newVdom = h('div')
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div style=""></div>')
   })
 
   test('change a style', () => {
-    const oldVDom = h('div', { style: { color: 'red' } })
-    const newVDom = h('div', { style: { color: 'blue' } })
+    const oldVdom = h('div', { style: { color: 'red' } })
+    const newVdom = h('div', { style: { color: 'blue' } })
 
-    patch(oldVDom, newVDom)
+    patch(oldVdom, newVdom)
 
     expect(document.body.innerHTML).toBe('<div style="color: blue;"></div>')
   })
@@ -221,73 +221,73 @@ describe('patch style', () => {
 describe('patch children', () => {
   describe('text vnode', () => {
     test('added at the end', () => {
-      const oldVDom = h('div', {}, ['A'])
-      const newVDom = h('div', {}, ['A', 'B'])
+      const oldVdom = h('div', {}, ['A'])
+      const newVdom = h('div', {}, ['A', 'B'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>AB</div>')
     })
 
     test('added at the beginning', () => {
-      const oldVDom = h('div', {}, ['B'])
-      const newVDom = h('div', {}, ['A', 'B'])
+      const oldVdom = h('div', {}, ['B'])
+      const newVdom = h('div', {}, ['A', 'B'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>AB</div>')
     })
 
     test('added in the middle', () => {
-      const oldVDom = h('div', {}, ['A', 'B'])
-      const newVDom = h('div', {}, ['A', 'B', 'C'])
+      const oldVdom = h('div', {}, ['A', 'B'])
+      const newVdom = h('div', {}, ['A', 'B', 'C'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>ABC</div>')
     })
 
     test('removed from the end', () => {
-      const oldVDom = h('div', {}, ['A', 'B'])
-      const newVDom = h('div', {}, ['A'])
+      const oldVdom = h('div', {}, ['A', 'B'])
+      const newVdom = h('div', {}, ['A'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>A</div>')
     })
 
     test('removed from the beginning', () => {
-      const oldVDom = h('div', {}, ['A', 'B'])
-      const newVDom = h('div', {}, ['B'])
+      const oldVdom = h('div', {}, ['A', 'B'])
+      const newVdom = h('div', {}, ['B'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>B</div>')
     })
 
     test('removed from the middle', () => {
-      const oldVDom = h('div', {}, ['A', 'B', 'C'])
-      const newVDom = h('div', {}, ['A', 'C'])
+      const oldVdom = h('div', {}, ['A', 'B', 'C'])
+      const newVdom = h('div', {}, ['A', 'C'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>AC</div>')
     })
 
     test('changed', () => {
-      const oldVDom = h('div', {}, ['A'])
-      const newVDom = h('div', {}, ['B'])
+      const oldVdom = h('div', {}, ['A'])
+      const newVdom = h('div', {}, ['B'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>B</div>')
     })
 
     test('moved around', () => {
-      const oldVDom = h('div', {}, ['A', 'B', 'C'])
-      const newVDom = h('div', {}, ['C', 'A', 'B'])
+      const oldVdom = h('div', {}, ['A', 'B', 'C'])
+      const newVdom = h('div', {}, ['C', 'A', 'B'])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div>CAB</div>')
     })
@@ -295,13 +295,13 @@ describe('patch children', () => {
 
   describe('element vnode', () => {
     test('added at the end', () => {
-      const oldVDom = h('div', {}, [h('span', {}, ['A'])])
-      const newVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [h('span', {}, ['A'])])
+      const newVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', { id: 'b' }, ['B']),
       ])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe(
         '<div><span>A</span><span id="b">B</span></div>'
@@ -309,13 +309,13 @@ describe('patch children', () => {
     })
 
     test('added at the beginning', () => {
-      const oldVDom = h('div', {}, [h('span', {}, ['B'])])
-      const newVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [h('span', {}, ['B'])])
+      const newVdom = h('div', {}, [
         h('span', { id: 'a' }, ['A']),
         h('span', {}, ['B']),
       ])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe(
         '<div><span id="a">A</span><span>B</span></div>'
@@ -323,17 +323,17 @@ describe('patch children', () => {
     })
 
     test('added in the middle', () => {
-      const oldVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', {}, ['C']),
       ])
-      const newVDom = h('div', {}, [
+      const newVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', { id: 'b' }, ['B']),
         h('span', {}, ['C']),
       ])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe(
         '<div><span>A</span><span id="b">B</span><span>C</span></div>'
@@ -341,41 +341,41 @@ describe('patch children', () => {
     })
 
     test('removed from the end', () => {
-      const oldVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', {}, ['B']),
       ])
-      const newVDom = h('div', {}, [h('span', {}, ['A'])])
+      const newVdom = h('div', {}, [h('span', {}, ['A'])])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div><span>A</span></div>')
     })
 
     test('removed from the beginning', () => {
-      const oldVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', {}, ['B']),
       ])
-      const newVDom = h('div', {}, [h('span', {}, ['B'])])
+      const newVdom = h('div', {}, [h('span', {}, ['B'])])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe('<div><span>B</span></div>')
     })
 
     test('removed from the middle', () => {
-      const oldVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', {}, ['B']),
         h('span', {}, ['C']),
       ])
-      const newVDom = h('div', {}, [
+      const newVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', {}, ['C']),
       ])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe(
         '<div><span>A</span><span>C</span></div>'
@@ -383,21 +383,140 @@ describe('patch children', () => {
     })
 
     test('moved around', () => {
-      const oldVDom = h('div', {}, [
+      const oldVdom = h('div', {}, [
         h('span', {}, ['A']),
         h('span', {}, ['B']),
         h('span', {}, ['C']),
       ])
-      const newVDom = h('div', {}, [
+      const newVdom = h('div', {}, [
         h('span', {}, ['C']),
         h('span', {}, ['A']),
         h('span', {}, ['B']),
       ])
 
-      patch(oldVDom, newVDom)
+      patch(oldVdom, newVdom)
 
       expect(document.body.innerHTML).toBe(
         '<div><span>C</span><span>A</span><span>B</span></div>'
+      )
+    })
+  })
+
+  describe('fragment vnode', () => {
+    test('add element at the end', () => {
+      const oldVdom = hFragment([h('span', {}, ['A'])])
+      const newVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', { id: 'b' }, ['B']),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe(
+        '<span>A</span><span id="b">B</span>'
+      )
+    })
+
+    test('add element at the beginning', () => {
+      const oldVdom = hFragment([h('span', {}, ['B'])])
+      const newVdom = hFragment([
+        h('span', { id: 'a' }, ['A']),
+        h('span', {}, ['B']),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe(
+        '<span id="a">A</span><span>B</span>'
+      )
+    })
+
+    test('add element in the middle', () => {
+      const oldVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', {}, ['C']),
+      ])
+      const newVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', { id: 'b' }, ['B']),
+        h('span', {}, ['C']),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe(
+        '<span>A</span><span id="b">B</span><span>C</span>'
+      )
+    })
+
+    test('remove element from the end', () => {
+      const oldVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+      ])
+      const newVdom = hFragment([h('span', {}, ['A'])])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe('<span>A</span>')
+    })
+
+    test('remove element from the beginning', () => {
+      const oldVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+      ])
+      const newVdom = hFragment([h('span', {}, ['B'])])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe('<span>B</span>')
+    })
+
+    test('remove element from the middle', () => {
+      const oldVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+        h('span', {}, ['C']),
+      ])
+      const newVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', {}, ['C']),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe('<span>A</span><span>C</span>')
+    })
+
+    test('append fragment', () => {
+      const oldVdom = hFragment([h('span', {}, ['A'])])
+      const newVdom = hFragment([
+        h('span', {}, ['A']),
+        hFragment([h('span', {}, ['B'])]),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe('<span>A</span><span>B</span>')
+    })
+
+    test('move children around', () => {
+      const oldVdom = hFragment([
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+        h('span', {}, ['C']),
+      ])
+      const newVdom = hFragment([
+        h('span', {}, ['C']),
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe(
+        '<span>C</span><span>A</span><span>B</span>'
       )
     })
   })
