@@ -339,6 +339,67 @@ describe.only('patch children', () => {
         '<div><span>A</span><span id="b">B</span><span>C</span></div>'
       )
     })
+
+    test('removed from the end', () => {
+      const oldVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+      ])
+      const newVDom = h('div', {}, [h('span', {}, ['A'])])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div><span>A</span></div>')
+    })
+
+    test('removed from the beginning', () => {
+      const oldVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+      ])
+      const newVDom = h('div', {}, [h('span', {}, ['B'])])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div><span>B</span></div>')
+    })
+
+    test('removed from the middle', () => {
+      const oldVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+        h('span', {}, ['C']),
+      ])
+      const newVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', {}, ['C']),
+      ])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe(
+        '<div><span>A</span><span>C</span></div>'
+      )
+    })
+
+    test('moved around', () => {
+      const oldVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+        h('span', {}, ['C']),
+      ])
+      const newVDom = h('div', {}, [
+        h('span', {}, ['C']),
+        h('span', {}, ['A']),
+        h('span', {}, ['B']),
+      ])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe(
+        '<div><span>C</span><span>A</span><span>B</span></div>'
+      )
+    })
   })
 })
 

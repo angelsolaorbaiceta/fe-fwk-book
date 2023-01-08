@@ -172,23 +172,20 @@ function patchChildren(oldVdom, newVdom) {
   )
 
   for (const operation of diffSeq) {
+    const { from, index, item } = operation
+
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
-        const { index, item } = operation
         mountDOM(item, parentEl, index)
-
         break
       }
 
       case ARRAY_DIFF_OP.REMOVE: {
-        const { item } = operation
         destroyDOM(item)
-
         break
       }
 
       case ARRAY_DIFF_OP.MOVE: {
-        const { from, index } = operation
         const el = oldChildren[from].el
         const elAtTargetIndex = parentEl.childNodes[index]
 
@@ -202,11 +199,7 @@ function patchChildren(oldVdom, newVdom) {
       }
 
       case ARRAY_DIFF_OP.NOOP: {
-        const { from, index } = operation
-        const oldChild = oldChildren[from]
-        const newChild = newChildren[index]
-        patchDOM(oldChild, newChild)
-
+        patchDOM(oldChildren[from], newChildren[index], parentEl)
         break
       }
     }
