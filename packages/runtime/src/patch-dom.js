@@ -7,16 +7,21 @@ import {
 import { destroyDOM } from './destroy-dom'
 import { DOM_TYPES } from './h'
 import { mountDOM } from './mount-dom'
-import { arraysDiff } from './utils/arrays'
+import { areNodesEqual } from './nodes-equal'
+import {
+  arraysDiff,
+  arraysDiffSequence,
+  ARRAY_DIFF_OP,
+} from './utils/arrays'
 import { objectsDiff } from './utils/objects'
 import { isNotBlankOrEmptyString } from './utils/strings'
 
 /**
  *
- * @param {import('./h').VNode} oldVdom
- * @param {import('./h').VNode} newVdom
- * @param {Node} parentEl
- * @returns
+ * @param {import('./h').VNode} oldVdom the old virtual dom
+ * @param {import('./h').VNode} newVdom the new virtual dom
+ * @param {Node} parentEl the parent element
+ * @returns {Element} the patched element
  */
 export function patchDOM(oldVdom, newVdom, parentEl) {
   if (!areNodesEqual(oldVdom, newVdom)) {
@@ -40,16 +45,17 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
     }
   }
 
+  patchChildren(oldVdom, newVdom)
+
   return newVdom
 }
 
-function areNodesEqual(nodeOne, nodeTwo) {
-  const { type: typeOne, tag: tagOne } = nodeOne
-  const { type: typeTwo, tag: tagTwo } = nodeTwo
-
-  return typeOne === typeTwo && tagOne === tagTwo
-}
-
+/**
+ * Patches a text virtual node.
+ *
+ * @param {import('./h').TextVNode} oldVdom The old virtual node
+ * @param {import('./h').TextVNode} newVdom The new virtual node
+ */
 function patchText(oldVdom, newVdom) {
   const el = oldVdom.el
   const { value: oldText } = oldVdom
@@ -141,5 +147,68 @@ function patchStyle(el, oldStyle = {}, newStyle = {}) {
 
   for (const style of added.concat(updated)) {
     setStyle(el, style, newStyle[style])
+  }
+}
+
+/**
+ * Patches the children of a virtual node.
+ *
+ * @param {import('./h').VNode} oldVdom The old virtual node
+ * @param {import('./h').VNode} newVdom the new virtual node
+ */
+function patchChildren(oldVdom, newVdom) {
+  const oldChildren = oldVdom.children ?? []
+  const newChildren = newVdom.children ?? []
+  const parentEl = oldVdom.el
+
+  if (oldChildren.length === 0 && newChildren.length === 0) {
+    return
+  }
+
+  const diffSeq = arraysDiffSequence(
+    oldChildren,
+    newChildren,
+    areNodesEqual
+  )
+
+  for (const operation of diffSeq) {
+    switch (operation.op) {
+      case ARRAY_DIFF_OP.ADD: {
+        const { index, item } = operation
+        mountDOM(item, parentEl, index)
+
+        break
+      }
+
+      case ARRAY_DIFF_OP.REMOVE: {
+        const { item } = operation
+        destroyDOM(item)
+
+        break
+      }
+
+      case ARRAY_DIFF_OP.MOVE: {
+        const { from, index } = operation
+        const el = oldChildren[from].el
+        const elAtTargetIndex = parentEl.childNodes[index]
+
+        if (el !== elAtTargetIndex) {
+          parentEl.insertBefore(el, elAtTargetIndex)
+        }
+
+        patchDOM(oldChildren[from], newChildren[index], parentEl)
+
+        break
+      }
+
+      case ARRAY_DIFF_OP.NOOP: {
+        const { from, index } = operation
+        const oldChild = oldChildren[from]
+        const newChild = newChildren[index]
+        patchDOM(oldChild, newChild)
+
+        break
+      }
+    }
   }
 }

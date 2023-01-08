@@ -42,6 +42,7 @@ export const ARRAY_DIFF_OP = {
   ADD: 'add',
   REMOVE: 'remove',
   MOVE: 'move',
+  NOOP: 'noop',
 }
 
 /**
@@ -57,6 +58,10 @@ export const ARRAY_DIFF_OP = {
  * Compare two arrays and return a sequence of operations to transform the old
  * array into the new one. The sequence is so that, if the operations are applied
  * in order, the old array is transformed into the new one.
+ *
+ * If an item moves around as a side effect to other operations taking place,
+ * such as adding something before it, the move operation will be included in
+ * the sequence as a NOOP operation.
  *
  * The sequence produced by this function can be applied to an array using the
  * `applyArraysDiffSequence` function.
@@ -154,10 +159,13 @@ function findAdditionsAndMoves(
 
       if (positions !== movedPositions) {
         sequence.push({ op: ARRAY_DIFF_OP.MOVE, from, index, item })
+      } else {
+        sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index })
       }
 
       foundIndices.add(from)
     } else {
+      sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index })
       foundIndices.add(from)
     }
   }
@@ -193,9 +201,6 @@ export function applyArraysDiffSequence(oldArray, diffSeq) {
 
       case ARRAY_DIFF_OP.MOVE:
         array.splice(index, 0, array.splice(from, 1)[0])
-        break
-
-      default:
         break
     }
 

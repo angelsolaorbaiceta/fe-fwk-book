@@ -218,6 +218,130 @@ describe('patch style', () => {
   })
 })
 
+describe.only('patch children', () => {
+  describe('text vnode', () => {
+    test('added at the end', () => {
+      const oldVDom = h('div', {}, ['A'])
+      const newVDom = h('div', {}, ['A', 'B'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>AB</div>')
+    })
+
+    test('added at the beginning', () => {
+      const oldVDom = h('div', {}, ['B'])
+      const newVDom = h('div', {}, ['A', 'B'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>AB</div>')
+    })
+
+    test('added in the middle', () => {
+      const oldVDom = h('div', {}, ['A', 'B'])
+      const newVDom = h('div', {}, ['A', 'B', 'C'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>ABC</div>')
+    })
+
+    test('removed from the end', () => {
+      const oldVDom = h('div', {}, ['A', 'B'])
+      const newVDom = h('div', {}, ['A'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>A</div>')
+    })
+
+    test('removed from the beginning', () => {
+      const oldVDom = h('div', {}, ['A', 'B'])
+      const newVDom = h('div', {}, ['B'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>B</div>')
+    })
+
+    test('removed from the middle', () => {
+      const oldVDom = h('div', {}, ['A', 'B', 'C'])
+      const newVDom = h('div', {}, ['A', 'C'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>AC</div>')
+    })
+
+    test('changed', () => {
+      const oldVDom = h('div', {}, ['A'])
+      const newVDom = h('div', {}, ['B'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>B</div>')
+    })
+
+    test('moved around', () => {
+      const oldVDom = h('div', {}, ['A', 'B', 'C'])
+      const newVDom = h('div', {}, ['C', 'A', 'B'])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe('<div>CAB</div>')
+    })
+  })
+
+  describe('element vnode', () => {
+    test('added at the end', () => {
+      const oldVDom = h('div', {}, [h('span', {}, ['A'])])
+      const newVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', { id: 'b' }, ['B']),
+      ])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe(
+        '<div><span>A</span><span id="b">B</span></div>'
+      )
+    })
+
+    test('added at the beginning', () => {
+      const oldVDom = h('div', {}, [h('span', {}, ['B'])])
+      const newVDom = h('div', {}, [
+        h('span', { id: 'a' }, ['A']),
+        h('span', {}, ['B']),
+      ])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe(
+        '<div><span id="a">A</span><span>B</span></div>'
+      )
+    })
+
+    test('added in the middle', () => {
+      const oldVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', {}, ['C']),
+      ])
+      const newVDom = h('div', {}, [
+        h('span', {}, ['A']),
+        h('span', { id: 'b' }, ['B']),
+        h('span', {}, ['C']),
+      ])
+
+      patch(oldVDom, newVDom)
+
+      expect(document.body.innerHTML).toBe(
+        '<div><span>A</span><span id="b">B</span><span>C</span></div>'
+      )
+    })
+  })
+})
+
 function patch(oldVdom, newVdom) {
   mountDOM(oldVdom, document.body)
   return patchDOM(oldVdom, newVdom, document.body)

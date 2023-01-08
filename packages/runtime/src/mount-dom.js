@@ -6,26 +6,30 @@ import { DOM_TYPES } from './h'
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
  * modifies the vdom tree to include the corresponding DOM nodes and event listeners.
  *
+ * If an index is given, the created DOM node is inserted at that index in the parent element.
+ * Otherwise, it is appended to the parent element.
+ *
  * It returns the created DOM element.
  *
  * @param {import('./h').VNode} vdom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @returns {Node} the created node
  */
-export function mountDOM(vdom, parentEl) {
+export function mountDOM(vdom, parentEl, index) {
   ensureIsValidParent(parentEl)
 
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
-      return createTextNode(vdom, parentEl)
+      return createTextNode(vdom, parentEl, index)
     }
 
     case DOM_TYPES.ELEMENT: {
-      return createElementNode(vdom, parentEl)
+      return createElementNode(vdom, parentEl, index)
     }
 
     case DOM_TYPES.FRAGMENT: {
-      return createFragmentNode(vdom, parentEl)
+      return createFragmentNode(vdom, parentEl, index)
     }
 
     default: {
@@ -46,15 +50,16 @@ export function mountDOM(vdom, parentEl) {
  *
  * @param {import('./h').TextVNode} vdom the virtual DOM node of type "text"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @returns {Text} the created text node
  */
-function createTextNode(vdom, parentEl) {
+function createTextNode(vdom, parentEl, index) {
   const { value } = vdom
 
   const textNode = document.createTextNode(value)
   vdom.el = textNode
 
-  parentEl.append(textNode)
+  insert(textNode, parentEl, index)
 
   return textNode
 }
@@ -68,9 +73,10 @@ function createTextNode(vdom, parentEl) {
  *
  * @param {import('./h').ElementVNode} vdom the virtual DOM node of type "element"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @returns {HTMLElement} the created element
  */
-function createElementNode(vdom, parentEl) {
+function createElementNode(vdom, parentEl, index) {
   const { tag, props, children } = vdom
 
   const element = document.createElement(tag)
@@ -78,7 +84,7 @@ function createElementNode(vdom, parentEl) {
   vdom.el = element
 
   children.forEach((child) => mountDOM(child, element))
-  parentEl.append(element)
+  insert(element, parentEl, index)
 
   return element
 }
@@ -110,16 +116,17 @@ function addProps(el, props, vdom) {
  *
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @returns {DocumentFragment} the parent element, where the fragment's children are appended
  */
-function createFragmentNode(vdom, parentEl) {
+function createFragmentNode(vdom, parentEl, index) {
   const { children } = vdom
 
   const fragment = document.createDocumentFragment()
   vdom.el = parentEl
 
   children.forEach((child) => mountDOM(child, fragment))
-  parentEl.append(fragment)
+  insert(fragment, parentEl, index)
 
   return parentEl
 }
@@ -137,5 +144,33 @@ function ensureIsValidParent(
 
   if (!(isElement || isFragment)) {
     throw new Error(errMsg)
+  }
+}
+
+/**
+ * Inserts `el` into `parentEl` at `index`.
+ * If `index` is `null`, the element is appended to the end.
+ *
+ * @param {Element} el the element to be inserted
+ * @param {Element} parentEl the host element
+ * @param {number} [index] the index at which the element should be inserted. If null or undefined, it will be appended
+ */
+export function insert(el, parentEl, index) {
+  // If index is null or undefined, simply append. Note the usage of `==` instead of `===`.
+  if (index == null) {
+    parentEl.append(el)
+    return
+  }
+
+  if (index < 0) {
+    throw new Error(`Index must be a positive integer, got ${index}`)
+  }
+
+  const children = parentEl.childNodes
+
+  if (index >= children.length) {
+    parentEl.append(el)
+  } else {
+    parentEl.insertBefore(el, children[index])
   }
 }
