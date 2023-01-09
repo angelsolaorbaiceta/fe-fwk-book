@@ -5,7 +5,7 @@ Code for the book "Build a frontend framework from scratch".
 This framework **isn't intended for production use**.
 Its intention is to **teach you how frontend frameworks work** by building one yourself, from scratch.
 
-## [v1.0 — Chapter 4](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch3/packages/runtime)
+## [v1.0 — Chapter 4](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch4/packages/runtime)
 
 _See the example application in the [examples/ch04 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch04)_.
 
@@ -23,3 +23,9 @@ Every time an event is dispatched, the reducer subscribed to the event is run to
 This is done by registering the application's `renderApp()` function to run after each event is processed in the dispatcher.
 
 In the next version we introduce the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
+
+## [v2.0 - Chapter 5](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch5/packages/runtime)
+
+_See the example application in the [examples/ch05 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch05)_.
+
+This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
