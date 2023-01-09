@@ -12,7 +12,7 @@ _See the example application in the [examples/ch04 folder](https://github.com/an
 To checkout this version of the code:
 
 ```bash
-git checkout ch4
+$ git checkout ch4
 ```
 
 This version of the framework introduces the concept of a _Virtual DOM_.
@@ -27,5 +27,11 @@ In the next version we introduce the _reconciliation algorithm_ to only update t
 ## [v2.0 - Chapter 5](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch5/packages/runtime)
 
 _See the example application in the [examples/ch05 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch05)_.
+
+To checkout this version of the code:
+
+```bash
+$ git checkout ch5
+```
 
 This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
