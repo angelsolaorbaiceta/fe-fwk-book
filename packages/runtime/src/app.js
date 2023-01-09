@@ -1,6 +1,7 @@
 import { destroyDOM } from './destroy-dom'
 import { Dispatcher } from './dispatcher'
 import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
 
 /**
  * Creates an application with the given top-level view, initial state and reducers.
@@ -33,19 +34,12 @@ export function createApp({ state, view, reducers = {} }) {
   }
 
   /**
-   * Renders the application, by first destroying the previous DOM —if any— and
-   * then mounting the new view.
-   *
-   * In the next version, a _reconciliation algorithm_ will be used to update the
-   * DOM instead of destroying and mounting the whole view.
+   * Renders the application, by reconciling the new and previous virtual DOM
+   * trees.
    */
   function renderApp() {
-    if (vdom) {
-      destroyDOM(vdom)
-    }
-
-    vdom = view(state, emit)
-    mountDOM(vdom, parentEl)
+    const newVdom = view(state, emit)
+    vdom = patchDOM(vdom, newVdom, parentEl)
   }
 
   return {
@@ -57,7 +51,8 @@ export function createApp({ state, view, reducers = {} }) {
      */
     mount(_parentEl) {
       parentEl = _parentEl
-      renderApp()
+      vdom = view(state, emit)
+      mountDOM(vdom, parentEl)
 
       return this
     },
