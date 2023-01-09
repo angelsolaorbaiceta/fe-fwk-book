@@ -5,6 +5,7 @@ import {
   setStyle,
 } from './attributes'
 import { destroyDOM } from './destroy-dom'
+import { addEventListener } from './events'
 import { DOM_TYPES } from './h'
 import { mountDOM } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
@@ -74,12 +75,23 @@ function patchText(oldVdom, newVdom) {
  */
 function patchElement(oldVdom, newVdom) {
   const el = oldVdom.el
-  const { class: oldClass, style: oldStyle, ...oldAttrs } = oldVdom.props
-  const { class: newClass, style: newStyle, ...newAttrs } = newVdom.props
+  const {
+    class: oldClass,
+    style: oldStyle,
+    on: oldEvents,
+    ...oldAttrs
+  } = oldVdom.props
+  const {
+    class: newClass,
+    style: newStyle,
+    on: newEvents,
+    ...newAttrs
+  } = newVdom.props
 
   patchAttrs(el, oldAttrs, newAttrs)
   patchClass(el, oldClass, newClass)
   patchStyle(el, oldStyle, newStyle)
+  newVdom.listeners = patchEvents(el, oldEvents, newEvents)
 }
 
 function patchAttrs(el, oldAttrs, newAttrs) {
@@ -148,6 +160,27 @@ function patchStyle(el, oldStyle = {}, newStyle = {}) {
   for (const style of added.concat(updated)) {
     setStyle(el, style, newStyle[style])
   }
+}
+
+function patchEvents(el, oldEvents = {}, newEvents = {}) {
+  if (oldEvents === newEvents) {
+    return
+  }
+
+  const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
+
+  for (const eventName of removed.concat(updated)) {
+    el.removeEventListener(eventName, oldEvents[eventName])
+  }
+
+  const addedListeners = {}
+
+  for (const eventName of added.concat(updated)) {
+    const listener = addEventListener(eventName, newEvents[eventName], el)
+    addedListeners[eventName] = listener
+  }
+
+  return addedListeners
 }
 
 /**

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { patchDOM } from '../patch-dom'
@@ -216,6 +216,21 @@ describe('patch style', () => {
 
     expect(document.body.innerHTML).toBe('<div style="color: blue;"></div>')
   })
+})
+
+test('patch event handlers', () => {
+  const oldHandler = vi.fn()
+  const oldVdom = h('button', { on: { click: oldHandler } }, ['Click me'])
+  const newHandler = vi.fn()
+  const newVdom = h('button', { on: { click: newHandler } }, ['Click me'])
+
+  patch(oldVdom, newVdom)
+
+  document.body.querySelector('button').click()
+
+  expect(oldHandler).not.toHaveBeenCalled()
+  expect(newHandler).toHaveBeenCalled()
+  expect(newVdom.listeners).not.toBeUndefined()
 })
 
 describe('patch children', () => {
