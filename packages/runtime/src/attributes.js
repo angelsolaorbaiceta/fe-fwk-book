@@ -33,9 +33,18 @@ export function setAttributes(el, attrs) {
   }
 }
 
+/**
+ * Sets the attribute on the element.
+ *
+ * @param {Element} el The element to add the attribute to
+ * @param {string} name The name of the attribute
+ * @param {(string|number|null)} value The value of the attribute
+ */
 export function setAttribute(el, name, value) {
   if (value == null) {
     removeAttribute(el, name)
+  } else if (name.startsWith('data-')) {
+    el.setAttribute(name, value)
   } else {
     el[name] = value
   }
