@@ -39,6 +39,11 @@ test('updating styles', () => {
   expect(el.style.backgroundColor).toBe('blue')
 })
 
+test('setting a "data-" attribute', () => {
+  setAttributes(el, { 'data-my-attr': 'foo' })
+  expect(el.dataset.myAttr).toBe('foo')
+})
+
 test.each([
   { name: 'hidden', value: true, expected: true },
   { name: 'hidden', value: false, expected: false },
