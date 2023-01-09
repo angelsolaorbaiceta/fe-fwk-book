@@ -5,7 +5,7 @@ Code for the book "Build a frontend framework from scratch".
 This framework **isn't intended for production use**.
 Its intention is to **teach you how frontend frameworks work** by building one yourself, from scratch.
 
-## [v1.0 — Chapter 4](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch3/packages/runtime)
+## [v1.0 — Chapter 4](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch4/packages/runtime)
 
 _See the example application in the [examples/ch04 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch04)_.
 
