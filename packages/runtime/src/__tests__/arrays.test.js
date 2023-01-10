@@ -208,18 +208,42 @@ describe('diff sequence', () => {
     expect(applyArraysDiffSequence(oldArray, diffSeq)).toEqual(newArray)
   })
 
-  // TODO: ideally, this test should pass, but the algorithm computes a more complex sequence
-  test.skip('shuffle items', () => {
-    const oldArray = ['a', 'b', 'c']
-    const newArray = ['c', 'a', 'b']
+  test.each([
+    {
+      oldArray: ['a', 'b', 'c'],
+      newArray: ['c', 'a', 'b'],
+      expected: [
+        { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 0 },
+        { op: ARRAY_DIFF_OP.NOOP, from: 0, index: 1 },
+        { op: ARRAY_DIFF_OP.NOOP, from: 1, index: 2 },
+      ],
+    },
+    {
+      oldArray: ['a', 'b', 'c'],
+      newArray: ['b', 'c', 'a'],
+      expected: [
+        { op: ARRAY_DIFF_OP.MOVE, item: 'b', from: 1, index: 0 },
+        { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 1 },
+        { op: ARRAY_DIFF_OP.NOOP, from: 0, index: 2 },
+      ],
+    },
+    {
+      oldArray: ['a', 'b', 'c', 'd'],
+      newArray: ['c', 'a', 'b', 'd'],
+      expected: [
+        { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 0 },
+        { op: ARRAY_DIFF_OP.NOOP, from: 0, index: 1 },
+        { op: ARRAY_DIFF_OP.NOOP, from: 1, index: 2 },
+        { op: ARRAY_DIFF_OP.NOOP, from: 3, index: 3 },
+      ],
+    },
+  ])(
+    'shuffle items, from $oldArray to $newArray',
+    ({ oldArray, newArray, expected }) => {
+      const diffSeq = arraysDiffSequence(oldArray, newArray)
 
-    const diffSeq = arraysDiffSequence(oldArray, newArray)
-
-    expect(diffSeq).toEqual([
-      { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 0 },
-      { op: ARRAY_DIFF_OP.NOOP, from: 0, index: 1 },
-      { op: ARRAY_DIFF_OP.MOVE, item: 'b', from: 1, index: 2 },
-    ])
-    expect(applyArraysDiffSequence(oldArray, diffSeq)).toEqual(newArray)
-  })
+      expect(diffSeq).toEqual(expected)
+      expect(applyArraysDiffSequence(oldArray, diffSeq)).toEqual(newArray)
+    }
+  )
 })
