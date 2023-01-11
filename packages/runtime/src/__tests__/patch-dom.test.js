@@ -8,8 +8,8 @@ beforeEach(() => {
 })
 
 test('no change', () => {
-  const oldVdom = h('div', {}, [hString('hello')])
-  const newVdom = h('div', {}, [hString('hello')])
+  const oldVdom = h('div', {}, ['hello'])
+  const newVdom = h('div', {}, ['hello'])
 
   const vdom = patch(oldVdom, newVdom)
 
@@ -18,14 +18,26 @@ test('no change', () => {
 })
 
 test('change the root node', () => {
-  const oldVdom = h('div', {}, [hString('hello')])
-  const newVdom = h('span', {}, [hString('hello')])
+  const oldVdom = h('div', {}, ['hello'])
+  const newVdom = h('span', {}, ['hello'])
 
   const vdom = patch(oldVdom, newVdom)
 
   expect(document.body.innerHTML).toEqual('<span>hello</span>')
   expect(vdom.el).toBeInstanceOf(HTMLSpanElement)
   expect(newVdom.el).toBe(vdom.el)
+})
+
+test('change the root node, mount in same index', () => {
+  const staticVdom = h('p', {}, ['bye'])
+  mountDOM(staticVdom, document.body)
+
+  const oldVdom = h('div', {}, ['hello'])
+  const newVdom = h('span', {}, ['hello'])
+  mountDOM(oldVdom, document.body, 0)
+  patchDOM(oldVdom, newVdom, document.body)
+
+  expect(document.body.innerHTML).toEqual('<span>hello</span><p>bye</p>')
 })
 
 test('sets the el in the new vdom', () => {
