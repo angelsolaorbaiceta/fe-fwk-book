@@ -22,8 +22,6 @@ The application instance, created using the `createApp()` function, holds all th
 Every time an event is dispatched, the reducer subscribed to the event is run to update the state, and then, the entire view is destroyed and recreated from scratch.
 This is done by registering the application's `renderApp()` function to run after each event is processed in the dispatcher.
 
-In the next version we introduce the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
-
 ## [v2.0 - Chapter 5](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch5/packages/runtime)
 
 _See the example application in the [examples/ch05 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch05)_.
