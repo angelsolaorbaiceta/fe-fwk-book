@@ -18,6 +18,15 @@ import { objectsDiff } from './utils/objects'
 import { isNotBlankOrEmptyString } from './utils/strings'
 
 /**
+ * Patches the DOM by comparing the `oldVdom` and `newVdom` virtual nodes and
+ * finding the changes that need to be applied to update the DOM.
+ *
+ * This function requires the `oldVdom` tree to have an `el` property set in
+ * all its nodes, that is, the `oldVdom` tree must have been mounted before.
+ *
+ * The function sets the `el` property in the `newVdom` tree to the same
+ * elements as in the `oldVdom` tree, but with the changes applied. If a node
+ * in the new tree is new, it'll be mounted and its `el` property set.
  *
  * @param {import('./h').VNode} oldVdom the old virtual dom
  * @param {import('./h').VNode} newVdom the new virtual dom
