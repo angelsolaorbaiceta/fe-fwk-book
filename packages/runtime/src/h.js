@@ -8,6 +8,8 @@ export const DOM_TYPES = {
 }
 
 /**
+ * A virtual node is an object representing a DOM element.
+ * The virtual node can be a text node, an element node or a fragment node.
  * @typedef VNode
  * @type {TextVNode|ElementVNode|FragmentVNode}
  */
@@ -26,9 +28,9 @@ export const DOM_TYPES = {
 /**
  * @typedef ElementVNodeProps
  * @type {object}
- * @property {Object.<string,Function>} on - The event listeners to add to the element.
- * @property {string|string[]} class - The class or classes to add to the element.
- * @property {Object.<string,string>} style - The CSS properties to add to the element.
+ * @property {Object.<string,Function>} [on] - The event listeners to add to the element.
+ * @property {(string|string[])} [class] - The class or classes to add to the element.
+ * @property {Object.<string,string>} [style] - The CSS properties to add to the element.
  */
 
 /**
