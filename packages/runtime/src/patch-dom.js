@@ -19,7 +19,7 @@ import { isNotBlankOrEmptyString } from './utils/strings'
 
 /**
  * Patches the DOM by comparing the `oldVdom` and `newVdom` virtual nodes and
- * finding the changes that need to be applied to update the DOM.
+ * finding the changes that need to be applied to the DOM.
  *
  * This function requires the `oldVdom` tree to have an `el` property set in
  * all its nodes, that is, the `oldVdom` tree must have been mounted before.
@@ -63,8 +63,9 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
 
 /**
  * Patches a text virtual node.
- * If the `newVdom` value (its text content) is different from the `oldVdom` value,
- * the `Text` node `nodeValue` is updated.
+ *
+ * If the `newVdom.value` (its text content) is different from the `oldVdom.value`,
+ * the `Text` node `nodeValue` property is updated with the new value.
  *
  * @param {import('./h').TextVNode} oldVdom The old virtual node
  * @param {import('./h').TextVNode} newVdom The new virtual node

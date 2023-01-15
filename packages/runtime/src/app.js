@@ -35,7 +35,7 @@ export function createApp({ state, view, reducers = {} }) {
 
   /**
    * Renders the application, by reconciling the new and previous virtual DOM
-   * trees.
+   * trees and doing the necessary DOM updates.
    */
   function renderApp() {
     const newVdom = view(state, emit)
