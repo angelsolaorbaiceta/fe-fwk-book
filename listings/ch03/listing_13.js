@@ -1,10 +1,23 @@
-export function addEventListeners(listeners = {}, el) {
-  const addedListeners = {}
+export function setAttributes(el, attrs) {
+  const { class: className, style, ...otherAttrs } = attrs //--1--
 
-  Object.entries(listeners).forEach(([eventName, handler]) => {
-    const listener = addEventListener(eventName, handler, el)
-    addedListeners[eventName] = listener
-  })
+  if (className) {
+    setClass(el, className) //--2--
+  }
 
-  return addedListeners
+  if (style) {
+    Object.entries(style).forEach(([prop, value]) => {
+      setStyle(el, prop, value) //--3--
+    })
+  }
+
+  for (const [name, value] of Object.entries(otherAttrs)) {
+    setAttribute(el, name, value) //--4--
+  }
 }
+
+// TODO: implement setClass
+
+// TODO: implement setStyle
+
+// TODO: implement setAttribute

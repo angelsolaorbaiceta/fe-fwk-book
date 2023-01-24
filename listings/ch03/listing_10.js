@@ -1,11 +1,24 @@
-function createFragmentNode(vdom, parentEl) {
-  const { children } = vdom
+import { setAttributes } from './attributes'
+import { addEventListeners } from './events'
 
-  const fragment = document.createDocumentFragment() //--1--
-  vdom.el = parentEl //--2--
+// --snip-- //
 
-  children.forEach((child) => mountDOM(child, fragment)) //--3--
-  parentEl.append(fragment) //--4--
+function createElementNode(vdom, parentEl) {
+  const { tag, props, children } = vdom
 
-  return parentEl //--5--
+  const element = document.createElement(tag) //--1--
+  addProps(element, props, vdom) //--2--
+  vdom.el = element
+
+  children.forEach((child) => mountDOM(child, element))
+  parentEl.append(element)
+
+  return element
+}
+
+function addProps(el, props, vdom) {
+  const { on: events, ...attrs } = props //--3--
+
+  vdom.listeners = addEventListeners(events, el) //--4--
+  setAttributes(el, attrs) //--5--
 }

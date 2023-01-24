@@ -1,8 +1,6 @@
 import { DOM_TYPES } from './h'
 
 export function mountDOM(vdom, parentEl) {
-  ensureIsValidParent(parentEl)
-
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       return createTextNode(vdom, parentEl)
@@ -27,5 +25,3 @@ export function mountDOM(vdom, parentEl) {
 // TODO: implement createElementNode()
 
 // TODO: implement createFragmentNode()
-
-// TODO: implement ensureIsValidParent()

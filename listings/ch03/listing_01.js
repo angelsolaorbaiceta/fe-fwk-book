@@ -1,3 +1,5 @@
-export function withoutNulls(arr) {
-  return arr.filter((item) => item != null)
+export const DOM_TYPES = {
+  TEXT: 'text',
+  ELEMENT: 'element',
+  FRAGMENT: 'fragment',
 }

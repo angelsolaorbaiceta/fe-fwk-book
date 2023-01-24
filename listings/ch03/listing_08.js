@@ -1,15 +1,10 @@
-function ensureIsValidParent(
-  parentEl,
-  errMsg = 'A parent element must be provided'
-) {
-  if (!parent) {
-    throw new Error(errMsg)
-  }
+function createTextNode(vdom, parentEl) {
+  const { value } = vdom
 
-  const isElement = parentEl instanceof Element
-  const isFragment = parentEl instanceof DocumentFragment
+  const textNode = document.createTextNode(value) //--1--
+  vdom.el = textNode //--2--
 
-  if (!(isElement || isFragment)) {
-    throw new Error(errMsg)
-  }
+  parentEl.append(textNode) //--3--
+
+  return textNode
 }

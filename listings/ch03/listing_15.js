@@ -1,11 +1,7 @@
-function setClass(el, className) {
-  el.className = '' // --1--
+export function setStyle(el, name, value) {
+  el.style[name] = value
+}
 
-  if (typeof className === 'string') {
-    el.className = className // --2--
-  }
-
-  if (Array.isArray(className)) {
-    el.classList.add(...className) // --3--
-  }
+export function removeStyle(el, name) {
+  el.style[name] = null
 }
