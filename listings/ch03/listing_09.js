@@ -6,6 +6,4 @@ function createFragmentNode(vdom, parentEl) {
 
   children.forEach((child) => mountDOM(child, fragment)) //--3--
   parentEl.append(fragment) //--4--
-
-  return parentEl //--5--
 }

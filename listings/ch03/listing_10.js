@@ -12,8 +12,6 @@ function createElementNode(vdom, parentEl) {
 
   children.forEach((child) => mountDOM(child, element))
   parentEl.append(element)
-
-  return element
 }
 
 function addProps(el, props, vdom) {

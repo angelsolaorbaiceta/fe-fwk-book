@@ -6,26 +6,26 @@ import { DOM_TYPES } from './h'
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
  * modifies the vdom tree to include the corresponding DOM nodes and event listeners.
  *
- * It returns the created DOM element.
- *
  * @param {object} oldVDom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
- * @returns {Node} the created node
  */
 export function mountDOM(vdom, parentEl) {
   ensureIsValidParent(parentEl)
 
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
-      return createTextNode(vdom, parentEl)
+      createTextNode(vdom, parentEl)
+      break
     }
 
     case DOM_TYPES.ELEMENT: {
-      return createElementNode(vdom, parentEl)
+      createElementNode(vdom, parentEl)
+      break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      return createFragmentNode(vdom, parentEl)
+      createFragmentNode(vdom, parentEl)
+      break
     }
 
     default: {
@@ -36,7 +36,7 @@ export function mountDOM(vdom, parentEl) {
 
 /**
  * Creates the text node for a virtual DOM text node.
- * The created `Text` is returned as well as added to the `el` property of the vdom.
+ * The created `Text` is added to the `el` property of the vdom.
  *
  * Note that `Text` is a subclass of `CharacterData`, which is a subclass of `Node`,
  * but not of `Element`. Methods like `append()`, `prepend()`, `before()`, `after()`,
@@ -46,7 +46,6 @@ export function mountDOM(vdom, parentEl) {
  *
  * @param {object} vdom the virtual DOM node of type "text"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
- * @returns {Text} the created text node
  */
 function createTextNode(vdom, parentEl) {
   const { value } = vdom
@@ -55,20 +54,17 @@ function createTextNode(vdom, parentEl) {
   vdom.el = textNode
 
   parentEl.append(textNode)
-
-  return textNode
 }
 
 /**
  * Creates the HTML element for a virtual DOM element node and its children recursively.
- * The created `Element` is returned as well as added to the `el` property of the vdom.
+ * The created `Element` is added to the `el` property of the vdom.
  *
  * If the vdom includes event listeners, these are added to the vdom object, under the
  * `listeners` property.
  *
  * @param {object} vdom the virtual DOM node of type "element"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
- * @returns {HTMLElement} the created element
  */
 function createElementNode(vdom, parentEl) {
   const { tag, props, children } = vdom
@@ -79,8 +75,6 @@ function createElementNode(vdom, parentEl) {
 
   children.forEach((child) => mountDOM(child, element))
   parentEl.append(element)
-
-  return element
 }
 
 function addProps(el, props, vdom) {
@@ -92,8 +86,7 @@ function addProps(el, props, vdom) {
 
 /**
  * Creates the fragment for a virtual DOM fragment node and its children recursively.
- * The created `DocumentFragment` is returned, but the vdom's `el` property is set to
- * be the `parentEl` passed to the function.
+ * The vdom's `el` property is set to be the `parentEl` passed to the function.
  * This is because a fragment loses its children when it is appended to the DOM, so
  * we can't use it to reference the fragment's children.
  *
@@ -103,7 +96,6 @@ function addProps(el, props, vdom) {
  *
  * @param {object} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
- * @returns {DocumentFragment} the parent element, where the fragment's children are appended
  */
 function createFragmentNode(vdom, parentEl) {
   const { children } = vdom
@@ -113,8 +105,6 @@ function createFragmentNode(vdom, parentEl) {
 
   children.forEach((child) => mountDOM(child, fragment))
   parentEl.append(fragment)
-
-  return parentEl
 }
 
 function ensureIsValidParent(

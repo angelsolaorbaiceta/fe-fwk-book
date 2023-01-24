@@ -5,6 +5,4 @@ function createTextNode(vdom, parentEl) {
   vdom.el = textNode //--2--
 
   parentEl.append(textNode) //--3--
-
-  return textNode
 }
