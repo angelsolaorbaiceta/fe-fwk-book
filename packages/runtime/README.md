@@ -1,5 +1,7 @@
 # Fe-Fwk
 
+![fe-fwk](https://img.shields.io/badge/fe--fwk-book-blueviolet)
+
 Code for the book "Build a frontend framework from scratch".
 
 This framework **isn't intended for production use**.
