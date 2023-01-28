@@ -1,6 +1,7 @@
 # Fe-Fwk CLI
 
-This CLI will help you get started with a new Fe-Fwk project.
+The CLI tool that accompanies the book [Build a frontend framework from scratch](https://www.manning.com/).
+Used to create the project structure for the book, so you can start writing the code right away.
 
 ## Installation
 
