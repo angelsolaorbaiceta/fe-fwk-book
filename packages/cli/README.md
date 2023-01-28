@@ -1,5 +1,7 @@
 # Fe-Fwk CLI
 
+![fe-fwk](https://img.shields.io/badge/fe--fwk-book-blueviolet)
+
 The CLI tool that accompanies the book [Build a frontend framework from scratch](https://www.manning.com/).
 Used to create the project structure for the book, so you can start writing the code right away.
 
