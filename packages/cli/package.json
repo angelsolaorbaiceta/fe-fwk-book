@@ -28,6 +28,7 @@
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^5.2.0",
     "mustache": "^4.2.0",
     "yargs": "^17.6.2"
   }

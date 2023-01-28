@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import chalk from 'chalk'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import init from './init.mjs'
@@ -21,13 +22,25 @@ yargs(hideBin(process.argv))
         console.info(`Creating the new project "${argv.name}"...`)
       }
       init(argv.name).then(() => {
-        // TODO: use chalk to produce colorful output
-        console.info(`Created the new project "${argv.name}"`)
         console.info(
-          'You can now cd into the project and run `npm install` to install the dependencies.'
+          '✅ ' +
+            chalk.green('Success!') +
+            ' Created the new project ' +
+            chalk.blue.italic(`${argv.name}`) +
+            ' 🎉🎉🎉'
         )
-        console.info('Enjoy reading the book!')
-        console.info('You can buy your copy at https://www.manning.com/')
+        console.info(
+          '\nYou can now cd into the project and install the dependencies:'
+        )
+        console.info(chalk.blue(`\t$ cd ${argv.name}`))
+        console.info(chalk.blue(`\t$ npm install`))
+        console.info('\n📖 Enjoy reading the book!')
+        console.info(
+          '📦 ' +
+            chalk.magenta.italic(
+              'Buy your copy at https://www.manning.com/ and start learning now!'
+            )
+        )
       })
     }
   )
