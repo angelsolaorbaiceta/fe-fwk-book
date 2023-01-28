@@ -4,8 +4,9 @@ import { fileURLToPath } from 'url'
 import mustache from 'mustache'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const bookUrl = 'https://www.manning.com/'
 const templatesDir = join(__dirname, '..', 'templates', 'init')
-const topLevelTemplates = ['package.json']
+const topLevelTemplates = ['package.json', 'README.md']
 const packageTemplates = [
   '.eslintrc.js',
   'package.json',
@@ -33,16 +34,13 @@ const packageTemplates = [
  *
  * The following variables are replaced in the templates:
  * - `{{name}}` - the name of the framework
+ * - `{{bookUrl}}` - the URL where to buy the book
  *
  * @param {string} name the name of the framework
  */
 export default async function init(name) {
   const workingDir = process.cwd()
   const projectDir = join(workingDir, name)
-
-  const variables = {
-    name,
-  }
 
   await mkdir(projectDir)
   for (const template of topLevelTemplates) {
@@ -53,14 +51,14 @@ export default async function init(name) {
   }
 
   await initPackage(projectDir, 'compiler', {
-    ...variables,
+    bookUrl,
     name: `${name}-compiler`,
   })
   await initPackage(projectDir, 'loader', {
-    ...variables,
+    bookUrl,
     name: `${name}-loader`,
   })
-  await initPackage(projectDir, 'runtime', variables)
+  await initPackage(projectDir, 'runtime', { name, bookUrl })
 }
 
 /**
