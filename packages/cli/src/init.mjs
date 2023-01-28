@@ -12,6 +12,10 @@ const packageTemplates = [
   'README.md',
   'rollup.config.mjs',
   'vitest.config.js',
+  {
+    dir: 'src',
+    files: ['index.js', { dir: '__tests__', files: ['sample.test.js'] }],
+  },
 ]
 
 /**
@@ -48,8 +52,14 @@ export default async function init(name) {
     await copyFile(srcPath, destPath)
   }
 
-  await initPackage(projectDir, 'compiler', variables)
-  await initPackage(projectDir, 'loader', variables)
+  await initPackage(projectDir, 'compiler', {
+    ...variables,
+    name: `${name}-compiler`,
+  })
+  await initPackage(projectDir, 'loader', {
+    ...variables,
+    name: `${name}-loader`,
+  })
   await initPackage(projectDir, 'runtime', variables)
 }
 
@@ -66,11 +76,43 @@ async function initPackage(projectDir, name, variables) {
   await mkdir(packageDir, { recursive: true })
 
   for (const template of packageTemplates) {
-    const srcPath = join(templatesDir, 'package', template)
+    await renderTemplate(packageDir, [], template, variables)
+  }
+}
+
+async function renderTemplate(
+  packageDir,
+  subdirectories,
+  template,
+  variables
+) {
+  if (typeof template === 'string') {
+    // template is the name of a file
+    const templatePath = join(
+      templatesDir,
+      'package',
+      ...subdirectories,
+      template
+    )
     const destPath = join(packageDir, template)
 
-    const content = await readFile(srcPath, 'utf8')
+    const content = await readFile(templatePath, 'utf8')
     const rendered = mustache.render(content, variables)
+
     await writeFile(destPath, rendered)
+  } else {
+    // template is a directory of files
+    const { dir, files } = template
+    const dirPath = join(packageDir, dir)
+    await mkdir(dirPath, { recursive: true })
+
+    for (const file of files) {
+      await renderTemplate(
+        dirPath,
+        [...subdirectories, dir],
+        file,
+        variables
+      )
+    }
   }
 }
