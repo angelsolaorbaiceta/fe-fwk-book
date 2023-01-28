@@ -19,13 +19,12 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:run": "vitest run",
     "prepack": "npm run build"
   },
   "author": "{{author}}",
   "license": "MIT",
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.26.3",
     "eslint": "^8.31.0",
     "jsdom": "^20.0.3",
     "rollup": "^3.9.0",

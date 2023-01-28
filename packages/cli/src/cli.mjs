@@ -21,7 +21,12 @@ yargs(hideBin(process.argv))
         console.info(`Creating the new project "${argv.name}"...`)
       }
       init(argv.name).then(() => {
+        // TODO: use chalk to produce colorful output
         console.info(`Created the new project "${argv.name}"`)
+        console.info(
+          'You can now cd into the project and run `npm install` to install the dependencies.'
+        )
+        console.info('Enjoy reading the book!')
       })
     }
   )

@@ -1,0 +1,35 @@
+{
+  "name": "{{name}}",
+  "version": "1.0.0",
+  "description": "A frontend framework to teach web developers how frontend frameworks work.",
+  "keywords": [
+    "frontend",
+    "framework",
+    "book",
+    "learning",
+    "web",
+    "development"
+  ],
+  "main": "dist/fe-fwk.js",
+  "files": [
+    "dist/fe-fwk.js"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "prepack": "npm run build"
+  },
+  "author": "{{author}}",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.31.0",
+    "jsdom": "^20.0.3",
+    "rollup": "^3.9.0",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-filesize": "^9.1.2",
+    "vitest": "^0.26.3"
+  }
+}
