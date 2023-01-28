@@ -27,6 +27,7 @@ yargs(hideBin(process.argv))
           'You can now cd into the project and run `npm install` to install the dependencies.'
         )
         console.info('Enjoy reading the book!')
+        console.info('You can buy your copy at https://www.manning.com/')
       })
     }
   )

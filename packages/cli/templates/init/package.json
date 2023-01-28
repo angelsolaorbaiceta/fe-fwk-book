@@ -2,7 +2,7 @@
   "name": "fe-fwk-book",
   "version": "1.0.0",
   "private": true,
-  "description": "Code for the book \"Build a frontend framework from scratch\".",
+  "description": "Code for the book 'Build a frontend framework from scratch'. Available at www.manning.com.",
   "workspaces": [
     "packages/compiler",
     "packages/loader",
@@ -17,6 +17,5 @@
     "frontend",
     "framework"
   ],
-  "author": "{{author}}",
   "license": "MIT"
 }

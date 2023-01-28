@@ -1,6 +1,7 @@
-import { copyFile, mkdir } from 'fs/promises'
+import { copyFile, mkdir, readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
+import mustache from 'mustache'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const templatesDir = join(__dirname, '..', 'templates', 'init')
@@ -26,11 +27,18 @@ const packageTemplates = [
  * - `rollup` - for bundling into ES modules
  * - `vitest` - for testing, using JSDOM environment
  *
+ * The following variables are replaced in the templates:
+ * - `{{name}}` - the name of the framework
+ *
  * @param {string} name the name of the framework
  */
 export default async function init(name) {
   const workingDir = process.cwd()
   const projectDir = join(workingDir, name)
+
+  const variables = {
+    name,
+  }
 
   await mkdir(projectDir)
   for (const template of topLevelTemplates) {
@@ -40,9 +48,9 @@ export default async function init(name) {
     await copyFile(srcPath, destPath)
   }
 
-  await initPackage(projectDir, 'compiler')
-  await initPackage(projectDir, 'loader')
-  await initPackage(projectDir, 'runtime')
+  await initPackage(projectDir, 'compiler', variables)
+  await initPackage(projectDir, 'loader', variables)
+  await initPackage(projectDir, 'runtime', variables)
 }
 
 /**
@@ -51,8 +59,9 @@ export default async function init(name) {
  *
  * @param {string} projectDir the path to the project directory
  * @param {string} name the name of the package
+ * @param {object} variables the variables to replace in the templates
  */
-async function initPackage(projectDir, name) {
+async function initPackage(projectDir, name, variables) {
   const packageDir = join(projectDir, 'packages', name)
   await mkdir(packageDir, { recursive: true })
 
@@ -60,6 +69,8 @@ async function initPackage(projectDir, name) {
     const srcPath = join(templatesDir, 'package', template)
     const destPath = join(packageDir, template)
 
-    await copyFile(srcPath, destPath)
+    const content = await readFile(srcPath, 'utf8')
+    const rendered = mustache.render(content, variables)
+    await writeFile(destPath, rendered)
   }
 }

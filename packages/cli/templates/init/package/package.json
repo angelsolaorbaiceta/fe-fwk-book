@@ -22,7 +22,6 @@
     "test:run": "vitest run",
     "prepack": "npm run build"
   },
-  "author": "{{author}}",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.31.0",
