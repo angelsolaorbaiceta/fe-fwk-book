@@ -42,6 +42,7 @@ export default async function init(name) {
   const workingDir = process.cwd()
   const projectDir = join(workingDir, name)
 
+  // Create the files in the root directory
   await mkdir(projectDir)
   for (const template of topLevelTemplates) {
     const srcPath = join(templatesDir, template)
@@ -50,6 +51,12 @@ export default async function init(name) {
     await copyFile(srcPath, destPath)
   }
 
+  // Create the examples directory git a .gitkeep file
+  const examplesDir = join(projectDir, 'examples')
+  await mkdir(examplesDir)
+  await writeFile(join(examplesDir, '.gitkeep'), '')
+
+  // Create the packages: runtime, compiler, loader
   await initPackage(projectDir, 'compiler', {
     bookUrl,
     name: `${name}-compiler`,
