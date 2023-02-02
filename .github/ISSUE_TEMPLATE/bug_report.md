@@ -25,8 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Context:**
  - OS: [e.g. Mac, Windows, Linux]
- - Browser: [e.g. chrome, safari]
- - Version: [e.g. 22]
+ - Browser or Node: [e.g. Node 8, Chrome 100]
  - Chapter of the book: [e.g. ch5, ch6]
 
 **Additional context**
