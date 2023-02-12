@@ -7,7 +7,7 @@ export class Dispatcher {
   // --snip-- //
 
   // --add--
-  afterEveryEvent(handler) {
+  afterEveryCommand(handler) {
     this.#afterHandlers.push(handler) // --1--
 
     return () => { // --2--

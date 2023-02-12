@@ -2,24 +2,24 @@ export class Dispatcher {
   #subs = {}
   #afterHandlers = []
 
-  subscribe(eventName, handler) {
-    if (this.#subs[eventName] === undefined) {
-      this.#subs[eventName] = []
+  subscribe(commandName, handler) {
+    if (this.#subs[commandName] === undefined) {
+      this.#subs[commandName] = []
     }
 
-    if (this.#subs[eventName].includes(handler)) {
+    if (this.#subs[commandName].includes(handler)) {
       return () => {}
     }
 
-    this.#subs[eventName].push(handler)
+    this.#subs[commandName].push(handler)
 
     return () => {
-      const idx = this.#subs[eventName].indexOf(handler)
-      this.#subs[eventName].splice(idx, 1)
+      const idx = this.#subs[commandName].indexOf(handler)
+      this.#subs[commandName].splice(idx, 1)
     }
   }
 
-  afterEveryEvent(handler) {
+  afterEveryCommand(handler) {
     this.#afterHandlers.push(handler)
 
     return () => {
@@ -28,11 +28,11 @@ export class Dispatcher {
     }
   }
 
-  dispatch(eventName, payload) {
-    if (eventName in this.#subs) {
-      this.#subs[eventName].forEach((handler) => handler(payload))
+  dispatch(commandName, payload) {
+    if (commandName in this.#subs) {
+      this.#subs[commandName].forEach((handler) => handler(payload))
     } else {
-      console.warn(`No handlers for event: ${eventName}`)
+      console.warn(`No handlers for command: ${commandName}`)
     }
 
     this.#afterHandlers.forEach((handler) => handler())
