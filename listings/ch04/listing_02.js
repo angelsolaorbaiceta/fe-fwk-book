@@ -1,5 +1,5 @@
 export class Dispatcher {
-  #subs = {}
+  #subs = new Map()
   // --add--
   #afterHandlers = []
   // --add--
