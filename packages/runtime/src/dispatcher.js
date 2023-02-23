@@ -6,7 +6,7 @@
  * a command is handled.
  */
 export class Dispatcher {
-  #subs = {}
+  #subs = new Map()
   #afterHandlers = []
 
   /**
@@ -18,19 +18,20 @@ export class Dispatcher {
    * @returns {() => void} a function that un-registers the handler
    */
   subscribe(commandName, handler) {
-    if (this.#subs[commandName] === undefined) {
-      this.#subs[commandName] = []
+    if (!this.#subs.has(commandName)) {
+      this.#subs.set(commandName, [])
     }
 
-    if (this.#subs[commandName].includes(handler)) {
+    const handlers = this.#subs.get(commandName)
+    if (handlers.includes(handler)) {
       return () => {}
     }
 
-    this.#subs[commandName].push(handler)
+    handlers.push(handler)
 
     return () => {
-      const idx = this.#subs[commandName].indexOf(handler)
-      this.#subs[commandName].splice(idx, 1)
+      const idx = handlers.indexOf(handler)
+      handlers.splice(idx, 1)
     }
   }
 
@@ -60,8 +61,8 @@ export class Dispatcher {
    * @param {any} payload the payload of the command
    */
   dispatch(commandName, payload) {
-    if (commandName in this.#subs) {
-      this.#subs[commandName].forEach((handler) => handler(payload))
+    if (this.#subs.has(commandName)) {
+      this.#subs.get(commandName).forEach((handler) => handler(payload))
     } else {
       console.warn(`No handlers for command: ${commandName}`)
     }
