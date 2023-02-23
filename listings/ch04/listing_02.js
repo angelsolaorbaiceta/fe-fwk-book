@@ -1,20 +1,19 @@
 export class Dispatcher {
   #subs = {}
+  // --add--
+  #afterHandlers = []
+  // --add--
+  
+  // --snip-- //
 
-  subscribe(commandName, handler) {
-    if (this.#subs[commandName] === undefined) { // --1--
-      this.#subs[commandName] = []
-    }
+  // --add--
+  afterEveryCommand(handler) {
+    this.#afterHandlers.push(handler) // --1--
 
-    if (this.#subs[commandName].includes(handler)) { // --2--
-      return () => {}
-    }
-
-    this.#subs[commandName].push(handler) // --3--
-
-    return () => { // --4--
-      const idx = this.#subs[commandName].indexOf(handler)
-      this.#subs[commandName].splice(idx, 1)
+    return () => { // --2--
+      const idx = this.#afterHandlers.indexOf(handler)
+      this.#afterHandlers.splice(idx, 1)
     }
   }
+  // --add--
 }

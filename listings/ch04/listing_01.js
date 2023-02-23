@@ -1,23 +1,20 @@
-import { destroyDOM } from './destroy-dom'
-import { mountDOM } from './mount-dom'
+export class Dispatcher {
+  #subs = {}
 
-export function createApp({ state, view }) { // --1--
-  let parentEl = null
-  let vdom = null
-
-  function renderApp() {
-    if (vdom) {
-      destroyDOM(vdom) // --2--
+  subscribe(commandName, handler) {
+    if (this.#subs[commandName] === undefined) { // --1--
+      this.#subs[commandName] = []
     }
 
-    vdom = view(state) 
-    mountDOM(vdom, parentEl) // --3--
-  }
+    if (this.#subs[commandName].includes(handler)) { // --2--
+      return () => {}
+    }
 
-  return {
-    mount(_parentEl) { // --4--
-      parentEl = _parentEl
-      renderApp()
-    },
+    this.#subs[commandName].push(handler) // --3--
+
+    return () => { // --4--
+      const idx = this.#subs[commandName].indexOf(handler)
+      this.#subs[commandName].splice(idx, 1)
+    }
   }
 }

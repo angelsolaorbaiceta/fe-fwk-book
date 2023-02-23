@@ -1,40 +1,23 @@
-export class Dispatcher {
-  #subs = {}
-  #afterHandlers = []
+import { destroyDOM } from './destroy-dom'
+import { mountDOM } from './mount-dom'
 
-  subscribe(commandName, handler) {
-    if (this.#subs[commandName] === undefined) {
-      this.#subs[commandName] = []
+export function createApp({ state, view }) { // --1--
+  let parentEl = null
+  let vdom = null
+
+  function renderApp() {
+    if (vdom) {
+      destroyDOM(vdom) // --2--
     }
 
-    if (this.#subs[commandName].includes(handler)) {
-      return () => {}
-    }
-
-    this.#subs[commandName].push(handler)
-
-    return () => {
-      const idx = this.#subs[commandName].indexOf(handler)
-      this.#subs[commandName].splice(idx, 1)
-    }
+    vdom = view(state) 
+    mountDOM(vdom, parentEl) // --3--
   }
 
-  afterEveryCommand(handler) {
-    this.#afterHandlers.push(handler)
-
-    return () => {
-      const idx = this.#afterHandlers.indexOf(handler)
-      this.#afterHandlers.splice(idx, 1)
-    }
-  }
-
-  dispatch(commandName, payload) {
-    if (commandName in this.#subs) {
-      this.#subs[commandName].forEach((handler) => handler(payload))
-    } else {
-      console.warn(`No handlers for command: ${commandName}`)
-    }
-
-    this.#afterHandlers.forEach((handler) => handler())
+  return {
+    mount(_parentEl) { // --4--
+      parentEl = _parentEl
+      renderApp()
+    },
   }
 }
