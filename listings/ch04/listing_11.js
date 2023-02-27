@@ -2,7 +2,7 @@ import {
   createApp,
   h,
   hFragment,
-} from '../../packages/runtime/dist/fe-fwk'
+} from '../../packages/runtime/dist/_<fwk-name>_'
 
 const state = {
   currentTodo: '',

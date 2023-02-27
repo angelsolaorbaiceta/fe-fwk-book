@@ -1,5 +1,4 @@
-export function removeEventListeners(listeners = {}, el) {
-  Object.entries(listeners).forEach(([eventName, handler]) => {
-    el.removeEventListener(eventName, handler)
-  })
+function removeFragmentNode(vdom) {
+  const { children } = vdom
+  children.forEach(destroyDOM)
 }

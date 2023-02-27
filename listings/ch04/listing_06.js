@@ -10,7 +10,7 @@ export function createApp({ state, view, /* --add-- */reducers = {}/* --add-- */
 
   // --add--
   const dispatcher = new Dispatcher()
-  const subscriptions = [dispatcher.afterEveryEvent(renderApp)] // --1--
+  const subscriptions = [dispatcher.afterEveryCommand(renderApp)] // --1--
 
   for (const actionName in reducers) {
     const reducer = reducers[actionName]

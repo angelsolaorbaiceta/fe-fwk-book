@@ -3,7 +3,7 @@ export function createApp({ state, view, reducers = {} }) {
   let vdom = null
 
   const dispatcher = new Dispatcher()
-  const subscriptions = [dispatcher.afterEveryEvent(renderApp)]
+  const subscriptions = [dispatcher.afterEveryCommand(renderApp)]
 
   // --add-- //
   function emit(eventName, payload) {

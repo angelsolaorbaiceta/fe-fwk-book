@@ -1,19 +1,15 @@
 export class Dispatcher {
-  #subs = {}
-  // --add--
-  #afterHandlers = []
-  // --add--
-  
   // --snip-- //
 
   // --add--
-  afterEveryEvent(handler) {
-    this.#afterHandlers.push(handler) // --1--
-
-    return () => { // --2--
-      const idx = this.#afterHandlers.indexOf(handler)
-      this.#afterHandlers.splice(idx, 1)
+  dispatch(commandName, payload) {
+    if (this.#subs.has(commandName)) { // --1--
+      this.#subs.get(commandName).forEach((handler) => handler(payload))
+    } else {
+      console.warn(`No handlers for command: ${commandName}`)
     }
+
+    this.#afterHandlers.forEach((handler) => handler()) // --2--
   }
   // --add--
 }

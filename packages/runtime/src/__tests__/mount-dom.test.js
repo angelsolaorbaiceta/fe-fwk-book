@@ -20,11 +20,11 @@ test('mount a text element in a host element', () => {
 
 test('save the created text element in the vdom', () => {
   const vdom = hString('hello')
-  const el = mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
+  const el = vdom.el
 
   expect(el).toBeInstanceOf(Text)
   expect(el.textContent).toBe('hello')
-  expect(vdom.el).toBe(el)
 })
 
 test('mount an element in a host element', () => {
@@ -36,10 +36,10 @@ test('mount an element in a host element', () => {
 
 test('save the created element in the vdom', () => {
   const vdom = h('div')
-  const el = mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
+  const el = vdom.el
 
   expect(el).toBeInstanceOf(HTMLDivElement)
-  expect(vdom.el).toBe(el)
 })
 
 test("can't mount a fragment without a parent element", () => {
@@ -119,7 +119,8 @@ test('mount an element with event handlers', () => {
 
 test('mounts an element with styles', () => {
   const vdom = h('div', { style: { color: 'red' } })
-  const el = mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
+  const el = vdom.el
 
   expect(document.body.innerHTML).toBe('<div style="color: red;"></div>')
   expect(el.style.color).toBe('red')

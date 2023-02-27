@@ -1,44 +1,48 @@
 /**
- * Event dispatcher that registers and unregisters event handlers to specific
- * events, and allows the execution of handlers after each event.
+ * Dispatcher that registers handler functions to respond to specific
+ * commands, identified by a unique name.
+ *
+ * The dispatcher also allows registering handler functions that run after
+ * a command is handled.
  */
 export class Dispatcher {
-  #subs = {}
+  #subs = new Map()
   #afterHandlers = []
 
   /**
-   * Registers an event handler to a specific event and returns a function that
-   * unregisters the handler.
+   * Registers an handler function that executes in response to a specific command
+   * being dispatched and returns a function that un-registers the handler.
    *
-   * @param {string} eventName the name of the event to register the handler for
-   * @param {(any) => void} handler the handler of the event
-   * @returns {() => void} a function that unregisters the handler
+   * @param {string} commandName the name of the command to register the handler for
+   * @param {(any) => void} handler the handler of the command
+   * @returns {() => void} a function that un-registers the handler
    */
-  subscribe(eventName, handler) {
-    if (this.#subs[eventName] === undefined) {
-      this.#subs[eventName] = []
+  subscribe(commandName, handler) {
+    if (!this.#subs.has(commandName)) {
+      this.#subs.set(commandName, [])
     }
 
-    if (this.#subs[eventName].includes(handler)) {
+    const handlers = this.#subs.get(commandName)
+    if (handlers.includes(handler)) {
       return () => {}
     }
 
-    this.#subs[eventName].push(handler)
+    handlers.push(handler)
 
     return () => {
-      const idx = this.#subs[eventName].indexOf(handler)
-      this.#subs[eventName].splice(idx, 1)
+      const idx = handlers.indexOf(handler)
+      handlers.splice(idx, 1)
     }
   }
 
   /**
-   * Registers a handler function that runs after each event and returns a
-   * function that unregisters the handler.
+   * Registers a handler function that runs after each command and returns a
+   * function that un-registers the handler.
    *
-   * @param {() => void} handler a function that runs after each event
-   * @returns {() => void} a function that unregisters the handler
+   * @param {() => void} handler a function that runs after each command
+   * @returns {() => void} a function that un-registers the handler
    */
-  afterEveryEvent(handler) {
+  afterEveryCommand(handler) {
     this.#afterHandlers.push(handler)
 
     return () => {
@@ -48,19 +52,19 @@ export class Dispatcher {
   }
 
   /**
-   * Dispatches an event to all handlers registered to the event and runs all
-   * handlers registered to run after each event.
+   * Dispatches a command to all registered handlers and runs all
+   * handlers registered to run after each command.
    *
-   * Displays a warning if the event has no handlers registered.
+   * Displays a warning if the command has no handlers registered.
    *
-   * @param {string} eventName the name of the event to dispatch
-   * @param {any} payload the payload of the event
+   * @param {string} commandName the name of the command to dispatch
+   * @param {any} payload the payload of the command
    */
-  dispatch(eventName, payload) {
-    if (eventName in this.#subs) {
-      this.#subs[eventName].forEach((handler) => handler(payload))
+  dispatch(commandName, payload) {
+    if (this.#subs.has(commandName)) {
+      this.#subs.get(commandName).forEach((handler) => handler(payload))
     } else {
-      console.warn(`No handlers for event: ${eventName}`)
+      console.warn(`No handlers for command: ${commandName}`)
     }
 
     this.#afterHandlers.forEach((handler) => handler())

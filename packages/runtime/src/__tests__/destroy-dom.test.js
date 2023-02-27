@@ -35,7 +35,8 @@ test('remove an html element event listeners', () => {
   const handler = vi.fn()
   const vdom = h('button', { on: { click: handler } }, [hString('hello')])
 
-  const buttonEl = mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
+  const buttonEl = vdom.el
   buttonEl.click()
 
   expect(handler).toHaveBeenCalledTimes(1)

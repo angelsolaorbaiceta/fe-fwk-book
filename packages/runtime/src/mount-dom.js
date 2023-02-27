@@ -9,27 +9,27 @@ import { DOM_TYPES } from './h'
  * If an index is given, the created DOM node is inserted at that index in the parent element.
  * Otherwise, it is appended to the parent element.
  *
- * It returns the created DOM element.
- *
  * @param {import('./h').VNode} vdom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
- * @returns {Node} the created node
  */
 export function mountDOM(vdom, parentEl, index) {
   ensureIsValidParent(parentEl)
 
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
-      return createTextNode(vdom, parentEl, index)
+      createTextNode(vdom, parentEl, index)
+      break
     }
 
     case DOM_TYPES.ELEMENT: {
-      return createElementNode(vdom, parentEl, index)
+      createElementNode(vdom, parentEl, index)
+      break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      return createFragmentNode(vdom, parentEl, index)
+      createFragmentNode(vdom, parentEl, index)
+      break
     }
 
     default: {
@@ -40,7 +40,7 @@ export function mountDOM(vdom, parentEl, index) {
 
 /**
  * Creates the text node for a virtual DOM text node.
- * The created `Text` is returned as well as added to the `el` property of the vdom.
+ * The created `Text` is added to the `el` property of the vdom.
  *
  * Note that `Text` is a subclass of `CharacterData`, which is a subclass of `Node`,
  * but not of `Element`. Methods like `append()`, `prepend()`, `before()`, `after()`,
@@ -51,7 +51,6 @@ export function mountDOM(vdom, parentEl, index) {
  * @param {import('./h').TextVNode} vdom the virtual DOM node of type "text"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
- * @returns {Text} the created text node
  */
 function createTextNode(vdom, parentEl, index) {
   const { value } = vdom
@@ -60,13 +59,11 @@ function createTextNode(vdom, parentEl, index) {
   vdom.el = textNode
 
   insert(textNode, parentEl, index)
-
-  return textNode
 }
 
 /**
  * Creates the HTML element for a virtual DOM element node and its children recursively.
- * The created `Element` is returned as well as added to the `el` property of the vdom.
+ * The created `Element` is added to the `el` property of the vdom.
  *
  * If the vdom includes event listeners, these are added to the vdom object, under the
  * `listeners` property.
@@ -74,7 +71,6 @@ function createTextNode(vdom, parentEl, index) {
  * @param {import('./h').ElementVNode} vdom the virtual DOM node of type "element"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
- * @returns {HTMLElement} the created element
  */
 function createElementNode(vdom, parentEl, index) {
   const { tag, props, children } = vdom
@@ -85,8 +81,6 @@ function createElementNode(vdom, parentEl, index) {
 
   children.forEach((child) => mountDOM(child, element))
   insert(element, parentEl, index)
-
-  return element
 }
 
 /**
@@ -105,8 +99,7 @@ function addProps(el, props, vdom) {
 
 /**
  * Creates the fragment for a virtual DOM fragment node and its children recursively.
- * The created `DocumentFragment` is returned, but the vdom's `el` property is set to
- * be the `parentEl` passed to the function.
+ * The vdom's `el` property is set to be the `parentEl` passed to the function.
  * This is because a fragment loses its children when it is appended to the DOM, so
  * we can't use it to reference the fragment's children.
  *
@@ -117,7 +110,6 @@ function addProps(el, props, vdom) {
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
- * @returns {DocumentFragment} the parent element, where the fragment's children are appended
  */
 function createFragmentNode(vdom, parentEl, index) {
   const { children } = vdom
@@ -127,8 +119,6 @@ function createFragmentNode(vdom, parentEl, index) {
 
   children.forEach((child) => mountDOM(child, fragment))
   insert(fragment, parentEl, index)
-
-  return parentEl
 }
 
 function ensureIsValidParent(

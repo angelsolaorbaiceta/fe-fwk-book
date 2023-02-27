@@ -1,10 +1,9 @@
-function createTextNode(vdom, parentEl) {
-  const { value } = vdom
+function createFragmentNode(vdom, parentEl) {
+  const { children } = vdom
 
-  const textNode = document.createTextNode(value) //--1--
-  vdom.el = textNode //--2--
+  const fragment = document.createDocumentFragment() //--1--
+  vdom.el = parentEl //--2--
 
-  parentEl.append(textNode) //--3--
-
-  return textNode
+  children.forEach((child) => mountDOM(child, fragment)) //--3--
+  parentEl.append(fragment) //--4--
 }

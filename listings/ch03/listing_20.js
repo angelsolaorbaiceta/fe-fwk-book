@@ -1,11 +1,5 @@
-function removeElementNode(vdom) {
-  const { el, children, listeners } = vdom
-
-  el.remove()
-  children.forEach(destroyDOM)
-
-  if (listeners) {
-    removeEventListeners(listeners, el)
-    delete vdom.listeners
-  }
+export function removeEventListeners(listeners = {}, el) {
+  Object.entries(listeners).forEach(([eventName, handler]) => {
+    el.removeEventListener(eventName, handler)
+  })
 }

@@ -1,20 +1,19 @@
 export class Dispatcher {
-  #subs = {}
+  #subs = new Map()
+  // --add--
+  #afterHandlers = []
+  // --add--
+  
+  // --snip-- //
 
-  subscribe(eventName, handler) {
-    if (this.#subs[eventName] === undefined) { // --1--
-      this.#subs[eventName] = []
-    }
+  // --add--
+  afterEveryCommand(handler) {
+    this.#afterHandlers.push(handler) // --1--
 
-    if (this.#subs[eventName].includes(handler)) { // --2--
-      return () => {}
-    }
-
-    this.#subs[eventName].push(handler) // --3--
-
-    return () => { // --4--
-      const idx = this.#subs[eventName].indexOf(handler)
-      this.#subs[eventName].splice(idx, 1)
+    return () => { // --2--
+      const idx = this.#afterHandlers.indexOf(handler)
+      this.#afterHandlers.splice(idx, 1)
     }
   }
+  // --add--
 }

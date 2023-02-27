@@ -1,19 +1,20 @@
 import { DOM_TYPES } from './h'
 
 export function mountDOM(vdom, parentEl) {
-  ensureIsValidParent(parentEl)
-
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
-      return createTextNode(vdom, parentEl)
+      createTextNode(vdom, parentEl) // --1--
+      break
     }
 
     case DOM_TYPES.ELEMENT: {
-      return createElementNode(vdom, parentEl)
+      createElementNode(vdom, parentEl) // --2--
+      break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      return createFragmentNode(vdom, parentEl)
+      createFragmentNode(vdom, parentEl) // --3--
+      break
     }
 
     default: {
@@ -27,5 +28,3 @@ export function mountDOM(vdom, parentEl) {
 // TODO: implement createElementNode()
 
 // TODO: implement createFragmentNode()
-
-// TODO: implement ensureIsValidParent()
