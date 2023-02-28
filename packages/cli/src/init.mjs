@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import mustache from 'mustache'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
-const bookUrl = 'https://www.manning.com/'
+const bookUrl = 'http://mng.bz/aM2o'
 const templatesDir = join(__dirname, '..', 'templates', 'init')
 const topLevelTemplates = ['package.json', 'README.md']
 const packageTemplates = [
