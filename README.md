@@ -2,8 +2,10 @@
 
 ![fe-fwk](https://img.shields.io/badge/fe--fwk-book-blueviolet)
 
-Code for the book "Build a web frontend framework (from scratch)," published by [Manning](https://www.manning.com/) and written [by myself](https://github.com/angelsolaorbaiceta).
+Code for the book "Build a web frontend framework (from scratch)," published by [Manning](http://mng.bz/aM2o) and written [by myself](https://github.com/angelsolaorbaiceta).
 In this book, you build a frontend framework yourself to learn how frontend frameworks work.
+
+📘 [Purchase your copy of the book here](http://mng.bz/aM2o) and start learning today!
 
 ## Getting Started
 

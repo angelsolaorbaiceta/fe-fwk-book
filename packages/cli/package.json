@@ -1,6 +1,6 @@
 {
   "name": "fe-fwk-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
   "type": "module",
   "keywords": [
@@ -18,7 +18,7 @@
     "src",
     "templates"
   ],
-  "homepage": "https://github.com/angelsolaorbaiceta/fe-fwk-book",
+  "homepage": "http://mng.bz/aM2o",
   "bugs": {
     "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
   },

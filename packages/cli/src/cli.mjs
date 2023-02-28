@@ -38,7 +38,7 @@ yargs(hideBin(process.argv))
         console.info(
           '📦 ' +
             chalk.magenta.italic(
-              'Buy your copy at https://www.manning.com/ and start learning now!'
+              'Buy your copy at http://mng.bz/aM2o and start learning now!'
             )
         )
       })
@@ -50,5 +50,5 @@ yargs(hideBin(process.argv))
     description: 'Run with verbose logging',
   })
   .demandCommand()
-  .epilog('You can find the book at ...')
+  .epilog('You can find the book at http://mng.bz/aM2o')
   .parse()
