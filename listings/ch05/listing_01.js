@@ -18,13 +18,13 @@ export function createApp({ state, view, reducers = {} }) {
     //}
     // --remove--
     // --add--
-    const newVdom = view(state, emit)
+    const newVdom = view(state, emit) // --1--
     // --add--
     // --remove--
     //mountDOM(vdom, parentEl)
     // --remove--
     // --add--
-    vdom = patchDOM(vdom, newVdom, parentEl)
+    vdom = patchDOM(vdom, newVdom, parentEl) // --2--
     // --add--
   }
 
@@ -36,7 +36,7 @@ export function createApp({ state, view, reducers = {} }) {
       // --remove--
       // --add--
       vdom = view(state, emit)
-      mountDOM(vdom, parentEl)
+      mountDOM(vdom, parentEl) // --3--
       // --add--
     },
 
