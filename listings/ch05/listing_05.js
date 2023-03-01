@@ -30,5 +30,5 @@ function findRemovals(oldArray, newArray, equalsFn) {
     }
   }
 
-  return { sequence, movedPositions }
+  return { removals: sequence, movedPositions }
 }

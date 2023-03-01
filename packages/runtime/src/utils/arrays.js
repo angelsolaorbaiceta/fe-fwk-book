@@ -76,7 +76,7 @@ export function arraysDiffSequence(
   newArray,
   equalsFn = (a, b) => a === b
 ) {
-  const { sequence: removals, movedPositions } = findRemovals(
+  const { removals, movedPositions } = findRemovals(
     oldArray,
     newArray,
     equalsFn
@@ -138,7 +138,7 @@ function findRemovals(oldArray, newArray, equalsFn) {
     }
   }
 
-  return { sequence, movedPositions }
+  return { removals: sequence, movedPositions }
 }
 
 /**
