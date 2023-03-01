@@ -7,15 +7,14 @@
  * @returns {{added: string[], removed: string[], updated: string[]}}
  */
 export function objectsDiff(oldObj, newObj) {
-  const added = Object.keys(newObj).filter((key) => !(key in oldObj))
-  const removed = Object.keys(oldObj).filter((key) => !(key in newObj))
-  const updated = Object.keys(newObj).filter(
-    (key) => key in oldObj && oldObj[key] !== newObj[key]
-  )
+  const oldKeys = Object.keys(oldObj)
+  const newKeys = Object.keys(newObj)
 
   return {
-    added,
-    removed,
-    updated,
+    added: newKeys.filter((key) => !(key in oldObj)),
+    removed: oldKeys.filter((key) => !(key in newObj)),
+    updated: newKeys.filter(
+      (key) => key in oldObj && oldObj[key] !== newObj[key]
+    ),
   }
 }
