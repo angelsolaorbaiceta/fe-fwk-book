@@ -110,7 +110,7 @@ function findRemovals(oldArray, newArray, equalsFn) {
   const foundIndicesInNewArray = new Set()
   // Keeps track of how many items have been removed from the old array, which
   // are the items that have been moved to the left
-  let movedPositions = Array(oldArray.length).fill(0)
+  const movedPositions = Array(oldArray.length).fill(0)
   const sequence = []
 
   for (let index = 0; index < oldArray.length; index++) {
