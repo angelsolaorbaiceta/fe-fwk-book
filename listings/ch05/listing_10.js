@@ -32,33 +32,34 @@ function findAdditionsAndMoves(
         movedPositions[i] += 1
       }
     } else if (isMoved) {
-      // --add--
-      const positions = index - from // --1--
+      const positions = index - from
 
-      if (positions !== movedPositions[from]) { // --2--
-        sequence.push({ op: ARRAY_DIFF_OP.MOVE, from, index, item }) // --3--
+      if (positions !== movedPositions[from]) {
+        sequence.push({ op: ARRAY_DIFF_OP.MOVE, from, index, item })
 
         if (positions < 0) {
           // Moving the item to the left causes the items to the right of it
           // to shift a position to the right.
-          for (let i = 0; i < from; i++) { // --4--
+          for (let i = 0; i < from; i++) {
             movedPositions[i] += 1
           }
         } else {
           // Moving the item to the right causes the items to the left of it
           // to shift a position to the left.
-          for (let i = from + 1; i < index; i++) { // --5--
+          for (let i = from + 1; i < index; i++) {
             movedPositions[i] -= 1
           }
         }
       } else {
-        sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index }) // --6--
+        sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index })
       }
 
-      foundIndicesInOldArray.add(from) // --7--
-      // --add--
+      foundIndicesInOldArray.add(from)
     } else {
-      // TODO: implement me
+      // --add--
+      sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index })
+      foundIndicesInOldArray.add(from)
+      // --add--
     }
   }
 

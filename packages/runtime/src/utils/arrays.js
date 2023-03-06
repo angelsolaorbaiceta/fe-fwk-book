@@ -170,6 +170,8 @@ function findAdditionsAndMoves(
 
     const isAdded = from === -1
     const isPossiblyMoved = !isAdded && from !== index
+    const isMoved =
+      isPossiblyMoved && !hasOppositeMove(sequence, from, index)
 
     if (isAdded) {
       sequence.push({
@@ -183,7 +185,7 @@ function findAdditionsAndMoves(
       for (let i = index; i < movedPositions.length; i++) {
         movedPositions[i] += 1
       }
-    } else if (isPossiblyMoved && !hasOppositeMove(sequence, from, index)) {
+    } else if (isMoved) {
       const positions = index - from
 
       if (positions !== movedPositions[from]) {
