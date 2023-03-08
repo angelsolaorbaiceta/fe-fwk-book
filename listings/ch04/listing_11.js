@@ -1,15 +1,35 @@
-import {
-  createApp,
-  h,
-  hFragment,
-} from '../../packages/runtime/dist/_<fwk-name>_'
+import { removeEventListeners } from './events'
+import { DOM_TYPES } from './h'
 
-const state = {
-  currentTodo: '',
-  edit: {
-    idx: null,
-    original: null,
-    edited: null,
-  },
-  todos: ['Walk the dog', 'Water the plants'],
+export function destroyDOM(vdom) {
+  const { type } = vdom
+
+  switch (type) {
+    case DOM_TYPES.TEXT: {
+      removeTextNode(vdom)
+      break
+    }
+
+    case DOM_TYPES.ELEMENT: {
+      removeElementNode(vdom)
+      break
+    }
+
+    case DOM_TYPES.FRAGMENT: {
+      removeFragmentNode(vdom)
+      break
+    }
+
+    default: {
+      throw new Error(`Can't destroy DOM of type: ${type}`)
+    }
+  }
+
+  delete vdom.el
 }
+
+// TODO: implement removeTextNode()
+
+// TODO: implement removeElementNode()
+
+// TODO: implement removeFragmentNode()

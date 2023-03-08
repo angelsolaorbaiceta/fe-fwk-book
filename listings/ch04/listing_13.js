@@ -1,7 +1,11 @@
-function App(state, emit) {
-  return hFragment([
-    h('h1', {}, ['My TODOs']),
-    CreateTodo(state, emit),
-    TodoList(state, emit),
-  ])
+function removeElementNode(vdom) {
+  const { el, children, listeners } = vdom
+
+  el.remove()
+  children.forEach(destroyDOM)
+
+  if (listeners) {
+    removeEventListeners(listeners, el)
+    delete vdom.listeners
+  }
 }

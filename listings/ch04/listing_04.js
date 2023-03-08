@@ -1,41 +1,22 @@
-export class Dispatcher {
-  #subs = new Map()
-  #afterHandlers = []
+import { setAttributes } from './attributes'
+import { addEventListeners } from './events'
 
-  subscribe(commandName, handler) {
-    if (!this.#subs.has(commandName)) {
-      this.#subs.set(commandName, [])
-    }
+// --snip-- //
 
-    const handlers = this.#subs.get(commandName)
-    if (handlers.includes(handler)) {
-      return () => {}
-    }
+function createElementNode(vdom, parentEl) {
+  const { tag, props, children } = vdom
 
-    handlers.push(handler)
+  const element = document.createElement(tag) //--1--
+  addProps(element, props, vdom) //--2--
+  vdom.el = element
 
-    return () => {
-      const idx = handlers.indexOf(handler)
-      handlers.splice(idx, 1)
-    }
-  }
+  children.forEach((child) => mountDOM(child, element))
+  parentEl.append(element)
+}
 
-  afterEveryCommand(handler) {
-    this.#afterHandlers.push(handler)
+function addProps(el, props, vdom) {
+  const { on: events, ...attrs } = props //--3--
 
-    return () => {
-      const idx = this.#afterHandlers.indexOf(handler)
-      this.#afterHandlers.splice(idx, 1)
-    }
-  }
-
-  dispatch(commandName, payload) {
-    if (this.#subs.has(commandName)) {
-      this.#subs.get(commandName).forEach((handler) => handler(payload))
-    } else {
-      console.warn(`No handlers for command: ${commandName}`)
-    }
-
-    this.#afterHandlers.forEach((handler) => handler())
-  }
+  vdom.listeners = addEventListeners(events, el) //--4--
+  setAttributes(el, attrs) //--5--
 }

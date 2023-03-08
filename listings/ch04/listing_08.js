@@ -1,21 +1,11 @@
-export function createApp({ state, view, reducers = {} }) {
-  let parentEl = null
-  let vdom = null
+function setClass(el, className) {
+  el.className = '' // --1--
 
-  // --snip-- //
-  
-  return {
-    mount(_parentEl) {
-      parentEl = _parentEl
-      renderApp()
-    },
+  if (typeof className === 'string') {
+    el.className = className // --2--
+  }
 
-    // --add-- //
-    unmount() {
-      destroyDOM(vdom)
-      vdom = null
-      subscriptions.forEach((unsubscribe) => unsubscribe())
-    },
-    // --add-- //
+  if (Array.isArray(className)) {
+    el.classList.add(...className) // --3--
   }
 }

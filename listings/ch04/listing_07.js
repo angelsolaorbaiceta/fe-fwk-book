@@ -1,26 +1,23 @@
-export function createApp({ state, view, reducers = {} }) {
-  let parentEl = null
-  let vdom = null
+export function setAttributes(el, attrs) {
+  const { class: className, style, ...otherAttrs } = attrs //--1--
 
-  const dispatcher = new Dispatcher()
-  const subscriptions = [dispatcher.afterEveryCommand(renderApp)]
-
-  // --add-- //
-  function emit(eventName, payload) {
-    dispatcher.dispatch(eventName, payload)
+  if (className) {
+    setClass(el, className) //--2--
   }
-  // --add-- //
-    
-  // --snip-- //
 
-  function renderApp() {
-    if (vdom) {
-      destroyDOM(vdom)
-    }
-
-    vdom = view(state, /* --add-- */emit/* --add-- */)
-    mountDOM(vdom, parentEl)
+  if (style) {
+    Object.entries(style).forEach(([prop, value]) => {
+      setStyle(el, prop, value) //--3--
+    })
   }
-  
-  // --snip-- //
+
+  for (const [name, value] of Object.entries(otherAttrs)) {
+    setAttribute(el, name, value) //--4--
+  }
 }
+
+// TODO: implement setClass
+
+// TODO: implement setStyle
+
+// TODO: implement setAttribute
