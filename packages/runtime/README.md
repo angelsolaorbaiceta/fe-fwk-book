@@ -9,7 +9,7 @@ Its intention is to **teach you how frontend frameworks work** by building one y
 
 ## [v1.0 — Chapter 6](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch6/packages/runtime)
 
-_See the example application in the [examples/ch04 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch04)_.
+_See the example application in the [examples/ch06 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch06)_.
 
 To checkout this version of the code:
 
