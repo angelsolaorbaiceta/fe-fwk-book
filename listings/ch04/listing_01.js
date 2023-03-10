@@ -1,21 +1,30 @@
-export class Dispatcher {
-  #subs = new Map()
+import { DOM_TYPES } from './h'
 
-  subscribe(commandName, handler) {
-    if (!this.#subs.has(commandName)) { // --1--
-      this.#subs.set(commandName, [])
+export function mountDOM(vdom, parentEl) {
+  switch (vdom.type) {
+    case DOM_TYPES.TEXT: {
+      createTextNode(vdom, parentEl) // --1--
+      break
     }
 
-    const handlers = this.#subs.get(commandName)
-    if (handlers.includes(handler)) { // --2--
-      return () => {}
+    case DOM_TYPES.ELEMENT: {
+      createElementNode(vdom, parentEl) // --2--
+      break
     }
 
-    handlers.push(handler) // --3--
+    case DOM_TYPES.FRAGMENT: {
+      createFragmentNode(vdom, parentEl) // --3--
+      break
+    }
 
-    return () => { // --4--
-      const idx = handlers.indexOf(handler)
-      handlers.splice(idx, 1)
+    default: {
+      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
     }
   }
 }
+
+// TODO: implement createTextNode()
+
+// TODO: implement createElementNode()
+
+// TODO: implement createFragmentNode()

@@ -1,19 +1,8 @@
-export class Dispatcher {
-  #subs = new Map()
-  // --add--
-  #afterHandlers = []
-  // --add--
-  
-  // --snip-- //
+function createTextNode(vdom, parentEl) {
+  const { value } = vdom
 
-  // --add--
-  afterEveryCommand(handler) {
-    this.#afterHandlers.push(handler) // --1--
+  const textNode = document.createTextNode(value) //--1--
+  vdom.el = textNode //--2--
 
-    return () => { // --2--
-      const idx = this.#afterHandlers.indexOf(handler)
-      this.#afterHandlers.splice(idx, 1)
-    }
-  }
-  // --add--
+  parentEl.append(textNode) //--3--
 }
