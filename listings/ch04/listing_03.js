@@ -1,15 +1,9 @@
-export class Dispatcher {
-  // --snip-- //
+function createFragmentNode(vdom, parentEl) {
+  const { children } = vdom
 
-  // --add--
-  dispatch(commandName, payload) {
-    if (this.#subs.has(commandName)) { // --1--
-      this.#subs.get(commandName).forEach((handler) => handler(payload))
-    } else {
-      console.warn(`No handlers for command: ${commandName}`)
-    }
+  const fragment = document.createDocumentFragment() //--1--
+  vdom.el = parentEl //--2--
 
-    this.#afterHandlers.forEach((handler) => handler()) // --2--
-  }
-  // --add--
+  children.forEach((child) => mountDOM(child, fragment)) //--3--
+  parentEl.append(fragment) //--4--
 }
