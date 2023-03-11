@@ -1,4 +1,4 @@
-export function insert(el, parentEl, index) {
+function insert(el, parentEl, index) {
   // If index is null or undefined, simply append.
   // Note the usage of `==` instead of `===`.
   if (index == null) {
