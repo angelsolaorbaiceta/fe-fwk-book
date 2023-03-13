@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 const yargs = require('yargs')
 const { hideBin } = require('yargs/helpers')
-const init = require('./init')
+const { init } = require('./init')
 
 yargs(hideBin(process.argv))
   .scriptName('fe-fwk')

@@ -38,7 +38,7 @@ const packageTemplates = [
  *
  * @param {string} name the name of the framework
  */
-export default async function init(name) {
+export async function init(name) {
   const workingDir = process.cwd()
   const projectDir = join(workingDir, name)
 
