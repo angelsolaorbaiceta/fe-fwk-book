@@ -1,7 +1,7 @@
-import { copyFile, mkdir, readFile, writeFile } from 'fs/promises'
-import { join } from 'path'
-import { fileURLToPath } from 'url'
-import mustache from 'mustache'
+const { copyFile, mkdir, readFile, writeFile } = require('fs/promises')
+const { join } = require('path')
+const { fileURLToPath } = require('url')
+const mustache = require('mustache')
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const bookUrl = 'http://mng.bz/aM2o'
