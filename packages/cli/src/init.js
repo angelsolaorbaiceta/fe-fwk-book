@@ -1,9 +1,7 @@
 const { copyFile, mkdir, readFile, writeFile } = require('fs/promises')
 const { join } = require('path')
-const { fileURLToPath } = require('url')
 const mustache = require('mustache')
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const bookUrl = 'http://mng.bz/aM2o'
 const templatesDir = join(__dirname, '..', 'templates', 'init')
 const topLevelTemplates = ['package.json', 'README.md']
