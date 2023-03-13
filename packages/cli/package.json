@@ -23,13 +23,13 @@
     "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
   },
   "scripts": {
-    "build": "ncc build src/main.js -m -o dist",
+    "build": "ncc build src/main.js -o dist",
     "prepack": "npm run build"
   },
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^5.2.0",
+    "chalk": "^4.1.2",
     "mustache": "^4.2.0",
     "yargs": "^17.7.1"
   },
