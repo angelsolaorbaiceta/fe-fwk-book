@@ -17,9 +17,6 @@ export function run() {
         })
       },
       (argv) => {
-        if (argv.verbose) {
-          console.info(`Creating the new project "${argv.name}"...`)
-        }
         init(argv.name).then(() => {
           console.info(
             '✅ ' +
@@ -43,11 +40,6 @@ export function run() {
         })
       }
     )
-    .option('verbose', {
-      alias: 'v',
-      type: 'boolean',
-      description: 'Run with verbose logging',
-    })
     .demandCommand()
     .epilog('You can find the book at http://mng.bz/aM2o')
     .parse()
