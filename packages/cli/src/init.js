@@ -1,9 +1,7 @@
-import { copyFile, mkdir, readFile, writeFile } from 'fs/promises'
-import { join } from 'path'
-import { fileURLToPath } from 'url'
-import mustache from 'mustache'
+const { copyFile, mkdir, readFile, writeFile } = require('fs/promises')
+const { join } = require('path')
+const mustache = require('mustache')
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const bookUrl = 'http://mng.bz/aM2o'
 const templatesDir = join(__dirname, '..', 'templates', 'init')
 const topLevelTemplates = ['package.json', 'README.md']
@@ -38,7 +36,7 @@ const packageTemplates = [
  *
  * @param {string} name the name of the framework
  */
-export default async function init(name) {
+export async function init(name) {
   const workingDir = process.cwd()
   const projectDir = join(workingDir, name)
 

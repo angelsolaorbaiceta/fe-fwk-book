@@ -1,8 +1,7 @@
 {
   "name": "fe-fwk-cli",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
-  "type": "module",
   "keywords": [
     "frontend",
     "framework",
@@ -12,10 +11,11 @@
     "development"
   ],
   "bin": {
-    "fe-fwk": "src/cli.mjs"
+    "fe-fwk": "bin/cli.js"
   },
   "files": [
-    "src",
+    "bin",
+    "dist",
     "templates"
   ],
   "homepage": "http://mng.bz/aM2o",
@@ -23,13 +23,18 @@
     "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "ncc build src/main.js -m -o dist",
+    "prepack": "npm run build"
   },
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^5.2.0",
+    "chalk": "^4.1.2",
     "mustache": "^4.2.0",
     "yargs": "^17.7.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.36.1",
+    "rollup": "^3.19.1"
   }
 }
