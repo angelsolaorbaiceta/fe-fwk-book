@@ -54,7 +54,7 @@ yargs(hideBin(process.argv))
         })
     }
   )
-  .version('1.0.4')
+  .version('1.0.5')
   .demandCommand()
   .epilog('📖 You can find the book at http://mng.bz/aM2o')
   .parse()
