@@ -8,7 +8,7 @@ addTodoInput.addEventListener('input', () => { // --2--
 })
 
 addTodoInput.addEventListener('keydown', ({ key }) => { // --3--
-  if (key === 'Enter') {
+  if (key === 'Enter' && addTodoInput.value.length >= 3) {
     addTodo()
   }
 })
