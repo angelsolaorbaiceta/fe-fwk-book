@@ -19,11 +19,7 @@ import { isNotBlankOrEmptyString } from './utils/strings'
 // --snip-- //
 
 // --add--
-function patchStyle(el, oldStyle = {}, newStyle = {}) {
-  if (oldStyle === newStyle) {
-    return
-  }
-
+function patchStyles(el, oldStyle = {}, newStyle = {}) {
   const { added, removed, updated } = objectsDiff(oldStyle, newStyle)
 
   for (const style of removed) {

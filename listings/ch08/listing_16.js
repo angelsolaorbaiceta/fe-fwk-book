@@ -20,15 +20,16 @@ import { isNotBlankOrEmptyString } from './utils/strings'
 // --snip-- //
 
 // --add--
-function patchEvents(el, oldEvents = {}, newEvents = {}) {
-  if (oldEvents === newEvents) {
-    return
-  }
-
+function patchEvents(
+  el,
+  oldListeners = {},
+  oldEvents = {},
+  newEvents = {}
+) {
   const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
 
   for (const eventName of removed.concat(updated)) {
-    el.removeEventListener(eventName, oldEvents[eventName])
+    el.removeEventListener(eventName, oldListeners[eventName])
   }
 
   const addedListeners = {}

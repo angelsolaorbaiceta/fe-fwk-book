@@ -15,15 +15,15 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
   }
 
   // --add--
-  newVdom.el = oldVdom.el
+  newVdom.el = oldVdom.el // --1--
 
   switch (newVdom.type) {
     case DOM_TYPES.TEXT: {
-      patchText(oldVdom, newVdom)
+      patchText(oldVdom, newVdom) // --2--
       break
     }
   }
 
-  return newVdom
+  return newVdom // --3--
   // --add--
 }

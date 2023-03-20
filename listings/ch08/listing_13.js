@@ -19,22 +19,18 @@ import { isNotBlankOrEmptyString } from './utils/strings'
 // --snip-- //
 
 // --add--
-function patchClass(el, oldClass, newClass) {
-  if (oldClass === newClass) {
-    return
-  }
+function patchClasses(el, oldClass, newClass) {
+  const oldClasses = toClassList(oldClass) // --1--
+  const newClasses = toClassList(newClass) // --2--
 
-  const oldClasses = toClassList(oldClass)
-  const newClasses = toClassList(newClass)
-
-  const { added, removed } = arraysDiff(oldClasses, newClasses)
-  el.classList.remove(...removed)
-  el.classList.add(...added)
+  const { added, removed } = arraysDiff(oldClasses, newClasses) // --3--
+  el.classList.remove(...removed) // --4--
+  el.classList.add(...added) // --5--
 }
 
-function toClassList(classes = '') {
+function toClassList(classes = '') { 
   return Array.isArray(classes)
-    ? classes.filter(isNotBlankOrEmptyString)
-    : classes.split(/(\s+)/).filter(isNotBlankOrEmptyString)
+    ? classes.filter(isNotBlankOrEmptyString) // --6--
+    : classes.split(/(\s+)/).filter(isNotBlankOrEmptyString) // --7--
 }
 // --add--

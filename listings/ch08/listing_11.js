@@ -12,17 +12,18 @@ function patchElement(oldVdom, newVdom) {
     on: newEvents,
     ...newAttrs
   } = newVdom.props
+  const { listeners: oldListeners } = oldVdom
 
   patchAttrs(el, oldAttrs, newAttrs)
-  patchClass(el, oldClass, newClass)
-  patchStyle(el, oldStyle, newStyle)
-  newVdom.listeners = patchEvents(el, oldEvents, newEvents)
+  patchClasses(el, oldClass, newClass)
+  patchStyles(el, oldStyle, newStyle)
+  newVdom.listeners = patchEvents(el, oldListeners, oldEvents, newEvents)
 }
 
 // TODO: implement patchAttrs()
 
-// TODO: implement patchClass()
+// TODO: implement patchClasses()
 
-// TODO: implement patchStyle()
+// TODO: implement patchStyles()
 
 // TODO: implement patchEvents()
