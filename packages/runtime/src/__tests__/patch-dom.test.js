@@ -230,19 +230,34 @@ describe('patch style', () => {
   })
 })
 
-test('patch event handlers', () => {
-  const oldHandler = vi.fn()
-  const oldVdom = h('button', { on: { click: oldHandler } }, ['Click me'])
-  const newHandler = vi.fn()
-  const newVdom = h('button', { on: { click: newHandler } }, ['Click me'])
+describe('patch event handlers', () => {
+  test('update event handler', () => {
+    const oldHandler = vi.fn()
+    const oldVdom = h('button', { on: { click: oldHandler } }, ['Click me'])
+    const newHandler = vi.fn()
+    const newVdom = h('button', { on: { click: newHandler } }, ['Click me'])
 
-  patch(oldVdom, newVdom)
+    patch(oldVdom, newVdom)
 
-  document.body.querySelector('button').click()
+    document.body.querySelector('button').click()
 
-  expect(oldHandler).not.toHaveBeenCalled()
-  expect(newHandler).toHaveBeenCalled()
-  expect(newVdom.listeners).not.toBeUndefined()
+    expect(oldHandler).not.toHaveBeenCalled()
+    expect(newHandler).toHaveBeenCalled()
+    expect(newVdom.listeners).not.toBeUndefined()
+  })
+
+  test('remove event handler', () => {
+    const oldHandler = vi.fn()
+    const oldVdom = h('button', { on: { click: oldHandler } }, ['Click me'])
+    const newVdom = h('button', {}, ['Click me'])
+
+    patch(oldVdom, newVdom)
+
+    document.body.querySelector('button').click()
+
+    expect(oldHandler).not.toHaveBeenCalled()
+    expect(newVdom.listeners).toStrictEqual({})
+  })
 })
 
 describe('patch children', () => {

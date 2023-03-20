@@ -103,11 +103,12 @@ function patchElement(oldVdom, newVdom) {
     on: newEvents,
     ...newAttrs
   } = newVdom.props
+  const { listeners: oldListeners } = oldVdom
 
   patchAttrs(el, oldAttrs, newAttrs)
   patchClass(el, oldClass, newClass)
   patchStyle(el, oldStyle, newStyle)
-  newVdom.listeners = patchEvents(el, oldEvents, newEvents)
+  newVdom.listeners = patchEvents(el, oldListeners, oldEvents, newEvents)
 }
 
 /**
@@ -203,11 +204,17 @@ function patchStyle(el, oldStyle = {}, newStyle = {}) {
  * listeners.
  *
  * @param {Element} el the element to patch
+ * @param {Object.<string, Function>} oldListeners the listeners added to the DOM
  * @param {Object.<string, Function>} oldEvents the events of the old virtual node
  * @param {Object.<string, Function>} newEvents the events of the new virtual node
  * @returns {Object.<string, Function>} the listeners that were added
  */
-function patchEvents(el, oldEvents = {}, newEvents = {}) {
+function patchEvents(
+  el,
+  oldListeners = {},
+  oldEvents = {},
+  newEvents = {}
+) {
   if (oldEvents === newEvents) {
     return
   }
@@ -215,7 +222,7 @@ function patchEvents(el, oldEvents = {}, newEvents = {}) {
   const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
 
   for (const eventName of removed.concat(updated)) {
-    el.removeEventListener(eventName, oldEvents[eventName])
+    el.removeEventListener(eventName, oldListeners[eventName])
   }
 
   const addedListeners = {}
