@@ -106,8 +106,8 @@ function patchElement(oldVdom, newVdom) {
   const { listeners: oldListeners } = oldVdom
 
   patchAttrs(el, oldAttrs, newAttrs)
-  patchClass(el, oldClass, newClass)
-  patchStyle(el, oldStyle, newStyle)
+  patchClasses(el, oldClass, newClass)
+  patchStyles(el, oldStyle, newStyle)
   newVdom.listeners = patchEvents(el, oldListeners, oldEvents, newEvents)
 }
 
@@ -143,11 +143,7 @@ function patchAttrs(el, oldAttrs, newAttrs) {
  * @param {string[]|string} [oldClass] the class(es) of the old virtual node
  * @param {string[]|string} [newClass] the class(es) of the new virtual node
  */
-function patchClass(el, oldClass, newClass) {
-  if (oldClass === newClass) {
-    return
-  }
-
+function patchClasses(el, oldClass, newClass) {
   const oldClasses = toClassList(oldClass)
   const newClasses = toClassList(newClass)
 
@@ -180,11 +176,7 @@ function toClassList(classes = '') {
  * @param {Object.<string, string>} [oldStyle] the style object of the old virtual node
  * @param {Object.<string, string>} [newStyle] the style object of the new virtual node
  */
-function patchStyle(el, oldStyle = {}, newStyle = {}) {
-  if (oldStyle === newStyle) {
-    return
-  }
-
+function patchStyles(el, oldStyle = {}, newStyle = {}) {
   const { added, removed, updated } = objectsDiff(oldStyle, newStyle)
 
   for (const style of removed) {
@@ -215,10 +207,6 @@ function patchEvents(
   oldEvents = {},
   newEvents = {}
 ) {
-  if (oldEvents === newEvents) {
-    return
-  }
-
   const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
 
   for (const eventName of removed.concat(updated)) {
