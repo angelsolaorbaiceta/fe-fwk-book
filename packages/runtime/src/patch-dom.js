@@ -244,10 +244,6 @@ function patchChildren(oldVdom, newVdom) {
   const newChildren = newVdom.children ?? []
   const parentEl = oldVdom.el
 
-  if (oldChildren.length === 0 && newChildren.length === 0) {
-    return
-  }
-
   const diffSeq = arraysDiffSequence(
     oldChildren,
     newChildren,
