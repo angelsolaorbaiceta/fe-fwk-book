@@ -14,11 +14,7 @@ _See the example application in the [examples/ch06 folder](https://github.com/an
 To checkout this version of the code:
 
 ```bash
-<<<<<<< HEAD
-$ git checkout ch4
-=======
 git checkout ch6
->>>>>>> ad98fdb (refactor: Split ch3 into ch3 and ch4 (#65))
 ```
 
 This version of the framework introduces the concept of a _Virtual DOM_.
@@ -28,14 +24,14 @@ The application instance, created using the `createApp()` function, holds all th
 Every time a command is dispatched, the reducer subscribed to the command is run to update the state, and then, the entire view is destroyed and recreated from scratch.
 This is done by registering the application's `renderApp()` function to run after each command is processed in the dispatcher.
 
-## [v2.0 - Chapter 5](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch5/packages/runtime)
+## [v2.0 - Chapter 8](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch8/packages/runtime)
 
-_See the example application in the [examples/ch05 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch05)_.
+_See the example application in the [examples/ch08 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch08)_.
 
 To checkout this version of the code:
 
 ```bash
-$ git checkout ch5
+$ git checkout ch8
 ```
 
 This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
