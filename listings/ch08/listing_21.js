@@ -20,14 +20,11 @@ function patchChildren(oldVdom, newVdom) {
         const el = oldChildren[from].el
         const elAtTargetIndex = parentEl.childNodes[index]
 
-        if (el !== elAtTargetIndex) {
-          parentEl.insertBefore(el, elAtTargetIndex)
-        }
-
+        parentEl.insertBefore(el, elAtTargetIndex)
         patchDOM(oldChildren[from], newChildren[index], parentEl)
+        // --add--
 
         break
-        // --add--
       }
 
       case ARRAY_DIFF_OP.NOOP: {

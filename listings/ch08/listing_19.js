@@ -8,8 +8,8 @@ function patchChildren(oldVdom, newVdom) {
       case ARRAY_DIFF_OP.ADD: {
         // --add--
         mountDOM(item, parentEl, index)
-        break
         // --add--
+        break
       }
 
       case ARRAY_DIFF_OP.REMOVE: {

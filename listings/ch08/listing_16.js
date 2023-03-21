@@ -26,19 +26,19 @@ function patchEvents(
   oldEvents = {},
   newEvents = {}
 ) {
-  const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
+  const { removed, added, updated } = objectsDiff(oldEvents, newEvents) // --1--
 
   for (const eventName of removed.concat(updated)) {
-    el.removeEventListener(eventName, oldListeners[eventName])
+    el.removeEventListener(eventName, oldListeners[eventName]) // --2--
   }
 
-  const addedListeners = {}
+  const addedListeners = {} // --3--
 
   for (const eventName of added.concat(updated)) {
-    const listener = addEventListener(eventName, newEvents[eventName], el)
-    addedListeners[eventName] = listener
+    const listener = addEventListener(eventName, newEvents[eventName], el) // --4--
+    addedListeners[eventName] = listener // --5--
   }
 
-  return addedListeners
+  return addedListeners // --6--
 }
 // --add--
