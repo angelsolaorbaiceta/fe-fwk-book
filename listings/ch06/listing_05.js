@@ -7,6 +7,11 @@ function CreateTodo({ currentTodo }, emit) {
       value: currentTodo,
       on: {
         input: ({ target }) => emit('update-current-todo', target.value),
+        keydown: ({ key }) => {
+          if (key === 'Enter' && currentTodo.length >= 3) {
+            emit('add-todo')
+          }
+        },
       },
     }),
     h(

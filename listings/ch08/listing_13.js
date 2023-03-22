@@ -24,8 +24,13 @@ function patchClasses(el, oldClass, newClass) {
   const newClasses = toClassList(newClass) // --2--
 
   const { added, removed } = arraysDiff(oldClasses, newClasses) // --3--
-  el.classList.remove(...removed) // --4--
-  el.classList.add(...added) // --5--
+  
+  if (removed.length > 0) {
+    el.classList.remove(...removed) // --4--
+  }
+  if (added.length > 0) {
+    el.classList.add(...added) // --5--
+  }
 }
 
 function toClassList(classes = '') { 
