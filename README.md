@@ -5,6 +5,8 @@
 Code for the book "Build a web frontend framework (from scratch)," published by [Manning](http://mng.bz/aM2o) and written [by myself](https://github.com/angelsolaorbaiceta).
 In this book, you build a frontend framework yourself to learn how frontend frameworks work.
 
+![Cover](https://images.manning.com/360/480/resize/book/0/dfa7a0d-8341-4cb5-86eb-958d2ed263f7/Orbaiceta-MEAP-HI.png)
+
 📘 [Purchase your copy of the book here](http://mng.bz/aM2o) and start learning today!
 
 ## Getting Started

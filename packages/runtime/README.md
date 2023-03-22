@@ -24,4 +24,14 @@ The application instance, created using the `createApp()` function, holds all th
 Every time a command is dispatched, the reducer subscribed to the command is run to update the state, and then, the entire view is destroyed and recreated from scratch.
 This is done by registering the application's `renderApp()` function to run after each command is processed in the dispatcher.
 
-In the next version we introduce the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
+## [v2.0 - Chapter 8](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch8/packages/runtime)
+
+_See the example application in the [examples/ch08 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch08)_.
+
+To checkout this version of the code:
+
+```bash
+$ git checkout ch8
+```
+
+This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.

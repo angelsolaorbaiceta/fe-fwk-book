@@ -8,7 +8,7 @@ import { assert } from './utils/assert'
  * Removes all `el` references from the vdom tree and removes all the event
  * listeners from the DOM.
  *
- * @param {object} vdom the virtual DOM node to destroy
+ * @param {import('./h').VNode} vdom the virtual DOM node to destroy
  */
 export function destroyDOM(vdom) {
   const { type, el } = vdom

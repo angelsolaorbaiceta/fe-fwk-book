@@ -10,7 +10,7 @@
  * except in the case of the `class` attribute.
  *
  * @param {HTMLElement} el target element
- * @param {object} attrs attributes to set
+ * @param {import('./h').ElementVNodeProps} attrs attributes to set
  */
 export function setAttributes(el, attrs) {
   const { class: className, style, ...otherAttrs } = attrs

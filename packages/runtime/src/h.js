@@ -8,6 +8,32 @@ export const DOM_TYPES = {
 }
 
 /**
+ * A virtual node is an object representing a DOM element.
+ * The virtual node can be a text node, an element node or a fragment node.
+ * @typedef VNode
+ * @type {TextVNode|ElementVNode|FragmentVNode}
+ */
+
+/**
+ * @typedef ElementVNode
+ * @type {object}
+ * @property {string} tag - The tag of the element.
+ * @property {string} type - The type of the virtual node = 'element'.
+ * @property {ElementVNodeProps} props - The attributes of the element.
+ * @property {VNode[]} children - The children of the element.
+ * @property {HTMLElement} [el] - The mounted element.
+ * @property {Object.<string,Function>} [listeners] - The event listeners added to the element.
+ */
+
+/**
+ * @typedef ElementVNodeProps
+ * @type {object}
+ * @property {Object.<string,Function>} [on] - The event listeners to add to the element.
+ * @property {(string|string[])} [class] - The class or classes to add to the element.
+ * @property {Object.<string,string>} [style] - The CSS properties to add to the element.
+ */
+
+/**
  * Hypertext function: creates a virtual node representing an element with
  * the passed in tag.
  *
@@ -23,7 +49,7 @@ export const DOM_TYPES = {
  * @param {string} tag the tag name of the element
  * @param {object} props the props to add to the element
  * @param {array} children the children to add to the element
- * @returns {object} the virtual node
+ * @returns {ElementVNode} the virtual node
  */
 export function h(tag, props = {}, children = []) {
   return {
@@ -33,6 +59,14 @@ export function h(tag, props = {}, children = []) {
     type: DOM_TYPES.ELEMENT,
   }
 }
+
+/**
+ * @typedef TextVNode
+ * @type {object}
+ * @property {string} type - The type of the virtual node = 'text'.
+ * @property {string} value - The text of the text node.
+ * @property {Text} [el] - The mounted element.
+ */
 
 /**
  * Creates a text virtual node.
@@ -45,6 +79,14 @@ export function h(tag, props = {}, children = []) {
 export function hString(str) {
   return { type: DOM_TYPES.TEXT, value: str }
 }
+
+/**
+ * @typedef FragmentVNode
+ * @type {object}
+ * @property {string} type - The type of the virtual node = 'fragment'.
+ * @property {VNode[]} children - The children of the fragment.
+ * @property {DocumentFragment} [el] - The mounted element, typically the parent of the fragment.
+ */
 
 /**
  * Wraps the virtual nodes in a fragment, adding the passed in props to the

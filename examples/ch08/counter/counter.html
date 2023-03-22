@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        text-align: center;
+        margin: 2em;
+        font-size: 2em;
+      }
+      button {
+        font-size: 1em;
+        width: 1.5em;
+      }
+      span {
+        margin: 0 1em;
+      }
+      span.negative {
+        color: #e91e61;
+      }
+    </style>
+
+    <script type="module">
+      import {
+        createApp,
+        h,
+        hString,
+        hFragment,
+      } from 'https://unpkg.com/fe-fwk@2'
+
+      const state = { count: 0 }
+      const reducers = {
+        add: (state) => ({ count: state.count + 1 }),
+        sub: (state) => ({ count: state.count - 1 }),
+      }
+
+      function View(state, emit) {
+        return hFragment([
+          h('button', { on: { click: () => emit('sub') } }, ['-']),
+          h(
+            'span',
+            { class: `${state.count < 0 ? 'negative' : 'positive'}` },
+            [hString(state.count)]
+          ),
+          h('button', { on: { click: () => emit('add') } }, ['+']),
+        ])
+      }
+
+      createApp({ state, view: View, reducers }).mount(document.body)
+    </script>
+
+    <title>Counter</title>
+  </head>
+  <body>
+    <h1>Counter</h1>
+  </body>
+</html>

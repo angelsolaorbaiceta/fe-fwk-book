@@ -1,4 +1,4 @@
-import { createApp, h, hFragment } from 'https://unpkg.com/fe-fwk@1'
+import { createApp, h, hFragment } from 'https://unpkg.com/fe-fwk@2'
 
 const state = {
   currentTodo: '',
