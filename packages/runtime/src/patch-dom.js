@@ -148,8 +148,13 @@ function patchClasses(el, oldClass, newClass) {
   const newClasses = toClassList(newClass)
 
   const { added, removed } = arraysDiff(oldClasses, newClasses)
-  el.classList.remove(...removed)
-  el.classList.add(...added)
+
+  if (removed.length > 0) {
+    el.classList.remove(...removed)
+  }
+  if (added.length > 0) {
+    el.classList.add(...added)
+  }
 }
 
 /**
