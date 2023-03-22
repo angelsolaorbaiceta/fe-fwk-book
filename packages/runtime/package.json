@@ -33,7 +33,7 @@
     "@vitest/coverage-c8": "^0.28.5",
     "eslint": "^8.36.0",
     "jsdom": "^21.1.1",
-    "rollup": "^3.19.1",
+    "rollup": "^3.20.0",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-filesize": "^10.0.0",
     "vitest": "^0.28.5"
