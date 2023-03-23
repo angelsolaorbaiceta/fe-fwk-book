@@ -20,10 +20,10 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
   switch (newVdom.type) {
     case DOM_TYPES.TEXT: {
       patchText(oldVdom, newVdom) // --2--
-      break
+      return newVdom // --3--
     }
   }
 
-  return newVdom // --3--
+  return newVdom
   // --add--
 }
