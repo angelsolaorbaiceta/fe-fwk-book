@@ -17,7 +17,7 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
   switch (newVdom.type) {
     case DOM_TYPES.TEXT: {
       patchText(oldVdom, newVdom)
-      break
+      return newVdom
     }
 
     // --add--
