@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import { defineComponent } from '../component'
-import { h } from '../h'
+import { h, hFragment } from '../h'
 
 // References from Euclid's Elements, Book I
 // http://aleph0.clarku.edu/~djoyce/elements/bookI/bookI.html#defs
@@ -8,6 +8,15 @@ import { h } from '../h'
 const Comp = defineComponent({
   render() {
     return h('p', {}, ['A point is that which has no part.'])
+  },
+})
+
+const FragComp = defineComponent({
+  render() {
+    return hFragment([
+      h('p', {}, ['A point is that which has no part.']),
+      h('p', {}, ['A line is breadthless length.']),
+    ])
   },
 })
 
@@ -52,6 +61,15 @@ describe('A component', () => {
 
     expect(document.body.innerHTML).toBe(
       '<p>A point is that which has no part.</p>'
+    )
+  })
+
+  test('can be mounted as a fragment', () => {
+    const comp = new FragComp()
+    comp.mount(document.body)
+
+    expect(document.body.innerHTML).toBe(
+      '<p>A point is that which has no part.</p><p>A line is breadthless length.</p>'
     )
   })
 })
