@@ -51,13 +51,13 @@ export function defineComponent({ render, state }) {
      *
      * @param {HTMLElement} hostEl the host element to mount the component to
      */
-    mount(hostEl) {
+    mount(hostEl, index = null) {
       if (this.#isMounted) {
         throw new Error('Component is already mounted')
       }
 
       this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl)
+      mountDOM(this.#vdom, hostEl, index)
 
       this.#isMounted = true
       this.#hostEl = hostEl

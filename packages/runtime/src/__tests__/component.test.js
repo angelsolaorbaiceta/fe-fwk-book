@@ -51,6 +51,17 @@ describe('A component', () => {
       )
     })
 
+    test('can be mounted at a specific position', () => {
+      document.body.innerHTML = '<h1>Definitions</h1><hr>'
+
+      const comp = new Comp()
+      comp.mount(document.body, 1)
+
+      expect(document.body.innerHTML).toBe(
+        '<h1>Definitions</h1><p>A point is that which has no part.</p><hr>'
+      )
+    })
+
     test("can't be mounted twice", () => {
       const comp = new Comp()
       comp.mount(document.body)
