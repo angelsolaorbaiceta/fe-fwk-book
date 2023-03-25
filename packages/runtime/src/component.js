@@ -1,3 +1,4 @@
+import { destroyDOM } from './destroy-dom'
 import { mountDOM } from './mount-dom'
 
 /**
@@ -9,6 +10,7 @@ import { mountDOM } from './mount-dom'
 export function defineComponent({ render }) {
   const Component = class {
     #isMounted = false
+    #vdom = null
 
     /**
      * Renders the component, returning the virtual DOM tree representing
@@ -28,10 +30,24 @@ export function defineComponent({ render }) {
         throw new Error('Component is already mounted')
       }
 
-      const vdom = this.render()
-      mountDOM(vdom, hostEl)
+      this.#vdom = this.render()
+      mountDOM(this.#vdom, hostEl)
 
       this.#isMounted = true
+    }
+
+    /**
+     * Unmounts the component from the DOM.
+     */
+    unmount() {
+      if (!this.#isMounted) {
+        throw new Error('Component is not mounted')
+      }
+
+      destroyDOM(this.#vdom)
+
+      this.#vdom = null
+      this.#isMounted = false
     }
   }
 
