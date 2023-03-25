@@ -12,8 +12,9 @@ import { DOM_TYPES } from './h'
  * @param {import('./h').VNode} vdom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-export function mountDOM(vdom, parentEl, index) {
+export function mountDOM(vdom, parentEl, index, hostComponent = null) {
   ensureIsValidParent(parentEl)
 
   switch (vdom.type) {
@@ -23,7 +24,7 @@ export function mountDOM(vdom, parentEl, index) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      createElementNode(vdom, parentEl, index)
+      createElementNode(vdom, parentEl, index, hostComponent)
       break
     }
 
@@ -71,12 +72,13 @@ function createTextNode(vdom, parentEl, index) {
  * @param {import('./h').ElementVNode} vdom the virtual DOM node of type "element"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createElementNode(vdom, parentEl, index) {
+function createElementNode(vdom, parentEl, index, hostComponent) {
   const { tag, props, children } = vdom
 
   const element = document.createElement(tag)
-  addProps(element, props, vdom)
+  addProps(element, props, vdom, hostComponent)
   vdom.el = element
 
   children.forEach((child) => mountDOM(child, element))
@@ -89,11 +91,12 @@ function createElementNode(vdom, parentEl, index) {
  * @param {Element} el The element to add the attributes to
  * @param {import('./h').ElementVNodeProps} props The props to add
  * @param {import('./h').ElementVNode} vdom The vdom node
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function addProps(el, props, vdom) {
+function addProps(el, props, vdom, hostComponent) {
   const { on: events, ...attrs } = props
 
-  vdom.listeners = addEventListeners(events, el)
+  vdom.listeners = addEventListeners(events, el, hostComponent)
   setAttributes(el, attrs)
 }
 

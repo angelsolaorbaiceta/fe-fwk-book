@@ -181,4 +181,34 @@ describe('A component', () => {
       expect(document.body.innerHTML).toBe('<button>1</button>')
     })
   })
+
+  describe('methods', () => {
+    test('can use methods to handle events', () => {
+      const Comp = defineComponent({
+        state() {
+          return { count: 0 }
+        },
+        increment() {
+          this.updateState({ count: this.state.count + 1 })
+        },
+        render() {
+          return h(
+            'button',
+            {
+              on: {
+                click: this.increment,
+              },
+            },
+            [hString(this.state.count)]
+          )
+        },
+      })
+      const comp = new Comp()
+      comp.mount(document.body)
+
+      document.querySelector('button').click()
+
+      expect(document.body.innerHTML).toBe('<button>1</button>')
+    })
+  })
 })
