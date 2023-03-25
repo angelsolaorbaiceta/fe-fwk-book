@@ -8,7 +8,7 @@ import { patchDOM } from './patch-dom'
  * @param {*} param0
  * @returns
  */
-export function defineComponent({ render }) {
+export function defineComponent({ render, state }) {
   const Component = class {
     #isMounted = false
     #vdom = null
@@ -16,6 +16,7 @@ export function defineComponent({ render }) {
 
     constructor(props = {}) {
       this.props = props
+      this.state = state ? state(props) : {}
     }
 
     /**
@@ -25,6 +26,16 @@ export function defineComponent({ render }) {
      */
     updateProps(props) {
       this.props = { ...this.props, ...props }
+    }
+
+    /**
+     * Updates all or part of the component's state and patches the DOM.
+     *
+     * @param {object} state
+     */
+    updateState(state) {
+      this.state = { ...this.state, ...state }
+      this.patch()
     }
 
     /**

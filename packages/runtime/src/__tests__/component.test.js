@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import { defineComponent } from '../component'
-import { h, hFragment } from '../h'
+import { h, hFragment, hString } from '../h'
 
 // References from Euclid's Elements, Book I
 // http://aleph0.clarku.edu/~djoyce/elements/bookI/bookI.html#defs
@@ -28,82 +28,129 @@ const PropsComp = defineComponent({
   },
 })
 
+const StateComp = defineComponent({
+  state() {
+    return { count: 0 }
+  },
+  render() {
+    return h('p', {}, [hString(this.state.count)])
+  },
+})
+
 describe('A component', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
   })
 
-  test('can be mounted into the DOM', () => {
-    new Comp().mount(document.body)
+  describe('mounting and unmounting', () => {
+    test('can be mounted into the DOM', () => {
+      new Comp().mount(document.body)
 
-    expect(document.body.innerHTML).toBe(
-      '<p>A point is that which has no part.</p>'
-    )
+      expect(document.body.innerHTML).toBe(
+        '<p>A point is that which has no part.</p>'
+      )
+    })
+
+    test("can't be mounted twice", () => {
+      const comp = new Comp()
+      comp.mount(document.body)
+
+      expect(() => comp.mount(document.body)).toThrow(/already mounted/)
+    })
+
+    test('can be unmounted', () => {
+      const comp = new Comp()
+      comp.mount(document.body)
+      comp.unmount()
+
+      expect(document.body.innerHTML).toBe('')
+    })
+
+    test("can't be unmounted if it wasn't mounted", () => {
+      const comp = new Comp()
+      expect(() => comp.unmount()).toThrow(/not mounted/)
+    })
+
+    test('can be mounted after being unmounted', () => {
+      const comp = new Comp()
+      comp.mount(document.body)
+      comp.unmount()
+      comp.mount(document.body)
+
+      expect(document.body.innerHTML).toBe(
+        '<p>A point is that which has no part.</p>'
+      )
+    })
+
+    test('can be mounted as a fragment', () => {
+      const comp = new FragComp()
+      comp.mount(document.body)
+
+      expect(document.body.innerHTML).toBe(
+        '<p>A point is that which has no part.</p><p>A line is breadthless length.</p>'
+      )
+    })
   })
 
-  test("can't be mounted twice", () => {
-    const comp = new Comp()
-    comp.mount(document.body)
+  describe('props', () => {
+    test('can have props', () => {
+      const comp = new PropsComp({ pClass: 'definition' })
+      comp.mount(document.body)
 
-    expect(() => comp.mount(document.body)).toThrow(/already mounted/)
+      expect(document.body.innerHTML).toBe(
+        '<p class="definition">A point is that which has no part.</p>'
+      )
+    })
+
+    test("can't patch the DOM if the component isn't mounted", () => {
+      const comp = new PropsComp({ pClass: 'definition' })
+      expect(() => comp.patch()).toThrow(/not mounted/)
+    })
+
+    test('can be updated and the DOM patched', () => {
+      const comp = new PropsComp({ pClass: 'definition' })
+      comp.mount(document.body)
+
+      comp.updateProps({ pClass: ['definition', 'updated'] })
+      comp.patch()
+
+      expect(document.body.innerHTML).toBe(
+        '<p class="definition updated">A point is that which has no part.</p>'
+      )
+    })
   })
 
-  test('can be unmounted', () => {
-    const comp = new Comp()
-    comp.mount(document.body)
-    comp.unmount()
+  describe('state', () => {
+    test('can have its own internal state', () => {
+      const comp = new StateComp()
+      comp.mount(document.body)
 
-    expect(document.body.innerHTML).toBe('')
-  })
+      expect(document.body.innerHTML).toBe('<p>0</p>')
+    })
 
-  test("can't be unmounted if it wasn't mounted", () => {
-    const comp = new Comp()
-    expect(() => comp.unmount()).toThrow(/not mounted/)
-  })
+    test('can be based on the props', () => {
+      const Comp = defineComponent({
+        state(props) {
+          return { count: props.initialCount }
+        },
+        render() {
+          return h('p', {}, [hString(this.state.count)])
+        },
+      })
+      const comp = new Comp({ initialCount: 10 })
 
-  test('can be mounted after being unmounted', () => {
-    const comp = new Comp()
-    comp.mount(document.body)
-    comp.unmount()
-    comp.mount(document.body)
+      comp.mount(document.body)
 
-    expect(document.body.innerHTML).toBe(
-      '<p>A point is that which has no part.</p>'
-    )
-  })
+      expect(document.body.innerHTML).toBe('<p>10</p>')
+    })
 
-  test('can be mounted as a fragment', () => {
-    const comp = new FragComp()
-    comp.mount(document.body)
+    test('when the state changes, the DOM is patched', () => {
+      const comp = new StateComp()
+      comp.mount(document.body)
 
-    expect(document.body.innerHTML).toBe(
-      '<p>A point is that which has no part.</p><p>A line is breadthless length.</p>'
-    )
-  })
+      comp.updateState({ count: 5 })
 
-  test('can have props', () => {
-    const comp = new PropsComp({ pClass: 'definition' })
-    comp.mount(document.body)
-
-    expect(document.body.innerHTML).toBe(
-      '<p class="definition">A point is that which has no part.</p>'
-    )
-  })
-
-  test("can't patch the DOM if the component isn't mounted", () => {
-    const comp = new PropsComp({ pClass: 'definition' })
-    expect(() => comp.patch()).toThrow(/not mounted/)
-  })
-
-  test('the props can be updated and the DOM patched', () => {
-    const comp = new PropsComp({ pClass: 'definition' })
-    comp.mount(document.body)
-
-    comp.updateProps({ pClass: ['definition', 'updated'] })
-    comp.patch()
-
-    expect(document.body.innerHTML).toBe(
-      '<p class="definition updated">A point is that which has no part.</p>'
-    )
+      expect(document.body.innerHTML).toBe('<p>5</p>')
+    })
   })
 })
