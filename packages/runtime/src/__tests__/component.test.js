@@ -23,4 +23,17 @@ describe('A component', () => {
       '<p>A point is that which has no part.</p>'
     )
   })
+
+  test("can't be mounted twice", () => {
+    const Comp = defineComponent({
+      render() {
+        return h('p', {}, ['A line is breadthless length.'])
+      },
+    })
+
+    const comp = new Comp()
+    comp.mount(document.body)
+
+    expect(() => comp.mount(document.body)).toThrow()
+  })
 })

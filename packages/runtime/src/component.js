@@ -8,6 +8,8 @@ import { mountDOM } from './mount-dom'
  */
 export function defineComponent({ render }) {
   const Component = class {
+    #isMounted = false
+
     /**
      * Renders the component, returning the virtual DOM tree representing
      * the component in its current state.
@@ -22,8 +24,14 @@ export function defineComponent({ render }) {
      * @param {HTMLElement} hostEl the host element to mount the component to
      */
     mount(hostEl) {
+      if (this.#isMounted) {
+        throw new Error('Component is already mounted')
+      }
+
       const vdom = this.render()
       mountDOM(vdom, hostEl)
+
+      this.#isMounted = true
     }
   }
 
