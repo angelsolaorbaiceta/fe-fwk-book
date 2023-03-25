@@ -33,7 +33,15 @@ const StateComp = defineComponent({
     return { count: 0 }
   },
   render() {
-    return h('p', {}, [hString(this.state.count)])
+    return h(
+      'button',
+      {
+        on: {
+          click: () => this.updateState({ count: this.state.count + 1 }),
+        },
+      },
+      [hString(this.state.count)]
+    )
   },
 })
 
@@ -136,7 +144,7 @@ describe('A component', () => {
       const comp = new StateComp()
       comp.mount(document.body)
 
-      expect(document.body.innerHTML).toBe('<p>0</p>')
+      expect(document.body.innerHTML).toBe('<button>0</button>')
     })
 
     test('can be based on the props', () => {
@@ -161,7 +169,16 @@ describe('A component', () => {
 
       comp.updateState({ count: 5 })
 
-      expect(document.body.innerHTML).toBe('<p>5</p>')
+      expect(document.body.innerHTML).toBe('<button>5</button>')
+    })
+
+    test('an event can change the state', () => {
+      const comp = new StateComp()
+      comp.mount(document.body)
+
+      document.querySelector('button').click()
+
+      expect(document.body.innerHTML).toBe('<button>1</button>')
     })
   })
 })
