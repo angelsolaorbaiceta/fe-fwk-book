@@ -20,6 +20,14 @@ const FragComp = defineComponent({
   },
 })
 
+const PropsComp = defineComponent({
+  render() {
+    return h('p', { class: this.props.pClass }, [
+      'A point is that which has no part.',
+    ])
+  },
+})
+
 describe('A component', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
@@ -70,6 +78,32 @@ describe('A component', () => {
 
     expect(document.body.innerHTML).toBe(
       '<p>A point is that which has no part.</p><p>A line is breadthless length.</p>'
+    )
+  })
+
+  test('can have props', () => {
+    const comp = new PropsComp({ pClass: 'definition' })
+    comp.mount(document.body)
+
+    expect(document.body.innerHTML).toBe(
+      '<p class="definition">A point is that which has no part.</p>'
+    )
+  })
+
+  test("can't patch the DOM if the component isn't mounted", () => {
+    const comp = new PropsComp({ pClass: 'definition' })
+    expect(() => comp.patch()).toThrow(/not mounted/)
+  })
+
+  test('the props can be updated and the DOM patched', () => {
+    const comp = new PropsComp({ pClass: 'definition' })
+    comp.mount(document.body)
+
+    comp.updateProps({ pClass: ['definition', 'updated'] })
+    comp.patch()
+
+    expect(document.body.innerHTML).toBe(
+      '<p class="definition updated">A point is that which has no part.</p>'
     )
   })
 })

@@ -1,5 +1,6 @@
 import { destroyDOM } from './destroy-dom'
 import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
 
 /**
  * Defines a component that can be instantiated and mounted into the DOM.
@@ -11,13 +12,27 @@ export function defineComponent({ render }) {
   const Component = class {
     #isMounted = false
     #vdom = null
+    #hostEl = null
+
+    constructor(props = {}) {
+      this.props = props
+    }
+
+    /**
+     * Updates all or part of the component's props.
+     *
+     * @param {object} props
+     */
+    updateProps(props) {
+      this.props = { ...this.props, ...props }
+    }
 
     /**
      * Renders the component, returning the virtual DOM tree representing
      * the component in its current state.
      */
     render() {
-      return render()
+      return render.call(this)
     }
 
     /**
@@ -34,6 +49,7 @@ export function defineComponent({ render }) {
       mountDOM(this.#vdom, hostEl)
 
       this.#isMounted = true
+      this.#hostEl = hostEl
     }
 
     /**
@@ -48,6 +64,19 @@ export function defineComponent({ render }) {
 
       this.#vdom = null
       this.#isMounted = false
+    }
+
+    /**
+     * Updates the component's virtual DOM tree and patches the DOM to
+     * reflect the changes.
+     */
+    patch() {
+      if (!this.#isMounted) {
+        throw new Error('Component is not mounted')
+      }
+
+      const vdom = this.render()
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl)
     }
   }
 
