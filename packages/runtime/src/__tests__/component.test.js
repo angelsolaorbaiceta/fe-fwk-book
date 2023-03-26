@@ -87,7 +87,6 @@ describe('Component props', () => {
     comp.mount(document.body)
 
     comp.updateProps({ pClass: ['definition', 'updated'] })
-    comp.patch()
 
     expect(document.body.innerHTML).toBe(
       '<p class="definition updated">A point is that which has no part.</p>'

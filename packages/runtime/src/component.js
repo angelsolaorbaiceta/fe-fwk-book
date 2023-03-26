@@ -39,6 +39,7 @@ export function defineComponent({ render, state, ...methods }) {
 
     updateProps(props) {
       this.props = { ...this.props, ...props }
+      this.patch()
     }
 
     updateState(state) {

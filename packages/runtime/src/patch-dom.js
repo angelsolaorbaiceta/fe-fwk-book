@@ -56,6 +56,11 @@ export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
       patchElement(oldVdom, newVdom, hostComponent)
       break
     }
+
+    case DOM_TYPES.COMPONENT: {
+      patchComponent(oldVdom, newVdom)
+      break
+    }
   }
 
   patchChildren(oldVdom, newVdom, hostComponent)
@@ -243,6 +248,23 @@ function patchEvents(
   }
 
   return addedListeners
+}
+
+/**
+ * Patches a component virtual node.
+ *
+ * To patch a component, the new props are passed to the component's `updateProps()`.
+ * This method is responsible for updating the component's state and re-rendering
+ * the component.
+ *
+ * @param {import('./h').ElementVNode} oldVdom the old virtual node
+ * @param {import('./h').ElementVNode} newVdom the new virtual node
+ */
+function patchComponent(oldVdom, newVdom) {
+  const { component } = oldVdom
+  const { props: newProps } = newVdom
+
+  component.updateProps(newProps)
 }
 
 /**

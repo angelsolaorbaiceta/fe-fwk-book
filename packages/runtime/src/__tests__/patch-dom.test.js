@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { patchDOM } from '../patch-dom'
@@ -641,6 +642,23 @@ describe('patch vdom with component host', () => {
 
     expect(document.body.innerHTML).toBe('<button>A</button>')
     expect(component.count).toBe(6)
+  })
+})
+
+describe('patch component with props', () => {
+  const Component = defineComponent({
+    render() {
+      return h('span', { class: 'foo' }, [this.props.text])
+    },
+  })
+
+  test('the new prop is patched into the DOM', () => {
+    const oldVdom = h(Component, { text: 'one' })
+    const newVdom = h(Component, { text: 'two' })
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toBe('<span class="foo">two</span>')
   })
 })
 
