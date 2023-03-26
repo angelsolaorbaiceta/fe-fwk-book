@@ -36,6 +36,11 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
       break
     }
 
+    case DOM_TYPES.COMPONENT: {
+      createComponentNode(vdom, parentEl, index, hostComponent)
+      break
+    }
+
     default: {
       throw new Error(`Can't mount DOM of type: ${vdom.type}`)
     }
@@ -128,6 +133,22 @@ function createFragmentNode(vdom, parentEl, index, hostComponent) {
     mountDOM(child, fragment, null, hostComponent)
   )
   insert(fragment, parentEl, index)
+}
+
+/**
+ * Creates the component node, and all of its subcomponents recursively.
+ *
+ * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
+ * @param {Element} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ */
+function createComponentNode(vdom, parentEl, index, hostComponent) {
+  const { tag: Component, props } = vdom
+  const component = new Component(props)
+
+  component.mount(parentEl, index)
+  vdom.component = component
 }
 
 function ensureIsValidParent(

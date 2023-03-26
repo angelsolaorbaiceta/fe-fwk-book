@@ -227,6 +227,19 @@ test('A component can patch the DOM, adding event handlers bound to the componen
   )
 })
 
+describe('Child components', () => {
+  const items = ['Walk the dog', 'Water the plants']
+
+  test('can mount child components', () => {
+    const comp = new List({ items })
+    comp.mount(document.body)
+
+    expect(document.body.innerHTML).toBe(
+      '<ul><li>Walk the dog</li><li>Water the plants</li></ul>'
+    )
+  })
+})
+
 // References from Euclid's Elements, Book I
 // http://aleph0.clarku.edu/~djoyce/elements/bookI/bookI.html#defs
 
@@ -266,6 +279,27 @@ const StateComp = defineComponent({
         },
       },
       [hString(this.state.count)]
+    )
+  },
+})
+
+const ListItem = defineComponent({
+  state() {
+    return { highlighted: false }
+  },
+  render() {
+    return h('li', { class: this.state.highlighted ? 'highlighted' : '' }, [
+      this.props.text,
+    ])
+  },
+})
+
+const List = defineComponent({
+  render() {
+    return h(
+      'ul',
+      {},
+      this.props.items.map((item) => h(ListItem, { text: item }))
     )
   },
 })

@@ -105,7 +105,6 @@ export function defineComponent({ render, state, ...methods }) {
       }
 
       const vdom = this.render()
-      console.log('patching DOM')
       this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }
   }

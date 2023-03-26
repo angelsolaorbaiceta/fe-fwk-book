@@ -5,6 +5,7 @@ export const DOM_TYPES = {
   TEXT: 'text',
   ELEMENT: 'element',
   FRAGMENT: 'fragment',
+  COMPONENT: 'component',
 }
 
 /**
@@ -35,7 +36,7 @@ export const DOM_TYPES = {
 
 /**
  * Hypertext function: creates a virtual node representing an element with
- * the passed in tag.
+ * the passed in tag or component constructor.
  *
  * The props are added to the element as attributes.
  * There are some special props:
@@ -46,17 +47,20 @@ export const DOM_TYPES = {
  * The children are added to the element as child nodes.
  * If a child is a string, it is converted to a text node using `hString()`.
  *
- * @param {string} tag the tag name of the element
+ * @param {(string|object)} tag the tag name of the element
  * @param {object} props the props to add to the element
  * @param {array} children the children to add to the element
  * @returns {ElementVNode} the virtual node
  */
 export function h(tag, props = {}, children = []) {
+  const type =
+    typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
+
   return {
     tag,
     props,
+    type,
     children: mapTextNodes(withoutNulls(children)),
-    type: DOM_TYPES.ELEMENT,
   }
 }
 
