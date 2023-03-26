@@ -31,13 +31,15 @@ import { isNotBlankOrEmptyString } from './utils/strings'
  * @param {import('./h').VNode} oldVdom the old virtual dom
  * @param {import('./h').VNode} newVdom the new virtual dom
  * @param {Node} parentEl the parent element
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
  * @returns {Element} the patched element
  */
-export function patchDOM(oldVdom, newVdom, parentEl) {
+export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
   if (!areNodesEqual(oldVdom, newVdom)) {
     const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
     destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index)
+    mountDOM(newVdom, parentEl, index, hostComponent)
 
     return newVdom
   }
@@ -51,12 +53,12 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom)
+      patchElement(oldVdom, newVdom, hostComponent)
       break
     }
   }
 
-  patchChildren(oldVdom, newVdom)
+  patchChildren(oldVdom, newVdom, hostComponent)
 
   return newVdom
 }
@@ -88,8 +90,9 @@ function patchText(oldVdom, newVdom) {
  *
  * @param {import('./h').ElementVNode} oldVdom the old virtual node
  * @param {import('./h').ElementVNode} newVdom the new virtual node
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function patchElement(oldVdom, newVdom) {
+function patchElement(oldVdom, newVdom, hostComponent) {
   const el = oldVdom.el
   const {
     class: oldClass,
@@ -108,7 +111,13 @@ function patchElement(oldVdom, newVdom) {
   patchAttrs(el, oldAttrs, newAttrs)
   patchClasses(el, oldClass, newClass)
   patchStyles(el, oldStyle, newStyle)
-  newVdom.listeners = patchEvents(el, oldListeners, oldEvents, newEvents)
+  newVdom.listeners = patchEvents(
+    el,
+    oldListeners,
+    oldEvents,
+    newEvents,
+    hostComponent
+  )
 }
 
 /**
@@ -204,13 +213,16 @@ function patchStyles(el, oldStyle = {}, newStyle = {}) {
  * @param {Object.<string, Function>} oldListeners the listeners added to the DOM
  * @param {Object.<string, Function>} oldEvents the events of the old virtual node
  * @param {Object.<string, Function>} newEvents the events of the new virtual node
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
  * @returns {Object.<string, Function>} the listeners that were added
  */
 function patchEvents(
   el,
   oldListeners = {},
   oldEvents = {},
-  newEvents = {}
+  newEvents = {},
+  hostComponent
 ) {
   const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
 
@@ -221,7 +233,12 @@ function patchEvents(
   const addedListeners = {}
 
   for (const eventName of added.concat(updated)) {
-    const listener = addEventListener(eventName, newEvents[eventName], el)
+    const listener = addEventListener(
+      eventName,
+      newEvents[eventName],
+      el,
+      hostComponent
+    )
     addedListeners[eventName] = listener
   }
 
@@ -243,8 +260,9 @@ function patchEvents(
  *
  * @param {import('./h').VNode} oldVdom The old virtual node
  * @param {import('./h').VNode} newVdom the new virtual node
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function patchChildren(oldVdom, newVdom) {
+function patchChildren(oldVdom, newVdom, hostComponent) {
   const oldChildren = oldVdom.children ?? []
   const newChildren = newVdom.children ?? []
   const parentEl = oldVdom.el
@@ -260,7 +278,7 @@ function patchChildren(oldVdom, newVdom) {
 
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
-        mountDOM(item, parentEl, index)
+        mountDOM(item, parentEl, index, hostComponent)
         break
       }
 
@@ -274,13 +292,23 @@ function patchChildren(oldVdom, newVdom) {
         const elAtTargetIndex = parentEl.childNodes[index]
 
         parentEl.insertBefore(el, elAtTargetIndex)
-        patchDOM(oldChildren[from], newChildren[index], parentEl)
+        patchDOM(
+          oldChildren[from],
+          newChildren[index],
+          parentEl,
+          hostComponent
+        )
 
         break
       }
 
       case ARRAY_DIFF_OP.NOOP: {
-        patchDOM(oldChildren[from], newChildren[index], parentEl)
+        patchDOM(
+          oldChildren[from],
+          newChildren[index],
+          parentEl,
+          hostComponent
+        )
         break
       }
     }

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { patchDOM } from '../patch-dom'
@@ -564,7 +564,87 @@ describe('patch children', () => {
   })
 })
 
-function patch(oldVdom, newVdom) {
+describe('patch vdom with component host', () => {
+  const component = { count: 5 }
+  const props = {
+    on: {
+      // Use method syntax to bind the component to the event handler.
+      // Arrow function's `this` can't be bound.
+      click() {
+        this.count++
+      },
+    },
+  }
+
+  afterEach(() => {
+    component.count = 5
+  })
+
+  test('when the root node changes, bounds the component to the event handlers', () => {
+    const oldVdom = h('button', ['Click'])
+    const newVdom = h('div', props, ['Click'])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('div').click()
+
+    expect(document.body.innerHTML).toBe('<div>Click</div>')
+    expect(component.count).toBe(6)
+  })
+
+  test('when a child node is added, bounds its event handlers to the component', () => {
+    const oldVdom = h('div', {}, ['hi'])
+    const newVdom = h('div', {}, ['hi', h('button', props, ['Click'])])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe(
+      '<div>hi<button>Click</button></div>'
+    )
+    expect(component.count).toBe(6)
+  })
+
+  test('when an event is patched, binds the event handler to the component', () => {
+    const oldVdom = h('button', {}, ['Click'])
+    const newVdom = h('button', props, ['Click'])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe('<button>Click</button>')
+    expect(component.count).toBe(6)
+  })
+
+  test('when a child node is moved, binds its event handlers to the component', () => {
+    const oldVdom = hFragment([
+      h('span', {}, ['A']),
+      h('button', {}, ['B']),
+    ])
+    const newVdom = hFragment([
+      h('button', props, ['B']),
+      h('span', {}, ['A']),
+    ])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe('<button>B</button><span>A</span>')
+    expect(component.count).toBe(6)
+  })
+
+  test('when a child node is moved naturally (noop), binds its event handlers to the component', () => {
+    const oldVdom = hFragment([h('button', {}, ['A'])])
+    const newVdom = hFragment([h('button', props, ['A'])])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe('<button>A</button>')
+    expect(component.count).toBe(6)
+  })
+})
+
+function patch(oldVdom, newVdom, hostComponent = null) {
   mountDOM(oldVdom, document.body)
-  return patchDOM(oldVdom, newVdom, document.body)
+  return patchDOM(oldVdom, newVdom, document.body, hostComponent)
 }
