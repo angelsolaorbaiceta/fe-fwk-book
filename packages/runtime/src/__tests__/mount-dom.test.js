@@ -1,4 +1,5 @@
 import { beforeEach, expect, test, vi } from 'vitest'
+import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 
@@ -168,4 +169,41 @@ test('where there is a host component, the event handlers are bound to it', asyn
 
   document.querySelector('#btn-2').click()
   expect(comp.count).toBe(7)
+})
+
+test('mount a component with props', () => {
+  const Component = defineComponent({
+    render() {
+      return h('p', { class: 'important' }, [this.props.message])
+    },
+  })
+  const vdom = h(Component, { message: 'hello' })
+  mountDOM(vdom, document.body)
+
+  expect(document.body.innerHTML).toBe('<p class="important">hello</p>')
+  expect(vdom.component).toBeInstanceOf(Component)
+})
+
+test('mount a component with children', () => {
+  const ChildComp = defineComponent({
+    render() {
+      return h('p', {}, [this.props.message])
+    },
+  })
+  const ParentComp = defineComponent({
+    render() {
+      return h(
+        'div',
+        {},
+        this.props.messages.map((msg) => h(ChildComp, { message: msg }))
+      )
+    },
+  })
+  const vdom = h(ParentComp, { messages: ['hello', 'world'] })
+  mountDOM(vdom, document.body)
+
+  expect(document.body.innerHTML).toBe(
+    '<div><p>hello</p><p>world</p></div>'
+  )
+  expect(vdom.component).toBeInstanceOf(ParentComp)
 })
