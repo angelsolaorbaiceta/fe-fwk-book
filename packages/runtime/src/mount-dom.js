@@ -143,7 +143,7 @@ function createFragmentNode(vdom, parentEl, index, hostComponent) {
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createComponentNode(vdom, parentEl, index, hostComponent) {
+function createComponentNode(vdom, parentEl, index) {
   const { tag: Component, props } = vdom
   const component = new Component(props)
 
