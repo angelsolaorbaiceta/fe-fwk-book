@@ -125,3 +125,48 @@ test('mounts an element with styles', () => {
   expect(document.body.innerHTML).toBe('<div style="color: red;"></div>')
   expect(el.style.color).toBe('red')
 })
+
+test.only('where there is a host component, the event handlers are bound to it', async () => {
+  const comp = { count: 5 }
+  const vdom = hFragment([
+    h(
+      'button',
+      {
+        on: {
+          // Can't use arrow functions, because their `this` is bound to the
+          // lexical scope, and that can't be changed.
+          click() {
+            this.count++
+          },
+        },
+        id: 'btn-1',
+      },
+      ['One']
+    ),
+    h('div', {}, [
+      h(
+        'button',
+        {
+          on: {
+            // Can't use arrow functions, because their `this` is bound to the
+            // lexical scope, and that can't be changed.
+            click() {
+              this.count++
+            },
+          },
+          id: 'btn-2',
+        },
+        ['Two']
+      ),
+    ]),
+  ])
+
+  mountDOM(vdom, document.body, null, comp)
+  console.log(document.body.innerHTML)
+
+  document.querySelector('#btn-1').click()
+  expect(comp.count).toBe(6)
+
+  document.querySelector('#btn-2').click()
+  expect(comp.count).toBe(7)
+})

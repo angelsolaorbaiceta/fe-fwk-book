@@ -9,6 +9,9 @@ import { DOM_TYPES } from './h'
  * If an index is given, the created DOM node is inserted at that index in the parent element.
  * Otherwise, it is appended to the parent element.
  *
+ * If a host component is given, the event listeners attached to the DOM nodes are bound to
+ * the host component.
+ *
  * @param {import('./h').VNode} vdom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
@@ -29,7 +32,7 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNode(vdom, parentEl, index)
+      createFragmentNode(vdom, parentEl, index, hostComponent)
       break
     }
 
@@ -81,7 +84,7 @@ function createElementNode(vdom, parentEl, index, hostComponent) {
   addProps(element, props, vdom, hostComponent)
   vdom.el = element
 
-  children.forEach((child) => mountDOM(child, element))
+  children.forEach((child) => mountDOM(child, element, null, hostComponent))
   insert(element, parentEl, index)
 }
 
@@ -113,14 +116,17 @@ function addProps(el, props, vdom, hostComponent) {
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createFragmentNode(vdom, parentEl, index) {
+function createFragmentNode(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
 
   const fragment = document.createDocumentFragment()
   vdom.el = parentEl
 
-  children.forEach((child) => mountDOM(child, fragment))
+  children.forEach((child) =>
+    mountDOM(child, fragment, null, hostComponent)
+  )
   insert(fragment, parentEl, index)
 }
 
