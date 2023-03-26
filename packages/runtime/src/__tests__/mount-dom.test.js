@@ -126,7 +126,7 @@ test('mounts an element with styles', () => {
   expect(el.style.color).toBe('red')
 })
 
-test.only('where there is a host component, the event handlers are bound to it', async () => {
+test('where there is a host component, the event handlers are bound to it', async () => {
   const comp = { count: 5 }
   const vdom = hFragment([
     h(
@@ -162,7 +162,6 @@ test.only('where there is a host component, the event handlers are bound to it',
   ])
 
   mountDOM(vdom, document.body, null, comp)
-  console.log(document.body.innerHTML)
 
   document.querySelector('#btn-1').click()
   expect(comp.count).toBe(6)
