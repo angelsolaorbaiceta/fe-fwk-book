@@ -79,7 +79,7 @@ describe('Component props', () => {
 
   test("can't patch the DOM if the component isn't mounted", () => {
     const comp = new PropsComp({ pClass: 'definition' })
-    expect(() => comp.patch()).toThrow(/not mounted/)
+    expect(() => comp.updateProps()).toThrow(/not mounted/)
   })
 
   test('can be updated and the DOM patched', () => {

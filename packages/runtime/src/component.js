@@ -39,12 +39,12 @@ export function defineComponent({ render, state, ...methods }) {
 
     updateProps(props) {
       this.props = { ...this.props, ...props }
-      this.patch()
+      this.#patch()
     }
 
     updateState(state) {
       this.state = { ...this.state, ...state }
-      this.patch()
+      this.#patch()
     }
 
     render() {
@@ -74,7 +74,7 @@ export function defineComponent({ render, state, ...methods }) {
       this.#isMounted = false
     }
 
-    patch() {
+    #patch() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
       }
