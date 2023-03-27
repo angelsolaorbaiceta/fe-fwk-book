@@ -117,7 +117,7 @@ function createFragmentNode(vdom, parentEl, index) {
   const fragment = document.createDocumentFragment()
   vdom.el = parentEl
 
-  children.forEach((child) => mountDOM(child, fragment))
+  children.forEach((child) => mountDOM(child, parentEl))
   insert(fragment, parentEl, index)
 }
 
