@@ -1,4 +1,4 @@
-function createElementNode(vdom, parentEl, index) {
+function createElementNode(vdom, parentEl, /*--add--*/index/*--add--*/) {
   const { tag, props, children } = vdom
 
   const element = document.createElement(tag)

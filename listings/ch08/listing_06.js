@@ -5,7 +5,7 @@ export function areNodesEqual(nodeOne, nodeTwo) {
     return false
   }
 
-  if (DOM_TYPES.ELEMENT) {
+  if (nodeOne.type === DOM_TYPES.ELEMENT) {
     const { tag: tagOne } = nodeOne
     const { tag: tagTwo } = nodeTwo
 
