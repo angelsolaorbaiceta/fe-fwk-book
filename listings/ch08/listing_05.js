@@ -1,4 +1,4 @@
-function createFragmentNode(vdom, parentEl, index) {
+function createFragmentNode(vdom, parentEl, /*--add--*/index/*--add--*/) {
   const { children } = vdom
 
   const fragment = document.createDocumentFragment()
