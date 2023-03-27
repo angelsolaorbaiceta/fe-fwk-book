@@ -22,9 +22,9 @@ function patchChildren(oldVdom, newVdom) {
 
         parentEl.insertBefore(el, elAtTargetIndex)
         patchDOM(oldChildren[from], newChildren[index], parentEl)
-        // --add--
-
+        
         break
+        // --add--
       }
 
       case ARRAY_DIFF_OP.NOOP: {
