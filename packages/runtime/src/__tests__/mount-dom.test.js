@@ -72,7 +72,19 @@ test('mount a fragment inside a fragment inside a host element', () => {
   expect(document.body.innerHTML).toBe('<p>foo</p><p>bar</p><p>baz</p>')
 })
 
-test('mount fragment with children and attributes', () => {
+test('all nested fragments el references point to the parent element (where they are mounted)', () => {
+  const vdomOne = hFragment([hString('hello, '), hString('world')])
+  const vdomTwo = hFragment([vdomOne])
+  const vdomThree = hFragment([vdomTwo])
+
+  mountDOM(vdomThree, document.body)
+
+  expect(vdomThree.el).toBe(document.body)
+  expect(vdomTwo.el).toBe(document.body)
+  expect(vdomOne.el).toBe(document.body)
+})
+
+test('mount fragment with children that have attributes', () => {
   const vdom = hFragment([
     h('span', { id: 'foo' }, [hString('hello, ')]),
     h('span', { id: 'bar' }, [hString('world')]),
