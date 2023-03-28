@@ -74,7 +74,7 @@ export function h(tag, props = {}, children = []) {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Text}
  *
  * @param {string} str the text to add to the text node
- * @returns {object} the virtual node
+ * @returns {TextVNode} the virtual node
  */
 export function hString(str) {
   return { type: DOM_TYPES.TEXT, value: str }
@@ -86,31 +86,23 @@ export function hString(str) {
  * @property {string} type - The type of the virtual node = 'fragment'.
  * @property {VNode[]} children - The children of the fragment.
  * @property {DocumentFragment} [el] - The mounted element, typically the parent of the fragment.
+ * @property {FragmentVNode} [parentFragment] - The parent fragment, if any.
  */
 
 /**
- * Wraps the virtual nodes in a fragment, adding the passed in props to the
- * individual nodes.
+ * Wraps the virtual nodes in a fragment.
+ *
  * If a child is a string, it is converted to a text node using `hString()`.
  *
  * @param {array} vNodes the virtual nodes to wrap in a fragment
- * @param {object} props the props to add to the fragment's children
- * @returns {object} the virtual node
+ * @returns {FragmentVNode} the virtual node
  */
-export function hFragment(vNodes, props = {}) {
+export function hFragment(vNodes) {
   assert(Array.isArray(vNodes), 'hFragment expects an array of vNodes')
-
-  const children = mapTextNodes(withoutNulls(vNodes))
-
-  for (const child of children) {
-    if (child.type !== DOM_TYPES.TEXT) {
-      child.props = { ...child.props, ...props }
-    }
-  }
 
   return {
     type: DOM_TYPES.FRAGMENT,
-    children,
+    children: mapTextNodes(withoutNulls(vNodes)),
   }
 }
 
@@ -118,4 +110,30 @@ function mapTextNodes(children) {
   return children.map((child) =>
     typeof child === 'string' ? hString(child) : child
   )
+}
+
+/**
+ * Extracts the children of a virtual node. If one of the children is a
+ * fragment, its children are extracted and added to the list of children.
+ * In other words, the fragments are replaced by their children.
+ *
+ * @param {FragmentVNode} vdom
+ * @returns {VNode[]} the children of the virtual node
+ */
+export function extractChildren(vdom) {
+  if (vdom.children == null) {
+    return []
+  }
+
+  const children = []
+
+  for (const child of vdom.children) {
+    if (child.type === DOM_TYPES.FRAGMENT) {
+      children.push(...extractChildren(child, children))
+    } else {
+      children.push(child)
+    }
+  }
+
+  return children
 }
