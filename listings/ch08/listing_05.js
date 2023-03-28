@@ -1,14 +1,16 @@
-function createFragmentNode(vdom, parentEl, /*--add--*/index/*--add--*/) {
-  const { children } = vdom
+import { DOM_TYPES } from './h'
 
-  const fragment = document.createDocumentFragment()
-  vdom.el = parentEl
+export function areNodesEqual(nodeOne, nodeTwo) {
+  if (nodeOne.type !== nodeTwo.type) { // --1--
+    return false
+  }
 
-  children.forEach((child) => mountDOM(child, fragment))
-  // --remove--
-  parentEl.append(fragment)
-  // --remove--
-  // --add--
-  insert(fragment, parentEl, index)
-  // --add--
+  if (nodeOne.type === DOM_TYPES.ELEMENT) {
+    const { tag: tagOne } = nodeOne
+    const { tag: tagTwo } = nodeTwo
+
+    return tagOne === tagTwo // --2--
+  }
+
+  return true
 }
