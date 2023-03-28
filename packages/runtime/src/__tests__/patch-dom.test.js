@@ -58,6 +58,20 @@ test('patch text', () => {
   expect(document.body.innerHTML).toEqual('bar')
 })
 
+describe('patch fragments', () => {
+  test('nested fragments, add child', () => {
+    const oldVdom = hFragment([hFragment([hString('foo')])])
+    const newVdom = hFragment([
+      hFragment([hString('foo'), hString('bar')]),
+      h('p', {}, ['baz']),
+    ])
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toEqual('foobar<p>baz</p>')
+  })
+})
+
 describe('patch attributes', () => {
   test('add attribute', () => {
     const oldVdom = h('div', {})

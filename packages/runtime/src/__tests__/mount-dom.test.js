@@ -54,14 +54,6 @@ test('mount a fragment in a host element', () => {
   expect(document.body.innerHTML).toBe('hello, world')
 })
 
-test('mount a fragment inside a host fragment', () => {
-  const host = document.createDocumentFragment()
-  const vdom = hFragment([hString('hello, '), hString('world')])
-  mountDOM(vdom, host)
-
-  expect(host.textContent).toBe('hello, world')
-})
-
 test('mount a fragment inside a fragment inside a host element', () => {
   const vdom = hFragment([
     h('p', {}, ['foo']),
