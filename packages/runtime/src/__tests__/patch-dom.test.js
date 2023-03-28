@@ -70,6 +70,22 @@ describe('patch fragments', () => {
 
     expect(document.body.innerHTML).toEqual('foobar<p>baz</p>')
   })
+
+  test('nested fragments, add child at index', () => {
+    const oldVdom = hFragment([
+      hString('A'),
+      hFragment([hString('B'), hString('C')]),
+    ])
+    const newVdom = hFragment([
+      hFragment([hString('X')]),
+      hString('A'),
+      hFragment([hString('B'), hFragment([hString('Y')]), hString('C')]),
+    ])
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toEqual('XABYC')
+  })
 })
 
 describe('patch attributes', () => {
