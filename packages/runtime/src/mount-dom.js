@@ -10,8 +10,6 @@ import { DOM_TYPES } from './h'
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  */
 export function mountDOM(vdom, parentEl) {
-  ensureIsValidParent(parentEl)
-
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl)
@@ -24,7 +22,7 @@ export function mountDOM(vdom, parentEl) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNode(vdom, parentEl)
+      createFragmentNodes(vdom, parentEl)
       break
     }
 
@@ -97,28 +95,9 @@ function addProps(el, props, vdom) {
  * @param {object} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  */
-function createFragmentNode(vdom, parentEl) {
+function createFragmentNodes(vdom, parentEl) {
   const { children } = vdom
-
-  const fragment = document.createDocumentFragment()
   vdom.el = parentEl
 
-  children.forEach((child) => mountDOM(child, fragment))
-  parentEl.append(fragment)
-}
-
-function ensureIsValidParent(
-  parentEl,
-  errMsg = 'A parent element must be provided'
-) {
-  if (!parent) {
-    throw new Error(errMsg)
-  }
-
-  const isElement = parentEl instanceof Element
-  const isFragment = parentEl instanceof DocumentFragment
-
-  if (!(isElement || isFragment)) {
-    throw new Error(errMsg)
-  }
+  children.forEach((child) => mountDOM(child, parentEl))
 }

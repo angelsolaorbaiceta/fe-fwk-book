@@ -47,7 +47,7 @@ test('remove an html element event listeners', () => {
   expect(handler).toHaveBeenCalledTimes(1)
 })
 
-test('destroy an html and its children recursively', () => {
+test('destroy an html element and its children recursively', () => {
   const vdom = h('div', {}, [
     h('p', {}, [hString('hello')]),
     h('span', {}, [hString('world')]),

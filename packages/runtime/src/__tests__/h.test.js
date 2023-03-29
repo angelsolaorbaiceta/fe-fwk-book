@@ -52,8 +52,7 @@ test('h() maps strings to text vNodes', () => {
 
 test('create a fragment vNode', () => {
   const children = [h('div', { class: 'foo' }, [])]
-  const props = { id: 'test' }
-  const vNode = hFragment(children, props)
+  const vNode = hFragment(children)
 
   expect(vNode).toEqual({
     type: DOM_TYPES.FRAGMENT,
@@ -61,7 +60,7 @@ test('create a fragment vNode', () => {
       {
         type: DOM_TYPES.ELEMENT,
         tag: 'div',
-        props: { class: 'foo', ...props },
+        props: { class: 'foo' },
         children: [],
       },
     ],
@@ -70,8 +69,7 @@ test('create a fragment vNode', () => {
 
 test('hFragment() filters null children', () => {
   const children = [h('div', { class: 'foo' }, []), null]
-  const props = { id: 'test' }
-  const vNode = hFragment(children, props)
+  const vNode = hFragment(children)
 
   expect(vNode).toEqual({
     type: DOM_TYPES.FRAGMENT,
@@ -79,27 +77,15 @@ test('hFragment() filters null children', () => {
       {
         type: DOM_TYPES.ELEMENT,
         tag: 'div',
-        props: { class: 'foo', ...props },
+        props: { class: 'foo' },
         children: [],
       },
     ],
   })
 })
 
-test('hFraagment() maps strings to text vNodes', () => {
+test('hFragment() maps strings to text vNodes', () => {
   const vNode = hFragment(['test'])
-  expect(vNode).toEqual({
-    type: DOM_TYPES.FRAGMENT,
-    children: [{ type: DOM_TYPES.TEXT, value: 'test' }],
-  })
-})
-
-test('fragment props are not added to text nodes', () => {
-  const children = [hString('test')]
-  const props = { id: 'test' }
-
-  const vNode = hFragment(children, props)
-
   expect(vNode).toEqual({
     type: DOM_TYPES.FRAGMENT,
     children: [{ type: DOM_TYPES.TEXT, value: 'test' }],

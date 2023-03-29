@@ -47,28 +47,19 @@ export function hString(str) {
 }
 
 /**
- * Wraps the virtual nodes in a fragment, adding the passed in props to the
- * individual nodes.
+ * Wraps the virtual nodes in a fragment.
+
  * If a child is a string, it is converted to a text node using `hString()`.
  *
  * @param {array} vNodes the virtual nodes to wrap in a fragment
- * @param {object} props the props to add to the fragment's children
  * @returns {object} the virtual node
  */
-export function hFragment(vNodes, props = {}) {
+export function hFragment(vNodes) {
   assert(Array.isArray(vNodes), 'hFragment expects an array of vNodes')
-
-  const children = mapTextNodes(withoutNulls(vNodes))
-
-  for (const child of children) {
-    if (child.type !== DOM_TYPES.TEXT) {
-      child.props = { ...child.props, ...props }
-    }
-  }
 
   return {
     type: DOM_TYPES.FRAGMENT,
-    children,
+    children: mapTextNodes(withoutNulls(vNodes)),
   }
 }
 

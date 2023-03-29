@@ -27,7 +27,7 @@ export function destroyDOM(vdom) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      removeFragmentNode(vdom)
+      removeFragmentNodes(vdom)
       break
     }
 
@@ -61,7 +61,7 @@ function removeElementNode(vdom) {
   }
 }
 
-function removeFragmentNode(vdom) {
+function removeFragmentNodes(vdom) {
   const { el, children } = vdom
 
   assert(el instanceof HTMLElement)
