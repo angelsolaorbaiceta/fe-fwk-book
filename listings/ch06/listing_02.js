@@ -1,8 +1,4 @@
-import {
-  createApp,
-  h,
-  hFragment,
-} from '../../packages/runtime/dist/_<fwk-name>_'
+import { createApp, h, hFragment } from 'https://unpkg.com/_<fwk-name>_@1'
 
 const state = {
   currentTodo: '',
