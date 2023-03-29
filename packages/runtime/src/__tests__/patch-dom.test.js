@@ -58,6 +58,68 @@ test('patch text', () => {
   expect(document.body.innerHTML).toEqual('bar')
 })
 
+describe('patch fragments', () => {
+  test('nested fragments, add child', () => {
+    const oldVdom = hFragment([hFragment([hString('foo')])])
+    const newVdom = hFragment([
+      hFragment([hString('foo'), hString('bar')]),
+      h('p', {}, ['baz']),
+    ])
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toEqual('foobar<p>baz</p>')
+  })
+
+  test('nested fragments, add child at index', () => {
+    const oldVdom = hFragment([
+      hString('A'),
+      hFragment([hString('B'), hString('C')]),
+    ])
+    const newVdom = hFragment([
+      hFragment([hString('X')]),
+      hString('A'),
+      hFragment([hString('B'), hFragment([hString('Y')]), hString('C')]),
+    ])
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toEqual('XABYC')
+  })
+
+  test('nested fragments, remove child', () => {
+    const oldVdom = hFragment([
+      hFragment([hString('X')]),
+      hString('A'),
+      hFragment([hString('B'), hFragment([hString('Y')]), hString('C')]),
+    ])
+    const newVdom = hFragment([
+      hString('A'),
+      hFragment([hString('B'), hString('C')]),
+    ])
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toEqual('ABC')
+  })
+
+  test('nested fragments, move child', () => {
+    const oldVdom = hFragment([
+      hString('A'),
+      hFragment([hString('B'), hString('C')]),
+    ])
+    const newVdom = hFragment([
+      hFragment([hString('B')]),
+      hString('A'),
+      hFragment([hString('C')]),
+    ])
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toEqual('BAC')
+  })
+})
+
 describe('patch attributes', () => {
   test('add attribute', () => {
     const oldVdom = h('div', {})

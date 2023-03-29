@@ -6,7 +6,7 @@ import {
 } from './attributes'
 import { destroyDOM } from './destroy-dom'
 import { addEventListener } from './events'
-import { DOM_TYPES } from './h'
+import { DOM_TYPES, extractChildren } from './h'
 import { mountDOM } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
 import {
@@ -245,8 +245,8 @@ function patchEvents(
  * @param {import('./h').VNode} newVdom the new virtual node
  */
 function patchChildren(oldVdom, newVdom) {
-  const oldChildren = oldVdom.children ?? []
-  const newChildren = newVdom.children ?? []
+  const oldChildren = extractChildren(oldVdom)
+  const newChildren = extractChildren(newVdom)
   const parentEl = oldVdom.el
 
   const diffSeq = arraysDiffSequence(

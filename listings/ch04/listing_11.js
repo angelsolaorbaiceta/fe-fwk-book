@@ -16,7 +16,7 @@ export function destroyDOM(vdom) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      removeFragmentNode(vdom)
+      removeFragmentNodes(vdom)
       break
     }
 
@@ -32,4 +32,4 @@ export function destroyDOM(vdom) {
 
 // TODO: implement removeElementNode()
 
-// TODO: implement removeFragmentNode()
+// TODO: implement removeFragmentNodes()
