@@ -47,7 +47,7 @@ test('remove an html element event listeners', () => {
   expect(handler).toHaveBeenCalledTimes(1)
 })
 
-test('destroy an html and its children recursively', () => {
+test('destroy an html element and its children recursively', () => {
   const vdom = h('div', {}, [
     h('p', {}, [hString('hello')]),
     h('span', {}, [hString('world')]),
@@ -72,6 +72,22 @@ test('destroy a fragment', () => {
 
   mountDOM(vdom, document.body)
   expect(document.body.innerHTML).toBe('<div>hello</div><span>world</span>')
+
+  destroyDOM(vdom)
+  expect(document.body.innerHTML).toBe('')
+  expect(allElementsHaveBeenDestroyed(vdom)).toBe(true)
+})
+
+test('destroy a fragment recursively', () => {
+  const vdom = hFragment([
+    h('span', {}, ['hello']),
+    hFragment([h('span', {}, [hString('world')])]),
+  ])
+
+  mountDOM(vdom, document.body)
+  expect(document.body.innerHTML).toBe(
+    '<span>hello</span><span>world</span>'
+  )
 
   destroyDOM(vdom)
   expect(document.body.innerHTML).toBe('')

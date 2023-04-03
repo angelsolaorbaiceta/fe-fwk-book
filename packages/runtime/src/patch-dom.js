@@ -6,7 +6,7 @@ import {
 } from './attributes'
 import { destroyDOM } from './destroy-dom'
 import { addEventListener } from './events'
-import { DOM_TYPES } from './h'
+import { DOM_TYPES, extractChildren } from './h'
 import { mountDOM } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
 import {
@@ -285,8 +285,8 @@ function patchComponent(oldVdom, newVdom) {
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
 function patchChildren(oldVdom, newVdom, hostComponent) {
-  const oldChildren = oldVdom.children ?? []
-  const newChildren = newVdom.children ?? []
+  const oldChildren = extractChildren(oldVdom)
+  const newChildren = extractChildren(newVdom)
   const parentEl = oldVdom.el
 
   const diffSeq = arraysDiffSequence(

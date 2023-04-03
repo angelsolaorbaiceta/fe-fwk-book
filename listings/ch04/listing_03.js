@@ -1,9 +1,6 @@
-function createFragmentNode(vdom, parentEl) {
+function createFragmentNodes(vdom, parentEl) {
   const { children } = vdom
+  vdom.el = parentEl //--1--
 
-  const fragment = document.createDocumentFragment() //--1--
-  vdom.el = parentEl //--2--
-
-  children.forEach((child) => mountDOM(child, fragment)) //--3--
-  parentEl.append(fragment) //--4--
+  children.forEach((child) => mountDOM(child, parentEl)) //--2--
 }

@@ -18,8 +18,6 @@ import { DOM_TYPES } from './h'
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
 export function mountDOM(vdom, parentEl, index, hostComponent = null) {
-  ensureIsValidParent(parentEl)
-
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl, index)
@@ -32,12 +30,12 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNode(vdom, parentEl, index, hostComponent)
+      createFragmentNodes(vdom, parentEl, hostComponent)
       break
     }
 
     case DOM_TYPES.COMPONENT: {
-      createComponentNode(vdom, parentEl, index, hostComponent)
+      createComponentNode(vdom, parentEl, hostComponent)
       break
     }
 
@@ -109,30 +107,20 @@ function addProps(el, props, vdom, hostComponent) {
 }
 
 /**
- * Creates the fragment for a virtual DOM fragment node and its children recursively.
- * The vdom's `el` property is set to be the `parentEl` passed to the function.
- * This is because a fragment loses its children when it is appended to the DOM, so
- * we can't use it to reference the fragment's children.
- *
- * Note that `DocumentFragment` is a subclass of `Node`, but not of `Element`.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment}
+ * Creates the nodes for the children of a virtual DOM fragment node and appends them to the
+ * parent element.
  *
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
- * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createFragmentNode(vdom, parentEl, index, hostComponent) {
+function createFragmentNodes(vdom, parentEl, hostComponent) {
   const { children } = vdom
-
-  const fragment = document.createDocumentFragment()
   vdom.el = parentEl
 
   children.forEach((child) =>
-    mountDOM(child, fragment, null, hostComponent)
+    mountDOM(child, parentEl, null, hostComponent)
   )
-  insert(fragment, parentEl, index)
 }
 
 /**
@@ -149,22 +137,6 @@ function createComponentNode(vdom, parentEl, index) {
 
   component.mount(parentEl, index)
   vdom.component = component
-}
-
-function ensureIsValidParent(
-  parentEl,
-  errMsg = 'A parent element must be provided'
-) {
-  if (!parent) {
-    throw new Error(errMsg)
-  }
-
-  const isElement = parentEl instanceof Element
-  const isFragment = parentEl instanceof DocumentFragment
-
-  if (!(isElement || isFragment)) {
-    throw new Error(errMsg)
-  }
 }
 
 /**

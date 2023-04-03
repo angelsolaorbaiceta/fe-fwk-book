@@ -1,6 +1,27 @@
+import {
+  removeAttribute,
+  setAttribute,
+  removeStyle,
+  setStyle,
+} from './attributes'
+import { destroyDOM } from './destroy-dom'
+import { addEventListener } from './events'
+import { DOM_TYPES } from './h'
+import { mountDOM, /*--add--*/extractChildren/*--add--*/} from './mount-dom'
+import { areNodesEqual } from './nodes-equal'
+import {
+  arraysDiff,
+  arraysDiffSequence,
+  ARRAY_DIFF_OP,
+} from './utils/arrays'
+import { objectsDiff } from './utils/objects'
+import { isNotBlankOrEmptyString } from './utils/strings
+
+// --snip-- //
+
 function patchChildren(oldVdom, newVdom) {
-  const oldChildren = oldVdom.children ?? [] // --1--
-  const newChildren = newVdom.children ?? [] // --2--
+  const oldChildren = extractChildren(oldVdom)
+  const newChildren = extractChildren(newVdom)
   const parentEl = oldVdom.el
 
   const diffSeq = arraysDiffSequence( // --3--

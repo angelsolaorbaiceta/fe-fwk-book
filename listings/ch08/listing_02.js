@@ -11,7 +11,7 @@ export function mountDOM(vdom, parentEl, /*--add--*/index/*--add--*/) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNode(vdom, parentEl, /*--add--*/index/*--add--*/)
+      createFragmentNodes(vdom, parentEl)
       break
     }
 
