@@ -7,7 +7,7 @@ import {
 import { destroyDOM } from './destroy-dom'
 import { addEventListener } from './events'
 import { DOM_TYPES } from './h'
-import { mountDOM, /*--add--*/extractChildren/*--add--*/} from './mount-dom'
+import { mountDOM, /*--add--*/extractChildren/*--add--*/ } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
 import {
   arraysDiff,
@@ -19,9 +19,10 @@ import { isNotBlankOrEmptyString } from './utils/strings
 
 // --snip-- //
 
+// --add--
 function patchChildren(oldVdom, newVdom) {
-  const oldChildren = extractChildren(oldVdom)
-  const newChildren = extractChildren(newVdom)
+  const oldChildren = extractChildren(oldVdom) // --1--
+  const newChildren = extractChildren(newVdom) // --2--
   const parentEl = oldVdom.el
 
   const diffSeq = arraysDiffSequence( // --3--
@@ -52,3 +53,4 @@ function patchChildren(oldVdom, newVdom) {
     }
   }
 }
+// --add--
