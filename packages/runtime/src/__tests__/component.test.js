@@ -82,7 +82,7 @@ describe('Component props', () => {
     expect(() => comp.updateProps()).toThrow(/not mounted/)
   })
 
-  test('can be updated and the DOM patched', () => {
+  test('when the props are updated, the DOM is patched', () => {
     const comp = new PropsComp({ pClass: 'definition' })
     comp.mount(document.body)
 
@@ -227,15 +227,27 @@ test('A component can patch the DOM, adding event handlers bound to the componen
 })
 
 describe('Child components', () => {
-  const items = ['Walk the dog', 'Water the plants']
+  const items = [
+    'A point is that which has no part',
+    'A line is breadthless length',
+  ]
 
   test('can mount child components', () => {
     const comp = new List({ items })
     comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
-      '<ul><li>Walk the dog</li><li>Water the plants</li></ul>'
+      '<ul><li>A point is that which has no part</li><li>A line is breadthless length</li></ul>'
     )
+  })
+
+  test('can unmount child components', () => {
+    const comp = new List({ items })
+    comp.mount(document.body)
+
+    comp.unmount()
+
+    expect(document.body.innerHTML).toBe('')
   })
 })
 

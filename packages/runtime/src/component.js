@@ -17,7 +17,8 @@ import { hasOwnProperty } from './utils/objects'
  * @typedef DefineComponentArgs
  * @type {object}
  * @property {function} render - The component's render function returning the virtual DOM tree representing the component in its current state.
- * @property {function} state - The component's state function returning the component's initial state.
+ * @property {(props: Object?) => Object} state - The component's state function returning the component's initial state.
+ * @property {Object<string, Function>} methods - The component's methods.
  */
 
 /**
