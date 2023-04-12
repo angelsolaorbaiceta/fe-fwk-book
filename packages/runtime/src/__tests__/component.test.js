@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
+import { toSingleHtmlLine } from './utils'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -249,6 +250,39 @@ describe('Child components', () => {
 
     expect(document.body.innerHTML).toBe('')
   })
+
+  test('the state of children is preserved through a re-render', () => {
+    const comp = new List({ items })
+    comp.mount(document.body)
+
+    // Highlight the first item
+    document.querySelectorAll('li')[0].click()
+    expect(document.body.innerHTML).toBe(
+      toSingleHtmlLine(
+        `
+      <ul>
+        <li class="highlighted">A point is that which has no part</li>
+        <li>A line is breadthless length</li>
+      </ul>
+      `
+      )
+    )
+
+    // Force a re-render of the component by adding a new item
+    comp.updateProps({ items: [...items, 'The ends of a line are points'] })
+
+    expect(document.body.innerHTML).toBe(
+      toSingleHtmlLine(
+        `
+      <ul>
+        <li class="highlighted">A point is that which has no part</li>
+        <li>A line is breadthless length</li>
+        <li>The ends of a line are points</li>
+      </ul>
+      `
+      )
+    )
+  })
 })
 
 // References from Euclid's Elements, Book I
@@ -299,9 +333,17 @@ const ListItem = defineComponent({
     return { highlighted: false }
   },
   render() {
-    return h('li', { class: this.state.highlighted ? 'highlighted' : '' }, [
-      this.props.text,
-    ])
+    return h(
+      'li',
+      {
+        class: this.state.highlighted ? 'highlighted' : '',
+        on: {
+          click: () =>
+            this.updateState({ highlighted: !this.state.highlighted }),
+        },
+      },
+      [this.props.text]
+    )
   },
 })
 
