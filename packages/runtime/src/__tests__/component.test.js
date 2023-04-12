@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
-import { toSingleHtmlLine } from './utils'
+import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -258,29 +258,57 @@ describe('Child components', () => {
     // Highlight the first item
     document.querySelectorAll('li')[0].click()
     expect(document.body.innerHTML).toBe(
-      toSingleHtmlLine(
-        `
+      singleHtmlLine`
       <ul>
         <li class="highlighted">A point is that which has no part</li>
         <li>A line is breadthless length</li>
       </ul>
       `
-      )
     )
 
     // Force a re-render of the component by adding a new item
     comp.updateProps({ items: [...items, 'The ends of a line are points'] })
 
     expect(document.body.innerHTML).toBe(
-      toSingleHtmlLine(
-        `
+      singleHtmlLine`
       <ul>
         <li class="highlighted">A point is that which has no part</li>
         <li>A line is breadthless length</li>
         <li>The ends of a line are points</li>
       </ul>
       `
-      )
+    )
+  })
+
+  test('children can be added', () => {
+    const comp = new List({ items })
+    comp.mount(document.body)
+
+    comp.updateProps({ items: [...items, 'The ends of a line are points'] })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <ul>
+        <li>A point is that which has no part</li>
+        <li>A line is breadthless length</li>
+        <li>The ends of a line are points</li>
+      </ul>
+      `
+    )
+  })
+
+  test('children can be removed', () => {
+    const comp = new List({ items })
+    comp.mount(document.body)
+
+    comp.updateProps({ items: [items[0]] })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <ul>
+        <li>A point is that which has no part</li>
+      </ul>
+      `
     )
   })
 })
