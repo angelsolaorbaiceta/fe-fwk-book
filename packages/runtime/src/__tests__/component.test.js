@@ -7,7 +7,7 @@ beforeEach(() => {
   document.body.innerHTML = ''
 })
 
-describe('Mounting and unmounting a component', () => {
+describe('Mounting and unmounting', () => {
   test('can be mounted into the DOM', () => {
     new Comp().mount(document.body)
 
@@ -168,63 +168,65 @@ describe('Component methods', () => {
   })
 })
 
-test('A component can patch the DOM, adding event handlers bound to the component', () => {
-  // A plus/minus counter that hides the "-" button when the count is 0.
-  const Component = defineComponent({
-    state() {
-      return { count: 0 }
-    },
-    render() {
-      return hFragment([
-        this.state.count > 0
-          ? h(
-              'button',
-              {
-                id: 'minus-btn',
-                on: {
-                  // Using a method function to avoid having the event handler bound to the
-                  // component due to lexical scoping. Make sure the binding is correctly
-                  // done by the component, passing itself as a reference to the patchDOM() fn.
-                  click() {
-                    this.updateState({ count: this.state.count - 1 })
+describe('Patching the DOM', () => {
+  test('Can add event handlers bound to the component', () => {
+    // A plus/minus counter that hides the "-" button when the count is 0.
+    const Component = defineComponent({
+      state() {
+        return { count: 0 }
+      },
+      render() {
+        return hFragment([
+          this.state.count > 0
+            ? h(
+                'button',
+                {
+                  id: 'minus-btn',
+                  on: {
+                    // Using a method function to avoid having the event handler bound to the
+                    // component due to lexical scoping. Make sure the binding is correctly
+                    // done by the component, passing itself as a reference to the patchDOM() fn.
+                    click() {
+                      this.updateState({ count: this.state.count - 1 })
+                    },
                   },
                 },
+                ['-']
+              )
+            : null,
+          h('span', {}, [hString(this.state.count)]),
+          h(
+            'button',
+            {
+              id: 'plus-btn',
+              on: {
+                click: () =>
+                  this.updateState({ count: this.state.count + 1 }),
               },
-              ['-']
-            )
-          : null,
-        h('span', {}, [hString(this.state.count)]),
-        h(
-          'button',
-          {
-            id: 'plus-btn',
-            on: {
-              click: () =>
-                this.updateState({ count: this.state.count + 1 }),
             },
-          },
-          ['+']
-        ),
-      ])
-    },
+            ['+']
+          ),
+        ])
+      },
+    })
+
+    const comp = new Component()
+    comp.mount(document.body)
+
+    expect(document.body.innerHTML).toBe(
+      '<span>0</span><button id="plus-btn">+</button>'
+    )
+
+    document.querySelector('#plus-btn').click()
+    expect(document.body.innerHTML).toBe(
+      '<button id="minus-btn">-</button><span>1</span><button id="plus-btn">+</button>'
+    )
+
+    document.querySelector('#minus-btn').click()
+    expect(document.body.innerHTML).toBe(
+      '<span>0</span><button id="plus-btn">+</button>'
+    )
   })
-
-  const comp = new Component()
-  comp.mount(document.body)
-
-  expect(document.body.innerHTML).toBe(
-    '<span>0</span><button id="plus-btn">+</button>'
-  )
-
-  document.querySelector('#plus-btn').click()
-  expect(document.body.innerHTML).toBe(
-    '<button id="minus-btn">-</button><span>1</span><button id="plus-btn">+</button>'
-  )
-
-  document.querySelector('#minus-btn').click()
-  expect(document.body.innerHTML).toBe(
-    '<span>0</span><button id="plus-btn">+</button>'
-  )
 })
 
 describe('Child components', () => {
@@ -313,6 +315,15 @@ describe('Child components', () => {
   })
 })
 
+describe('Events', () => {
+  test('components can emit events', () => {
+    const comp = new ListItem({ text: 'A point is that which has no part' })
+    comp.mount(document.body)
+
+    document.querySelector('li').dispatchEvent(new Event('dblclick'))
+  })
+})
+
 // References from Euclid's Elements, Book I
 // http://aleph0.clarku.edu/~djoyce/elements/bookI/bookI.html#defs
 
@@ -368,6 +379,7 @@ const ListItem = defineComponent({
         on: {
           click: () =>
             this.updateState({ highlighted: !this.state.highlighted }),
+          dblclick: () => this.emit('remove-item', this.props.text),
         },
       },
       [this.props.text]

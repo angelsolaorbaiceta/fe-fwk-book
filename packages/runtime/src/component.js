@@ -75,6 +75,10 @@ export function defineComponent({ render, state, ...methods }) {
       this.#isMounted = false
     }
 
+    emit(eventName, payload) {
+      console.log('emit', eventName, payload)
+    }
+
     #patch() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
