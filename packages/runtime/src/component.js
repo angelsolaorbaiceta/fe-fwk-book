@@ -33,18 +33,29 @@ export function defineComponent({ render, state, ...methods }) {
     #vdom = null
     #hostEl = null
     #eventHandlers = null
+    #parentComponent = null
 
     /**
      * Creates an instance of the component.
      * Each instance has its own props, state and lifecycle independent of other instances.
      *
-     * @param {Object.<string, Any>} props
-     * @param {Object.<string, Function>} eventHandlers
+     * @param {Object.<string, Any>} props the component's props
+     * @param {Object.<string, Function>} eventHandlers the component's event handlers
+     * @param {Component} parentComponent the component that created this component
      */
-    constructor(props = {}, eventHandlers = {}) {
+    constructor(props = {}, eventHandlers = {}, parentComponent = null) {
       this.props = props
       this.state = state ? state(props) : {}
       this.#eventHandlers = eventHandlers
+      this.#parentComponent = parentComponent
+    }
+
+    get parentComponent() {
+      return this.#parentComponent
+    }
+
+    get vdom() {
+      return this.#vdom
     }
 
     /**
@@ -60,6 +71,11 @@ export function defineComponent({ render, state, ...methods }) {
       this.#patch()
     }
 
+    /**
+     * Updates all or part of the component's state and patches the DOM to reflect the changes.
+     *
+     * @param {Object.<string, Any>} state the new state to be merged with the existing state
+     */
     updateState(state) {
       this.state = { ...this.state, ...state }
       this.#patch()
@@ -102,9 +118,14 @@ export function defineComponent({ render, state, ...methods }) {
       const handler = this.#eventHandlers[eventName]
       if (!handler) {
         console.warn(`No event handler for "${eventName}"`)
+        return
       }
 
-      handler(payload)
+      if (this.#parentComponent) {
+        handler.call(this.#parentComponent, payload)
+      } else {
+        handler(payload)
+      }
     }
 
     #patch() {

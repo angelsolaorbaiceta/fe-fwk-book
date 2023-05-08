@@ -35,7 +35,7 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     case DOM_TYPES.COMPONENT: {
-      createComponentNode(vdom, parentEl, hostComponent)
+      createComponentNode(vdom, parentEl, index, hostComponent)
       break
     }
 
@@ -131,12 +131,19 @@ function createFragmentNodes(vdom, parentEl, hostComponent) {
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createComponentNode(vdom, parentEl, index) {
-  const { tag: Component, props } = vdom
-  const component = new Component(props)
+function createComponentNode(vdom, parentEl, index, hostComponent) {
+  const Component = vdom.tag
+  const { props, events } = extractComponentProps(vdom.props)
+  const component = new Component(props, events, hostComponent)
 
   component.mount(parentEl, index)
   vdom.component = component
+}
+
+function extractComponentProps(props) {
+  // TODO: ignore props.key, data- attributes and style and class
+  const { on: events = {}, ...rest } = props
+  return { props: rest, events }
 }
 
 /**

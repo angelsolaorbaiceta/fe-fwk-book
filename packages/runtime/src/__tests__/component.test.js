@@ -331,6 +331,33 @@ describe('Events', () => {
       'A point is that which has no part'
     )
   })
+
+  test('event handlers can be bound to the component', () => {
+    const comp = new DefinitionsComponent()
+    comp.mount(document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <ul>
+        <li>A point is that which has no part</li>
+        <li>A line is breadthless length</li>
+        <li>The ends of a line are points</li>
+      </ul>
+      `
+    )
+
+    // Remove the second item
+    document.querySelectorAll('li')[1].dispatchEvent(new Event('dblclick'))
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <ul>
+        <li>A point is that which has no part</li>
+        <li>The ends of a line are points</li>
+      </ul>
+      `
+    )
+  })
 })
 
 // References from Euclid's Elements, Book I
@@ -408,5 +435,28 @@ const List = defineComponent({
         })
       )
     )
+  },
+})
+
+const DefinitionsComponent = defineComponent({
+  state() {
+    return {
+      items: [
+        'A point is that which has no part',
+        'A line is breadthless length',
+        'The ends of a line are points',
+      ],
+    }
+  },
+  removeItem(item) {
+    const idx = this.state.items.indexOf(item)
+    const items = this.state.items.filter((_, i) => i !== idx)
+    this.updateState({ items })
+  },
+  render() {
+    return h(List, {
+      items: this.state.items,
+      on: { 'remove-item': this.removeItem },
+    })
   },
 })

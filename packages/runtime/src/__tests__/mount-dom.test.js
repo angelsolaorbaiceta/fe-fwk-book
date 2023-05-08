@@ -211,3 +211,64 @@ test('mount a component with children', () => {
   )
   expect(vdom.component).toBeInstanceOf(ParentComp)
 })
+
+test('mount a component with event handlers', () => {
+  const onClick = vi.fn()
+  const Component = defineComponent({
+    render() {
+      return h('button', { on: { click: () => this.emit('click') } }, [
+        'Click me',
+      ])
+    },
+  })
+  const vdom = h(Component, { on: { click: onClick } })
+  mountDOM(vdom, document.body)
+
+  document.querySelector('button').click()
+  console.log(vdom)
+
+  expect(onClick).toBeCalledTimes(1)
+})
+
+test('mount a component with a parent component', () => {
+  // Parent component just as a stub; won't get rendered.
+  const Parent = {}
+  const Component = defineComponent({
+    render() {
+      return h('p', {}, ['child'])
+    },
+  })
+  const vdom = h(Component)
+  mountDOM(vdom, document.body, null, Parent)
+
+  expect(document.body.innerHTML).toBe('<p>child</p>')
+  expect(vdom.component.parentComponent).toBe(Parent)
+})
+
+test('child components keep a reference to their parent component', () => {
+  const CompC = defineComponent({
+    render() {
+      return h('p', {}, ['c'])
+    },
+  })
+  const CompB = defineComponent({
+    render() {
+      return h(CompC)
+    },
+  })
+  const CompA = defineComponent({
+    render() {
+      return h(CompB)
+    },
+  })
+  const vdom = h(CompA)
+  mountDOM(vdom, document.body)
+
+  const compA = vdom.component
+  const compB = compA.vdom.component
+  const compC = compB.vdom.component
+
+  expect(compA.parentComponent).toBe(null)
+  expect(compB.parentComponent).toBe(compA)
+  expect(compC.parentComponent).toBe(compB)
+})
