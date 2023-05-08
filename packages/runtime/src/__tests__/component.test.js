@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { singleHtmlLine } from './utils'
@@ -317,10 +317,19 @@ describe('Child components', () => {
 
 describe('Events', () => {
   test('components can emit events', () => {
-    const comp = new ListItem({ text: 'A point is that which has no part' })
+    const handler = vi.fn()
+    const comp = new ListItem(
+      { text: 'A point is that which has no part' },
+      { 'remove-item': handler }
+    )
     comp.mount(document.body)
 
     document.querySelector('li').dispatchEvent(new Event('dblclick'))
+
+    expect(handler).toHaveBeenCalledTimes(1)
+    expect(handler).toHaveBeenCalledWith(
+      'A point is that which has no part'
+    )
   })
 })
 
@@ -392,7 +401,12 @@ const List = defineComponent({
     return h(
       'ul',
       {},
-      this.props.items.map((item) => h(ListItem, { text: item }))
+      this.props.items.map((item) =>
+        h(ListItem, {
+          text: item,
+          on: { 'remove-item': (item) => this.emit('remove-item', item) },
+        })
+      )
     )
   },
 })

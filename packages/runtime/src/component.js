@@ -32,12 +32,29 @@ export function defineComponent({ render, state, ...methods }) {
     #isMounted = false
     #vdom = null
     #hostEl = null
+    #eventHandlers = null
 
-    constructor(props = {}) {
+    /**
+     * Creates an instance of the component.
+     * Each instance has its own props, state and lifecycle independent of other instances.
+     *
+     * @param {Object.<string, Any>} props
+     * @param {Object.<string, Function>} eventHandlers
+     */
+    constructor(props = {}, eventHandlers = {}) {
       this.props = props
       this.state = state ? state(props) : {}
+      this.#eventHandlers = eventHandlers
     }
 
+    /**
+     * Updates all or part of the component's props and patches the DOM to reflect the changes.
+     * This method shouldn't be called from within the component's code, as a component
+     * shouldn't update its own props. Instead, the parent component should update the props
+     * of its child components.
+     *
+     * @param {Object.<string, Any>} props the new props to be merged with the existing props
+     */
     updateProps(props) {
       this.props = { ...this.props, ...props }
       this.#patch()
@@ -75,8 +92,19 @@ export function defineComponent({ render, state, ...methods }) {
       this.#isMounted = false
     }
 
+    /**
+     * Emits an event to the parent component.
+     *
+     * @param {string} eventName The name of the event to emit
+     * @param {Any} [payload] The payload to pass to the event handler
+     */
     emit(eventName, payload) {
-      console.log('emit', eventName, payload)
+      const handler = this.#eventHandlers[eventName]
+      if (!handler) {
+        console.warn(`No event handler for "${eventName}"`)
+      }
+
+      handler(payload)
     }
 
     #patch() {
