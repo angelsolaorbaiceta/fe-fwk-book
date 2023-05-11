@@ -332,6 +332,32 @@ describe('Events', () => {
     )
   })
 
+  test('before the component is mounted, its event handlers are not called', () => {
+    const handler = vi.fn()
+    const comp = new ListItem(
+      { text: 'A point is that which has no part' },
+      { 'remove-item': handler }
+    )
+
+    comp.emit('remove-item')
+
+    expect(handler).not.toHaveBeenCalled()
+  })
+
+  test('when the component is unmounted, its event handlers are removed', () => {
+    const handler = vi.fn()
+    const comp = new ListItem(
+      { text: 'A point is that which has no part' },
+      { 'remove-item': handler }
+    )
+    comp.mount(document.body)
+    comp.unmount()
+
+    comp.emit('remove-item')
+
+    expect(handler).not.toHaveBeenCalled()
+  })
+
   test('event handlers can be bound to the component', () => {
     const comp = new DefinitionsComponent()
     comp.mount(document.body)

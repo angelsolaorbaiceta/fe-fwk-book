@@ -33,7 +33,9 @@ export function defineComponent({ render, state, ...methods }) {
     #isMounted = false
     #vdom = null
     #hostEl = null
+    #eventHandlers = null
     #dispatcher = new Dispatcher()
+    #subscriptions = []
     #parentComponent = null
 
     /**
@@ -47,17 +49,8 @@ export function defineComponent({ render, state, ...methods }) {
     constructor(props = {}, eventHandlers = {}, parentComponent = null) {
       this.props = props
       this.state = state ? state(props) : {}
+      this.#eventHandlers = eventHandlers
       this.#parentComponent = parentComponent
-
-      Object.entries(eventHandlers).forEach(([eventName, handler]) => {
-        this.#dispatcher.subscribe(eventName, (payload) => {
-          if (this.#parentComponent) {
-            handler.call(this.#parentComponent, payload)
-          } else {
-            handler(payload)
-          }
-        })
-      })
     }
 
     get parentComponent() {
@@ -102,9 +95,26 @@ export function defineComponent({ render, state, ...methods }) {
 
       this.#vdom = this.render()
       mountDOM(this.#vdom, hostEl, index, this)
+      this.#wireEventHandlers()
 
       this.#isMounted = true
       this.#hostEl = hostEl
+    }
+
+    #wireEventHandlers() {
+      this.#subscriptions = Object.entries(this.#eventHandlers).map(
+        ([eventName, handler]) => this.#wireEventHandler(eventName, handler)
+      )
+    }
+
+    #wireEventHandler(eventName, handler) {
+      return this.#dispatcher.subscribe(eventName, (payload) => {
+        if (this.#parentComponent) {
+          handler.call(this.#parentComponent, payload)
+        } else {
+          handler(payload)
+        }
+      })
     }
 
     unmount() {
@@ -113,9 +123,11 @@ export function defineComponent({ render, state, ...methods }) {
       }
 
       destroyDOM(this.#vdom)
+      this.#subscriptions.forEach((unsubscribe) => unsubscribe())
 
       this.#vdom = null
       this.#isMounted = false
+      this.#subscriptions = []
     }
 
     /**
