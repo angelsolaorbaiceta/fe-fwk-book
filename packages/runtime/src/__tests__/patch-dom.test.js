@@ -722,6 +722,15 @@ describe('patch component with props', () => {
 
     expect(document.body.innerHTML).toBe('<span class="foo">two</span>')
   })
+
+  test("the component instance is preserved (the component isn't re-created)", () => {
+    const oldVdom = h(Component, { text: 'one' })
+    const newVdom = h(Component, { text: 'two' })
+
+    patch(oldVdom, newVdom)
+
+    expect(newVdom.component).toBe(oldVdom.component)
+  })
 })
 
 function patch(oldVdom, newVdom, hostComponent = null) {
