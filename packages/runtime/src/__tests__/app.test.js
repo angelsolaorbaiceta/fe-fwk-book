@@ -1,40 +1,75 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
 import { h, hFragment } from '../h'
+import { defineComponent } from '../component'
+import { singleHtmlLine } from './utils'
 
-const state = { count: 0 }
+const App = defineComponent({
+  state({ todos = [] }) {
+    return { todos }
+  },
 
-const reducers = {
-  decrement: (state) => ({ count: state.count - 1 }),
-  increment: (state) => ({ count: state.count + 1 }),
-}
+  render() {
+    return hFragment([
+      h('h1', {}, ['Todos']),
+      h(AddTodo, { on: { addTodo: this.addTodo } }),
+      h(TodosList, { todos: this.state.todos }),
+    ])
+  },
 
-function View(state, emit) {
-  return hFragment([
-    h(
-      'button',
-      {
-        on: { click: () => emit('decrement') },
-        'data-qa': 'minus-btn',
-      },
-      ['-']
-    ),
-    h('span', {}, [`${state.count}`]),
-    h(
-      'button',
-      {
-        on: { click: () => emit('increment') },
-        'data-qa': 'plus-btn',
-      },
-      ['+']
-    ),
-  ])
-}
+  addTodo(description) {
+    this.updateState({
+      todos: [...this.state.todos, description],
+    })
+  },
+})
 
+const AddTodo = defineComponent({
+  state() {
+    return {
+      description: '',
+    }
+  },
+
+  render() {
+    return hFragment([
+      h('input', {
+        type: 'text',
+        value: this.state.description,
+        on: { input: this.updateDescription },
+      }),
+      h('button', { on: { click: this.addTodo } }, ['Add']),
+    ])
+  },
+
+  updateDescription({ target }) {
+    this.updateState({ description: target.value })
+  },
+
+  addTodo() {
+    this.emit('addTodo', this.state.description)
+    this.updateState({ description: '' })
+  },
+})
+
+const TodosList = defineComponent({
+  render() {
+    return h(
+      'ul',
+      {},
+      this.props.todos.map((description) => h('li', {}, [description]))
+    )
+  },
+})
+
+/** @type {import('../app').Application} */
 let app
 
 beforeEach(() => {
-  app = createApp({ state, reducers, view: View })
+  app = createApp(App, { todos: ['Water the plants', 'Walk the dog'] })
+})
+
+afterEach(() => {
   document.body.innerHTML = ''
 })
 
@@ -45,44 +80,54 @@ describe('when the application is mounted', () => {
 
   test('it is rendered into the parent element', () => {
     expect(document.body.innerHTML).toBe(
-      normalizeLines(`
-      <button data-qa="minus-btn">-</button>
-      <span>0</span>
-      <button data-qa="plus-btn">+</button>`)
+      singleHtmlLine`
+      <h1>Todos</h1>
+      <input type="text">
+      <button>Add</button>
+      <ul>
+        <li>Water the plants</li>
+        <li>Walk the dog</li>
+        </ul>`
     )
   })
 
-  describe('when the user clicks the increment button', () => {
+  describe('when the application is unmounted', () => {
     beforeEach(() => {
-      document.querySelector('[data-qa="plus-btn"]').click()
+      app.unmount()
     })
 
-    test('it increments the counter', () => {
-      expect(document.body.innerHTML).toBe(
-        normalizeLines(`
-        <button data-qa="minus-btn">-</button>
-        <span>1</span>
-        <button data-qa="plus-btn">+</button>`)
-      )
+    test('it is removed from the parent element', () => {
+      expect(document.body.innerHTML).toBe('')
     })
   })
 
-  describe('when the user clicks the decrement button', () => {
+  describe('when the user adds a todo', () => {
     beforeEach(() => {
-      document.querySelector('[data-qa="minus-btn"]').click()
+      writeInInput('Buy milk')
+      clickAddButton()
     })
 
-    test('it decrements the counter', () => {
+    test('renders the new todo', () => {
       expect(document.body.innerHTML).toBe(
-        normalizeLines(`
-        <button data-qa="minus-btn">-</button>
-        <span>-1</span>
-        <button data-qa="plus-btn">+</button>`)
+        singleHtmlLine`
+        <h1>Todos</h1>
+        <input type="text">
+        <button>Add</button>
+        <ul>
+          <li>Water the plants</li>
+          <li>Walk the dog</li>
+          <li>Buy milk</li>
+        </ul>`
       )
     })
   })
 })
 
-function normalizeLines(str) {
-  return str.replace(/\n/g, '').trim().replace(/>\s+</g, '><')
+function writeInInput(text) {
+  document.querySelector('input').value = text
+  document.querySelector('input').dispatchEvent(new Event('input'))
+}
+
+function clickAddButton() {
+  document.querySelector('button').click()
 }
