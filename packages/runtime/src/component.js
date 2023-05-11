@@ -1,4 +1,5 @@
 import { destroyDOM } from './destroy-dom'
+import { Dispatcher } from './dispatcher'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
@@ -32,7 +33,7 @@ export function defineComponent({ render, state, ...methods }) {
     #isMounted = false
     #vdom = null
     #hostEl = null
-    #eventHandlers = null
+    #dispatcher = new Dispatcher()
     #parentComponent = null
 
     /**
@@ -46,8 +47,17 @@ export function defineComponent({ render, state, ...methods }) {
     constructor(props = {}, eventHandlers = {}, parentComponent = null) {
       this.props = props
       this.state = state ? state(props) : {}
-      this.#eventHandlers = eventHandlers
       this.#parentComponent = parentComponent
+
+      Object.entries(eventHandlers).forEach(([eventName, handler]) => {
+        this.#dispatcher.subscribe(eventName, (payload) => {
+          if (this.#parentComponent) {
+            handler.call(this.#parentComponent, payload)
+          } else {
+            handler(payload)
+          }
+        })
+      })
     }
 
     get parentComponent() {
@@ -115,17 +125,7 @@ export function defineComponent({ render, state, ...methods }) {
      * @param {Any} [payload] The payload to pass to the event handler
      */
     emit(eventName, payload) {
-      const handler = this.#eventHandlers[eventName]
-      if (!handler) {
-        console.warn(`No event handler for "${eventName}"`)
-        return
-      }
-
-      if (this.#parentComponent) {
-        handler.call(this.#parentComponent, payload)
-      } else {
-        handler(payload)
-      }
+      this.#dispatcher.dispatch(eventName, payload)
     }
 
     #patch() {
