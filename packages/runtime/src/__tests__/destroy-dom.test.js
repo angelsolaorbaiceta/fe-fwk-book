@@ -2,6 +2,7 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { destroyDOM } from '../destroy-dom'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
+import { defineComponent } from '../component'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -87,6 +88,29 @@ test('destroy a fragment recursively', () => {
   mountDOM(vdom, document.body)
   expect(document.body.innerHTML).toBe(
     '<span>hello</span><span>world</span>'
+  )
+
+  destroyDOM(vdom)
+  expect(document.body.innerHTML).toBe('')
+  expect(allElementsHaveBeenDestroyed(vdom)).toBe(true)
+})
+
+test('destroy a component with subcomponents', () => {
+  const ChildComponent = defineComponent({
+    render() {
+      return h('p', {}, ['body'])
+    },
+  })
+  const ParentComponent = defineComponent({
+    render() {
+      return hFragment([h('h1', {}, ['Title']), h(ChildComponent)])
+    },
+  })
+  const vdom = h('div', {}, [h(ParentComponent)])
+
+  mountDOM(vdom, document.body)
+  expect(document.body.innerHTML).toBe(
+    '<div><h1>Title</h1><p>body</p></div>'
   )
 
   destroyDOM(vdom)
