@@ -225,7 +225,6 @@ test('mount a component with event handlers', () => {
   mountDOM(vdom, document.body)
 
   document.querySelector('button').click()
-  console.log(vdom)
 
   expect(onClick).toBeCalledTimes(1)
 })
