@@ -1,4 +1,4 @@
-import { extractComponentProps } from '../utils/props'
+import { extractComponentProps } from './utils/props'
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'

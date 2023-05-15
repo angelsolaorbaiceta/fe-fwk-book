@@ -15,7 +15,7 @@ import { assert } from './assert'
  * @param {import('../h').VNode} vdom
  * @returns {ExtractedComponentProps} the events and props of the component
  */
-export function extractComponentPros(vdom) {
+export function extractComponentProps(vdom) {
   assert(
     vdom.type === DOM_TYPES.COMPONENT,
     "Can't extract props from a non-component virtual node"
