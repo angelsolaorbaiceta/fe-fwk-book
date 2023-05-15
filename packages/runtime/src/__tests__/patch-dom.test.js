@@ -3,6 +3,7 @@ import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { patchDOM } from '../patch-dom'
+import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -730,6 +731,130 @@ describe('patch component with props', () => {
     patch(oldVdom, newVdom)
 
     expect(newVdom.component).toBe(oldVdom.component)
+  })
+})
+
+describe('patch keyed component list', () => {
+  // A component with internal state
+  const Component = defineComponent({
+    state() {
+      return { highlighted: false }
+    },
+
+    render() {
+      const { highlighted } = this.state
+      const { text } = this.props
+
+      return h(
+        'span',
+        {
+          class: highlighted ? 'highlighted' : '',
+          id: text,
+          on: {
+            click: () => this.updateState({ highlighted: !highlighted }),
+          },
+        },
+        [text]
+      )
+    },
+  })
+
+  test('swap two components', () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'b', text: 'B' }),
+      h(Component, { key: 'a', text: 'A' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of the first component.
+    document.querySelector('#A').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="B">B</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="B">B</span>
+      <span id="A" class="highlighted">A</span>
+      `
+    )
+  })
+
+  test('add a new component in the middle', () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'c', text: 'C' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of the two components
+    document.querySelector('#A').click()
+    document.querySelector('#B').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="B" class="highlighted">B</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="C">C</span>
+      <span id="B" class="highlighted">B</span>
+      `
+    )
+  })
+
+  test('remove a component in the middle', () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+      h(Component, { key: 'c', text: 'C' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'c', text: 'C' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of the middle component
+    document.querySelector('#B').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A">A</span>
+      <span id="B" class="highlighted">B</span>
+      <span id="C">C</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A">A</span>
+      <span id="C">C</span>
+      `
+    )
   })
 })
 
