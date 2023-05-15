@@ -1,5 +1,6 @@
 import { destroyDOM } from './destroy-dom'
 import { Dispatcher } from './dispatcher'
+import { DOM_TYPES } from './h'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
@@ -59,6 +60,24 @@ export function defineComponent({ render, state, ...methods }) {
 
     get vdom() {
       return this.#vdom
+    }
+
+    /**
+     * Returns the component's mounted element or elements, if the component is a fragment.
+     * If the component is not mounted, returns an empty array.
+     *
+     * @returns {Array.<Element>}
+     */
+    get elements() {
+      if (this.#vdom == null) {
+        return []
+      }
+
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
+        return this.#vdom.children.map((child) => child.el)
+      }
+
+      return [this.#vdom.el]
     }
 
     /**

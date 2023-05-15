@@ -271,3 +271,18 @@ test('child components keep a reference to their parent component', () => {
   expect(compB.parentComponent).toBe(compA)
   expect(compC.parentComponent).toBe(compB)
 })
+
+test('when a component with multiple elements is mounted, the vdom keeps a reference to the first element', () => {
+  const Component = defineComponent({
+    render() {
+      return hFragment([
+        h('p', { id: 'one' }, ['1']),
+        h('p', { id: 'two' }, ['2']),
+      ])
+    },
+  })
+  const vdom = h(Component)
+  mountDOM(vdom, document.body)
+
+  expect(vdom.el).toBe(document.querySelector('p#one'))
+})

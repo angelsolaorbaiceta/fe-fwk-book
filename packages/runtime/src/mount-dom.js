@@ -127,6 +127,15 @@ function createFragmentNodes(vdom, parentEl, hostComponent) {
 /**
  * Creates the component node, and all of its subcomponents recursively.
  *
+ * The created `Component` is added to the `component` property of the vdom.
+ * The created `Element` is added to the `el` property of the vdom. If the component
+ * has a fragment, and thus several top-level elements, the first one is added to the `el`.
+ *
+ * The use case for the `el` reference is the reconciliation algorithm. In the case of
+ * a component, it's sole use is to move a component to a different position using the
+ * `insertBefore()` method. To insert an element before a component, the `el` property
+ * points at the component's first element.
+ *
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
@@ -139,6 +148,7 @@ function createComponentNode(vdom, parentEl, index, hostComponent) {
 
   component.mount(parentEl, index)
   vdom.component = component
+  vdom.el = component.elements[0]
 }
 
 /**
