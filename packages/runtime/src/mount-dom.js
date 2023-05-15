@@ -1,3 +1,4 @@
+import { extractComponentProps } from '../utils/props'
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
@@ -133,17 +134,11 @@ function createFragmentNodes(vdom, parentEl, hostComponent) {
  */
 function createComponentNode(vdom, parentEl, index, hostComponent) {
   const Component = vdom.tag
-  const { props, events } = extractComponentProps(vdom.props)
+  const { props, events } = extractComponentProps(vdom)
   const component = new Component(props, events, hostComponent)
 
   component.mount(parentEl, index)
   vdom.component = component
-}
-
-function extractComponentProps(props) {
-  // TODO: ignore props.key, data- attributes and style and class
-  const { on: events = {}, ...rest } = props
-  return { props: rest, events }
 }
 
 /**
