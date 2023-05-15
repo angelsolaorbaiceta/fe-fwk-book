@@ -856,6 +856,38 @@ describe('patch keyed component list', () => {
       `
     )
   })
+
+  test("when a component changes its key, loses it's internal state (it's recreated)", () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'c', text: 'C' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of two components
+    document.querySelector('#A').click()
+    document.querySelector('#B').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="B" class="highlighted">B</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="C">C</span>
+      `
+    )
+  })
 })
 
 function patch(oldVdom, newVdom, hostComponent = null) {

@@ -98,6 +98,7 @@ const TodoList = defineComponent({
       {},
       todos.map((todo, i) =>
         h(TodoItem, {
+          key: todo.replaceAll(' ', '-'),
           todo,
           i,
           on: {
