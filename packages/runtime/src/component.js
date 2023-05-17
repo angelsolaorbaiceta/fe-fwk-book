@@ -146,6 +146,7 @@ export function defineComponent({ render, state, ...methods }) {
 
       this.#vdom = null
       this.#isMounted = false
+      this.#hostEl = null
       this.#subscriptions = []
     }
 
