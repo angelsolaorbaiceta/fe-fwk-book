@@ -80,6 +80,17 @@ export function defineComponent({ render, state, ...methods }) {
       return [this.#vdom.el]
     }
 
+    get firstElement() {
+      return this.elements[0]
+    }
+
+    /**
+     * Returns the component's offset (with respect with the component's first element) in the DOM.
+     */
+    get offset() {
+      return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+    }
+
     /**
      * Updates all or part of the component's props and patches the DOM to reflect the changes.
      * This method shouldn't be called from within the component's code, as a component

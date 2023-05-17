@@ -890,6 +890,83 @@ describe('patch keyed component list', () => {
   })
 })
 
+/**
+ * These cases are interesting because, the indices of the list operations over the children
+ * of the component require an offset: the number of children before the component's first child.
+ *
+ * The component patches its view, independently of the other components above it, but when
+ * the component isn't the first child of the parent, the indices of the list operations
+ * need to be offset.
+ *
+ * At mounting time, that offset is the passed index to the `mount()` method.
+ * But things can move around, and the component can be moved to a different position.
+ */
+describe('Components inside children arrays', () => {
+  const Component = defineComponent({
+    state() {
+      return { swap: false }
+    },
+    render() {
+      return hFragment([
+        h('span', {}, ['B']),
+        this.state.swap ? h('p', {}, ['XX']) : h('span', {}, ['C']),
+      ])
+    },
+  })
+
+  test('swapping an item (remove + add) inside a component, inside an element', () => {
+    const vdom = h('div', {}, [h('span', {}, ['A']), h(Component)])
+    mountDOM(vdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <div>
+        <span>A</span>
+        <span>B</span>
+        <span>C</span>
+      </div>
+      `
+    )
+
+    const component = vdom.children[1].component
+    component.updateState({ swap: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <div>
+        <span>A</span>
+        <span>B</span>
+        <p>XX</p>
+      </div>
+      `
+    )
+  })
+
+  test('swapping an item (remove + add) inside a component, inside a fragment', () => {
+    const vdom = hFragment([h('span', {}, ['A']), h(Component)])
+    mountDOM(vdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+    <span>A</span>
+    <span>B</span>
+    <span>C</span>
+    `
+    )
+
+    const component = vdom.children[1].component
+    component.updateState({ swap: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+    <span>A</span>
+    <span>B</span>
+    <p>XX</p>
+    `
+    )
+  })
+})
+
 function patch(oldVdom, newVdom, hostComponent = null) {
   mountDOM(oldVdom, document.body)
   return patchDOM(oldVdom, newVdom, document.body, hostComponent)

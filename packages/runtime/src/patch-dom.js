@@ -301,7 +301,8 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
 
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
-        mountDOM(item, parentEl, index, hostComponent)
+        const offset = hostComponent?.offset ?? 0
+        mountDOM(item, parentEl, index + offset, hostComponent)
         break
       }
 
