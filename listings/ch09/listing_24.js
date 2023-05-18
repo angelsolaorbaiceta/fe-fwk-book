@@ -1,7 +1,8 @@
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
+import { hasOwnProperty } from './utils/objects'
 
-export function defineComponent({ render, state }) {
+export function defineComponent({ render, state, ...methods }) {
   const Component = class {
     #isMounted = false
     #vdom = null
@@ -27,7 +28,7 @@ export function defineComponent({ render, state }) {
       }
       
       this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index)
+      mountDOM(this.#vdom, hostEl, index, this)
       
       this.#hostEl = hostEl
       this.#isMounted = true
@@ -51,8 +52,18 @@ export function defineComponent({ render, state }) {
       }
 
       const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl)
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }
+  }
+
+  for (const methodName in methods) {
+    if (hasOwnProperty(Component, methodName)) {
+      throw new Error(
+        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
+      )
+    }
+
+    Component.prototype[methodName] = methods[methodName]
   }
 
   return Component

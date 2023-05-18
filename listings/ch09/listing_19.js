@@ -1,32 +1,27 @@
-export function defineComponent({ render, state, ...methods }) {
-  const Component = class {
-    // --snip--
+export function patchDOM(oldVdom, newVdom, parentEl/*--add--*/, hostComponent = null/*--add--*/) {
+  if (!areNodesEqual(oldVdom, newVdom)) {
+    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
+    destroyDOM(oldVdom)
+    mountDOM(newVdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
 
-    mount(hostEl, index = null) {
-      if (this.#isMounted) {
-        throw new Error('Component is already mounted')
-      }
-      
-      this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index/*--add--*/, this/*--add--*/)
-      
-      this.#hostEl = hostEl
-      this.#isMounted = true
+    return newVdom
+  }
+
+  newVdom.el = oldVdom.el
+
+  switch (newVdom.type) {
+    case DOM_TYPES.TEXT: {
+      patchText(oldVdom, newVdom)
+      return newVdom
     }
-    
-    // --snip--
 
-    #patch() {
-      if (!this.#isMounted) {
-        throw new Error('Component is not mounted')
-      }
-
-      const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl/*--add--*/, this/*--add--*/)
+    case DOM_TYPES.ELEMENT: {
+      patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/)
+      break
     }
   }
 
-  // --snip--
+  patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/)
 
-  return Component
+  return newVdom
 }

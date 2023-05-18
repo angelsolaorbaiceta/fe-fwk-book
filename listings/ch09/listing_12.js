@@ -1,10 +1,25 @@
-function createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) {
-  const { tag, props, children } = vdom
+import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
+// --add--
+import { hasOwnProperty } from './utils/objects'
+// --add--
 
-  const element = document.createElement(tag)
-  addProps(element, props, vdom/*--add--*/, hostComponent/*--add--*/)
-  vdom.el = element
+export function defineComponent({ render, state/* --add-- */, ...methods/* --add-- */ }) {
+  const Component = class {
+    // --snip-- //
+  }
 
-  children.forEach((child) => mountDOM(child, element/*--add--*/, null, hostComponent/*--add--*/))
-  insert(element, parentEl, index)
+  // --add--
+  for (const methodName in methods) {
+    if (hasOwnProperty(Component, methodName)) {
+      throw new Error(
+        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
+      )
+    }
+
+    Component.prototype[methodName] = methods[methodName]
+  }
+  // --add--
+
+  return Component
 }

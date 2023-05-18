@@ -1,70 +1,29 @@
-import { mountDOM } from './mount-dom'
-import { patchDOM } from './patch-dom'
-import { hasOwnProperty } from './utils/objects'
+function patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
+  const el = oldVdom.el
+  const {
+    class: oldClass,
+    style: oldStyle,
+    on: oldEvents,
+    ...oldAttrs
+  } = oldVdom.props
+  const {
+    class: newClass,
+    style: newStyle,
+    on: newEvents,
+    ...newAttrs
+  } = newVdom.props
+  const { listeners: oldListeners } = oldVdom
 
-export function defineComponent({ render, state, ...methods }) {
-  const Component = class {
-    #isMounted = false
-    #vdom = null
-    #hostEl = null
-
-    constructor(props = {}) {
-      this.props = props
-      this.state = state ? state(props) : {}
-    }
-    
-    updateState(state) {
-      this.state = { ...this.state, ...state }
-      this.#patch()
-    }
-
-    render() {
-      return render.call(this)
-    }
-
-    mount(hostEl, index = null) {
-      if (this.#isMounted) {
-        throw new Error('Component is already mounted')
-      }
-      
-      this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index, this)
-      
-      this.#hostEl = hostEl
-      this.#isMounted = true
-    }
-    
-    unmount() {
-      if (!this.#isMounted) {
-        throw new Error('Component is not mounted')
-      }
-
-      destroyDOM(this.#vdom)
-
-      this.#vdom = null
-      this.#hostEl = null
-      this.#isMounted = false
-    }
-
-    #patch() {
-      if (!this.#isMounted) {
-        throw new Error('Component is not mounted')
-      }
-
-      const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
-    }
-  }
-
-  for (const methodName in methods) {
-    if (hasOwnProperty(Component, methodName)) {
-      throw new Error(
-        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
-      )
-    }
-
-    Component.prototype[methodName] = methods[methodName]
-  }
-
-  return Component
+  patchAttrs(el, oldAttrs, newAttrs)
+  patchClasses(el, oldClass, newClass)
+  patchStyles(el, oldStyle, newStyle)
+  newVdom.listeners = patchEvents(
+    el,
+    oldListeners,
+    oldEvents,
+    newEvents,
+    // --add--
+    hostComponent
+    // --add--
+  )
 }

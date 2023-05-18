@@ -1,25 +1,16 @@
-import { mountDOM } from './mount-dom'
-import { patchDOM } from './patch-dom'
-// --add--
-import { hasOwnProperty } from './utils/objects'
-// --add--
-
-export function defineComponent({ render, state/* --add-- */, ...methods/* --add-- */ }) {
+export function defineComponent({ render, state }) {
   const Component = class {
-    // --snip--
-  }
+    // --snip-- //
+    
+    #patch() {
+      if (!this.#isMounted) {
+        throw new Error('Component is not mounted')
+      }
 
-  // --add--
-  for (const methodName in methods) {
-    if (hasOwnProperty(Component, methodName)) {
-      throw new Error(
-        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
-      )
+      const vdom = this.render()
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl/*--add--*/, this/*--add--*/)
     }
-
-    Component.prototype[methodName] = methods[methodName]
   }
-  // --add--
 
   return Component
 }

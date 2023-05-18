@@ -1,7 +1,7 @@
 
 export function defineComponent({ render, state }) {
   const Component = class {
-    // --snip--
+    // --snip-- //
 
     render() {
       // --remove--
@@ -12,7 +12,7 @@ export function defineComponent({ render, state }) {
       // --add--
     }
 
-    // --snip--
+    // --snip-- //
   }
 
   return Component

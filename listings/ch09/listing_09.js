@@ -1,43 +1,27 @@
-// --add--
-import { toPromise } from './utils/promises'
-// --add--
+export function patchDOM(oldVdom, newVdom, parentEl/*--add--*/, hostComponent = null/*--add--*/) {
+  if (!areNodesEqual(oldVdom, newVdom)) {
+    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
+    destroyDOM(oldVdom)
+    mountDOM(newVdom, parentEl, index)
 
-export function addEventListeners(
-  listeners = {},
-  el,
-  /*--add--*/hostComponent = null/*--add--*/
-) {
-  const addedListeners = {}
-
-  Object.entries(listeners).forEach(([eventName, handler]) => {
-    const listener = addEventListener(eventName, handler, el/*--add--*/, hostComponent/*--add--*/)
-    addedListeners[eventName] = listener
-  })
-
-  return addedListeners
-}
-
-export function addEventListener(
-  eventName,
-  handler,
-  el,
-  /*--add--*/hostComponent = null/*--add--*/
-) {
-  // --remove--
-  el.addEventListener(eventName, handler)
-  return handler
-  // --remove--
-  // --add--
-  async function asyncHandler() {
-    await toPromise(
-      hostComponent
-        ? handler.call(hostComponent, ...arguments)
-        : handler(...arguments)
-    )
+    return newVdom
   }
 
-  el.addEventListener(eventName, asyncHandler)
+  newVdom.el = oldVdom.el
 
-  return asyncHandler
-  // --add--
+  switch (newVdom.type) {
+    case DOM_TYPES.TEXT: {
+      patchText(oldVdom, newVdom)
+      return newVdom
+    }
+
+    case DOM_TYPES.ELEMENT: {
+      patchElement(oldVdom, newVdom)
+      break
+    }
+  }
+
+  patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/)
+
+  return newVdom
 }

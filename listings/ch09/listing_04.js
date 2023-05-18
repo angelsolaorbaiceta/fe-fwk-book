@@ -26,11 +26,11 @@ export function defineComponent({ render, state }) {
     }
 
     mount(hostEl, index = null) {
-      // --snip--
+      // --snip-- //
     }
     
     unmount() {
-      // --snip--
+      // --snip-- //
     }
 
     // --add--

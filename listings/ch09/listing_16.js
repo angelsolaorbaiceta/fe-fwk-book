@@ -1,29 +1,10 @@
-function patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
-  const el = oldVdom.el
-  const {
-    class: oldClass,
-    style: oldStyle,
-    on: oldEvents,
-    ...oldAttrs
-  } = oldVdom.props
-  const {
-    class: newClass,
-    style: newStyle,
-    on: newEvents,
-    ...newAttrs
-  } = newVdom.props
-  const { listeners: oldListeners } = oldVdom
+function createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) {
+  const { tag, props, children } = vdom
 
-  patchAttrs(el, oldAttrs, newAttrs)
-  patchClasses(el, oldClass, newClass)
-  patchStyles(el, oldStyle, newStyle)
-  newVdom.listeners = patchEvents(
-    el,
-    oldListeners,
-    oldEvents,
-    newEvents,
-    // --add--
-    hostComponent
-    // --add--
-  )
+  const element = document.createElement(tag)
+  addProps(element, props, vdom/*--add--*/, hostComponent/*--add--*/)
+  vdom.el = element
+
+  children.forEach((child) => mountDOM(child, element/*--add--*/, null, hostComponent/*--add--*/))
+  insert(element, parentEl, index)
 }
