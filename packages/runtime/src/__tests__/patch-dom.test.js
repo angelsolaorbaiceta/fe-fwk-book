@@ -902,7 +902,7 @@ describe('patch keyed component list', () => {
  * But things can move around, and the component can be moved to a different position.
  */
 describe('Components inside children arrays', () => {
-  const Component = defineComponent({
+  const SwapComponent = defineComponent({
     state() {
       return { swap: false }
     },
@@ -914,19 +914,24 @@ describe('Components inside children arrays', () => {
     },
   })
 
-  test('swapping an item (remove + add) inside a component, inside an element', () => {
-    const vdom = h('div', {}, [h('span', {}, ['A']), h(Component)])
-    mountDOM(vdom, document.body)
+  const MoveComponent = defineComponent({
+    state() {
+      return { move: false }
+    },
+    render() {
+      if (this.state.move) {
+        return hFragment([h('p', {}, ['C']), h('span', {}, ['B'])])
+      }
 
-    expect(document.body.innerHTML).toBe(
-      singleHtmlLine`
-      <div>
-        <span>A</span>
-        <span>B</span>
-        <span>C</span>
-      </div>
-      `
-    )
+      return hFragment([h('span', {}, ['B']), h('p', {}, ['C'])])
+    },
+  })
+
+  test('swapping an item (remove + add) inside a component that goes after an element in the same parent node', () => {
+    // Parent element is a <div>
+    // The component inside the <div> goes after the <span> (at index 1)
+    const vdom = h('div', {}, [h('span', {}, ['A']), h(SwapComponent)])
+    mountDOM(vdom, document.body)
 
     const component = vdom.children[1].component
     component.updateState({ swap: true })
@@ -942,27 +947,59 @@ describe('Components inside children arrays', () => {
     )
   })
 
-  test('swapping an item (remove + add) inside a component, inside a fragment', () => {
-    const vdom = hFragment([h('span', {}, ['A']), h(Component)])
+  test('moving an item inside a component that goes after an element in the same parent node', () => {
+    // Parent element is a <div>
+    // The component inside the <div> goes after the <span> (at index 1)
+    const vdom = h('div', {}, [h('span', {}, ['A']), h(MoveComponent)])
     mountDOM(vdom, document.body)
+
+    const component = vdom.children[1].component
+    component.updateState({ move: true })
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`
-    <span>A</span>
-    <span>B</span>
-    <span>C</span>
-    `
+      <div>
+        <span>A</span>
+        <p>C</p>
+        <span>B</span>
+      </div>
+      `
     )
+  })
+
+  test('swapping an item (remove + add) inside a component that goes after an element in a fragment', () => {
+    // Parent element is the <body>
+    // The component inside the <body> goes after the <span> (at index 1)
+    const vdom = hFragment([h('span', {}, ['A']), h(SwapComponent)])
+    mountDOM(vdom, document.body)
 
     const component = vdom.children[1].component
     component.updateState({ swap: true })
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`
-    <span>A</span>
-    <span>B</span>
-    <p>XX</p>
-    `
+      <span>A</span>
+      <span>B</span>
+      <p>XX</p>
+      `
+    )
+  })
+
+  test('moving an item inside a component that goes after an element in a fragment', () => {
+    // Parent element is the <body>
+    // The component inside the <body> goes after the <span> (at index 1)
+    const vdom = hFragment([h('span', {}, ['A']), h(MoveComponent)])
+    mountDOM(vdom, document.body)
+
+    const component = vdom.children[1].component
+    component.updateState({ move: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span>A</span>
+      <p>C</p>
+      <span>B</span>
+      `
     )
   })
 })

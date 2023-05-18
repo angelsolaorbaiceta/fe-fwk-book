@@ -281,6 +281,14 @@ function patchComponent(oldVdom, newVdom) {
  * - `ARRAY_DIFF_OP.MOVE`: the old child's element is moved to its new index and the nodes are passed to the `patchDOM` function
  * - `ARRAY_DIFF_OP.NOOP`: both virtual nodes are passed to the `patchDOM` function
  *
+ * When the vdom is the view from a component (that is, when `hostComponent != null`), the operation indices
+ * are relative to the component's view. In these cases, the offset of the component's first child in the
+ * parent element is used to correct the indices. These only affects the operations where the indices
+ * refer to the actual DOM:
+ *
+ * - `ADD`: the index where the new child is mounted in the DOM needs to be corrected
+ * - `MOVE`: the index of the item used as reference in the DOM for the move needs to be corrected
+ *
  * @param {import('./h').VNode} oldVdom The old virtual node
  * @param {import('./h').VNode} newVdom the new virtual node
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
@@ -298,10 +306,10 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
 
   for (const operation of diffSeq) {
     const { from, index, item } = operation
+    const offset = hostComponent?.offset ?? 0
 
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
-        const offset = hostComponent?.offset ?? 0
         mountDOM(item, parentEl, index + offset, hostComponent)
         break
       }
@@ -313,7 +321,7 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
 
       case ARRAY_DIFF_OP.MOVE: {
         const el = oldChildren[from].el
-        const elAtTargetIndex = parentEl.childNodes[index]
+        const elAtTargetIndex = parentEl.childNodes[index + offset]
 
         parentEl.insertBefore(el, elAtTargetIndex)
         patchDOM(
