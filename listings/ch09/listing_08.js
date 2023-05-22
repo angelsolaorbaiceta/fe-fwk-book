@@ -8,7 +8,7 @@ export function defineComponent({ render, state }) {
       }
 
       const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl/*--add--*/, this/*--add--*/)
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl/*--add--*/, this/*--add--*/) // --1--
     }
   }
 

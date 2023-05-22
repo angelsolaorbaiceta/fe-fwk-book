@@ -1,7 +1,7 @@
-import { extractComponentProps } from './utils/props'
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
+import { extractComponentProps } from './utils/props'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and

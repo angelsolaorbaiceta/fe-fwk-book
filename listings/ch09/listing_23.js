@@ -1,3 +1,4 @@
+import { DOM_TYPES, extractChildren } from './h'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
@@ -19,7 +20,7 @@ export function defineComponent({ render, state, ...methods }) {
       }
 
       if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
-        return this.#vdom.children.map((child) => child.el)
+        return extractChildren(this.#vdom).map((child) => child.el)
       }
 
       return [this.#vdom.el]

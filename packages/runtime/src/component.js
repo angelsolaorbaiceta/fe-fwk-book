@@ -35,9 +35,9 @@ export function defineComponent({ render, state, ...methods }) {
     #vdom = null
     #hostEl = null
     #eventHandlers = null
+    #parentComponent = null
     #dispatcher = new Dispatcher()
     #subscriptions = []
-    #parentComponent = null
 
     /**
      * Creates an instance of the component.

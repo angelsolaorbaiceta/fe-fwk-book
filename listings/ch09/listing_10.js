@@ -1,4 +1,4 @@
-function patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
+function patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) { // --1--
   const oldChildren = extractChildren(oldVdom)
   const newChildren = extractChildren(newVdom)
   const parentEl = oldVdom.el
@@ -12,12 +12,12 @@ function patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
   for (const operation of diffSeq) {
     const { from, index, item } = operation
     // --add--
-    const offset = hostComponent?.offset ?? 0
+    const offset = hostComponent?.offset ?? 0 // --2--
     // --add--
 
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
-        mountDOM(item, parentEl, index/*--add--*/ + offset, hostComponent/*--add--*/)
+        mountDOM(item, parentEl, index/*--add--*/ + offset, hostComponent/*--add--*/) // --3--
         break
       }
 
@@ -28,7 +28,7 @@ function patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
         
       case ARRAY_DIFF_OP.MOVE: {
         const el = oldChildren[from].el
-        const elAtTargetIndex = parentEl.childNodes[index/*--add--*/ + offset/*--add--*/]
+        const elAtTargetIndex = parentEl.childNodes[index/*--add--*/ + offset/*--add--*/] // --4--
 
         parentEl.insertBefore(el, elAtTargetIndex)
         patchDOM(
@@ -36,7 +36,7 @@ function patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
           newChildren[index],
           parentEl,
           // --add--
-          hostComponent
+          hostComponent // --5--
           // --add--
         )
 
@@ -49,7 +49,7 @@ function patchChildren(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
           newChildren[index],
           parentEl,
           // --add--
-          hostComponent
+          hostComponent // --6--
           // --add--
         )
         break
