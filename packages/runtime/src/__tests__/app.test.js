@@ -1,66 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
-import { h, hFragment } from '../h'
-import { defineComponent } from '../component'
+import { App } from './app'
 import { singleHtmlLine } from './utils'
-
-const App = defineComponent({
-  state({ todos = [] }) {
-    return { todos }
-  },
-
-  render() {
-    return hFragment([
-      h('h1', {}, ['Todos']),
-      h(AddTodo, { on: { addTodo: this.addTodo } }),
-      h(TodosList, { todos: this.state.todos }),
-    ])
-  },
-
-  addTodo(description) {
-    this.updateState({
-      todos: [...this.state.todos, description],
-    })
-  },
-})
-
-const AddTodo = defineComponent({
-  state() {
-    return {
-      description: '',
-    }
-  },
-
-  render() {
-    return hFragment([
-      h('input', {
-        type: 'text',
-        value: this.state.description,
-        on: { input: this.updateDescription },
-      }),
-      h('button', { on: { click: this.addTodo } }, ['Add']),
-    ])
-  },
-
-  updateDescription({ target }) {
-    this.updateState({ description: target.value })
-  },
-
-  addTodo() {
-    this.emit('addTodo', this.state.description)
-    this.updateState({ description: '' })
-  },
-})
-
-const TodosList = defineComponent({
-  render() {
-    return h(
-      'ul',
-      {},
-      this.props.todos.map((description) => h('li', {}, [description]))
-    )
-  },
-})
 
 /** @type {import('../app').Application} */
 let app
@@ -85,9 +26,15 @@ describe('when the application is mounted', () => {
       <input type="text">
       <button>Add</button>
       <ul>
-        <li>Water the plants</li>
-        <li>Walk the dog</li>
-        </ul>`
+        <li>
+          <span>Water the plants</span>
+          <button>Done</button>
+        </li>
+        <li>
+          <span>Walk the dog</span>
+          <button>Done</button>
+        </li>
+      </ul>`
     )
   })
 
@@ -107,16 +54,46 @@ describe('when the application is mounted', () => {
       clickAddButton()
     })
 
-    test('renders the new todo', () => {
+    test('renders the new todo in read mode', () => {
       expect(document.body.innerHTML).toBe(
         singleHtmlLine`
         <h1>Todos</h1>
         <input type="text">
         <button>Add</button>
         <ul>
-          <li>Water the plants</li>
-          <li>Walk the dog</li>
-          <li>Buy milk</li>
+          <li>
+            <span>Water the plants</span>
+            <button>Done</button>
+          </li>
+          <li>
+            <span>Walk the dog</span>
+            <button>Done</button>
+          </li>
+          <li>
+            <span>Buy milk</span>
+            <button>Done</button>
+          </li>
+        </ul>`
+      )
+    })
+  })
+
+  describe('when the user removes a todo', () => {
+    beforeEach(() => {
+      clickDoneButton(0)
+    })
+
+    test('removes the todo from the list', () => {
+      expect(document.body.innerHTML).toBe(
+        singleHtmlLine`
+        <h1>Todos</h1>
+        <input type="text">
+        <button>Add</button>
+        <ul>
+          <li>
+            <span>Walk the dog</span>
+            <button>Done</button>
+          </li>
         </ul>`
       )
     })
@@ -130,4 +107,8 @@ function writeInInput(text) {
 
 function clickAddButton() {
   document.querySelector('button').click()
+}
+
+function clickDoneButton(index) {
+  document.querySelectorAll('li button')[index].click()
 }
