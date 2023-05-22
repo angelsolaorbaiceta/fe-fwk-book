@@ -1,4 +1,4 @@
-export function defineComponent({ render/* --add-- */, state/* --add-- */ }) {
+export function defineComponent({ render/*--add--*/, state/*--add--*/ }) { // --1--
   const Component = class {
     #isMounted = false
     #vdom = null
@@ -6,8 +6,8 @@ export function defineComponent({ render/* --add-- */, state/* --add-- */ }) {
 
     // --add--
     constructor(props = {}) {
-      this.props = props
-      this.state = state ? state(props) : {}
+      this.props = props // --2--
+      this.state = state ? state(props) : {} // --3--
     }
     // --add--
 

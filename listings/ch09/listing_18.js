@@ -3,6 +3,6 @@ function createFragmentNodes(vdom, parentEl/*--add--*/, hostComponent/*--add--*/
   vdom.el = parentEl
 
   children.forEach((child) =>
-    mountDOM(child, parentEl, null/*--add--*/, hostComponent/*--add--*/)
+    mountDOM(child, parentEl/*--add--*/, null, hostComponent/*--add--*/)
   )
 }

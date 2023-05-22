@@ -1,3 +1,9 @@
+// --add--
+import { DOM_TYPES, extractChildren } from './h'
+// --add--
+import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
+
 export function defineComponent({ render, state }) {
   const Component = class {
     #isMounted = false
@@ -11,23 +17,23 @@ export function defineComponent({ render, state }) {
     
     // --add--
     get elements() {
-      if (this.#vdom == null) {
+      if (this.#vdom == null) { // --1--
         return []
       }
 
-      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
-        return this.#vdom.children.map((child) => child.el)
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) { // --2-- 
+        return extractChildren(this.#vdom).map((child) => child.el)
       }
 
-      return [this.#vdom.el]
+      return [this.#vdom.el] // --3--
     }
 
     get firstElement() {
-      return this.elements[0]
+      return this.elements[0] // --4--
     }
 
     get offset() {
-      return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+      return Array.from(this.#hostEl.children).indexOf(this.firstElement) // --5--
     }
     // --add--
     

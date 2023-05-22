@@ -1,28 +1,29 @@
+import { destroyDOM } from './destroy-dom'
 import { mountDOM } from './mount-dom'
 
-export function defineComponent({ render }) {
-  const Component = class {
+export function defineComponent({ render }) { // --1--
+  const Component = class { // --2--
     #vdom = null
     #hostEl = null
 
-    render() {
+    render() { // --3--
       return render()
     }
 
     mount(hostEl, index = null) {
-      this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index)
+      this.#vdom = this.render() // --4--
+      mountDOM(this.#vdom, hostEl, index) // --5--
       
       this.#hostEl = hostEl
     }
     
     unmount() {
-      destroyDOM(this.#vdom)
+      destroyDOM(this.#vdom) // --6--
 
       this.#vdom = null
       this.#hostEl = null
     }
   }
 
-  return Component
+  return Component // --7--
 }

@@ -1,6 +1,46 @@
+import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
+import { hasOwnProperty } from './utils/objects'
+
 export function defineComponent({ render, state, ...methods }) {
   const Component = class {
-    // --snip-- //
+    #isMounted = false
+    #vdom = null
+    #hostEl = null
+
+    constructor(props = {}) {
+      this.props = props
+      this.state = state ? state(props) : {}
+    }
+
+    get elements() {
+      if (this.#vdom == null) {
+        return []
+      }
+
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
+        return this.#vdom.children.map((child) => child.el)
+      }
+
+      return [this.#vdom.el]
+    }
+
+    get firstElement() {
+      return this.elements[0]
+    }
+
+    get offset() {
+      return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+    }
+    
+    updateState(state) {
+      this.state = { ...this.state, ...state }
+      this.#patch()
+    }
+
+    render() {
+      return render.call(this)
+    }
 
     mount(hostEl, index = null) {
       if (this.#isMounted) {
@@ -8,13 +48,23 @@ export function defineComponent({ render, state, ...methods }) {
       }
       
       this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index/*--add--*/, this/*--add--*/)
+      mountDOM(this.#vdom, hostEl, index, this)
       
       this.#hostEl = hostEl
       this.#isMounted = true
     }
     
-    // --snip-- //
+    unmount() {
+      if (!this.#isMounted) {
+        throw new Error('Component is not mounted')
+      }
+
+      destroyDOM(this.#vdom)
+
+      this.#vdom = null
+      this.#hostEl = null
+      this.#isMounted = false
+    }
 
     #patch() {
       if (!this.#isMounted) {
@@ -22,11 +72,19 @@ export function defineComponent({ render, state, ...methods }) {
       }
 
       const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl/*--add--*/, this/*--add--*/)
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }
   }
 
-  // --snip-- //
+  for (const methodName in methods) {
+    if (hasOwnProperty(Component, methodName)) {
+      throw new Error(
+        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
+      )
+    }
+
+    Component.prototype[methodName] = methods[methodName]
+  }
 
   return Component
 }

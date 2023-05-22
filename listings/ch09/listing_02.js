@@ -1,7 +1,7 @@
 export function defineComponent({ render }) {
   const Component = class {
     // --add--
-    #isMounted = false
+    #isMounted = false // --1--
     // --add--
     #vdom = null
     #hostEl = null
@@ -12,7 +12,7 @@ export function defineComponent({ render }) {
 
     mount(hostEl, index = null) {
       // --add--
-      if (this.#isMounted) {
+      if (this.#isMounted) { // --2--
         throw new Error('Component is already mounted')
       }
       // --add--
@@ -22,13 +22,13 @@ export function defineComponent({ render }) {
       
       this.#hostEl = hostEl
       // --add--
-      this.#isMounted = true
+      this.#isMounted = true // --3--
       // --add--
     }
     
     unmount() {
       // --add--
-      if (!this.#isMounted) {
+      if (!this.#isMounted) { // --4--
         throw new Error('Component is not mounted')
       }
       // --add--
@@ -38,7 +38,7 @@ export function defineComponent({ render }) {
       this.#vdom = null
       this.#hostEl = null
       // --add--
-      this.#isMounted = false
+      this.#isMounted = false // --5--
       // --add--
     }
   }

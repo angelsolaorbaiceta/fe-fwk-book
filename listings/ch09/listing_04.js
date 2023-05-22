@@ -16,8 +16,8 @@ export function defineComponent({ render, state }) {
     
     // --add--
     updateState(state) {
-      this.state = { ...this.state, ...state }
-      this.#patch()
+      this.state = { ...this.state, ...state } // --1--
+      this.#patch() // --2--
     }
     // --add--
 
@@ -35,12 +35,12 @@ export function defineComponent({ render, state }) {
 
     // --add--
     #patch() {
-      if (!this.#isMounted) {
+      if (!this.#isMounted) { // --3--
         throw new Error('Component is not mounted')
       }
 
-      const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl)
+      const vdom = this.render() // --4--
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl) // --5--
     }
     // --add--
   }
