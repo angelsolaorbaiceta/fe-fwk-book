@@ -386,6 +386,94 @@ describe('Events', () => {
   })
 })
 
+describe('Mounted elements', () => {
+  test('unmounted components have no mounted elements', () => {
+    const Component = defineComponent({
+      render() {
+        return h('p', {}, ['A point is that which has no part.'])
+      },
+    })
+    const comp = new Component()
+
+    expect(comp.elements).toEqual([])
+  })
+
+  test('component with a single root element', () => {
+    const Component = defineComponent({
+      render() {
+        return h('p', {}, ['A point is that which has no part.'])
+      },
+    })
+    const comp = new Component()
+    comp.mount(document.body)
+
+    const expectedEl = document.querySelector('p')
+
+    expect(comp.elements).toEqual([expectedEl])
+  })
+
+  test('component with a root fragment containing elements', () => {
+    const Component = defineComponent({
+      render() {
+        return hFragment([
+          h('p', {}, ['A point is that which has no part.']),
+          h('p', {}, ['A line is breadthless length.']),
+        ])
+      },
+    })
+    const comp = new Component()
+    comp.mount(document.body)
+
+    const [expectedOne, expectedTwo] = document.querySelectorAll('p')
+
+    expect(comp.elements).toEqual([expectedOne, expectedTwo])
+  })
+
+  test('component with a root fragment containing other components', () => {
+    const Subcomponent = defineComponent({
+      render() {
+        return h('p', {}, ['A point is that which has no part.'])
+      },
+    })
+    const Component = defineComponent({
+      render() {
+        return hFragment([h(Subcomponent), h(Subcomponent)])
+      },
+    })
+    const comp = new Component()
+    comp.mount(document.body)
+
+    const [expectedOne, expectedTwo] = document.querySelectorAll('p')
+
+    expect(comp.elements).toEqual([expectedOne, expectedTwo])
+  })
+
+  test('component with a root fragment containing other nested components', () => {
+    const Subcomponent = defineComponent({
+      render() {
+        return hFragment([h('p', {}, ['One']), h('p', {}, ['Two'])])
+      },
+    })
+    const Component = defineComponent({
+      render() {
+        return hFragment([h(Subcomponent), h(Subcomponent)])
+      },
+    })
+    const comp = new Component()
+    comp.mount(document.body)
+
+    const [expectedOne, expectedTwo, expectedThree, expectedFour] =
+      document.querySelectorAll('p')
+
+    expect(comp.elements).toEqual([
+      expectedOne,
+      expectedTwo,
+      expectedThree,
+      expectedFour,
+    ])
+  })
+})
+
 // References from Euclid's Elements, Book I
 // http://aleph0.clarku.edu/~djoyce/elements/bookI/bookI.html#defs
 

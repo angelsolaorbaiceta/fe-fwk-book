@@ -255,7 +255,8 @@ function patchEvents(
  *
  * To patch a component, the new props are passed to the component's `updateProps()`.
  * This method is responsible for updating the component's state and re-rendering
- * the component.
+ * the component. Calling `updateProps()` will cause call the component's `#patch()`
+ * method, which will in turn use the `patchDOM()` function to patch the DOM.
  *
  * @param {import('./h').ElementVNode} oldVdom the old virtual node
  * @param {import('./h').ElementVNode} newVdom the new virtual node
