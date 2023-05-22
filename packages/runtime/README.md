@@ -36,14 +36,14 @@ $ git checkout ch8
 
 This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
 
-## v3.0 - Chapter 10
+## v3.0 - Chapter 11
 
-_See the example application in the [examples/ch10 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch10)_.
+_See the example application in the [examples/ch11 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch11)_.
 
 To checkout this version of the code:
 
 ```bash
-$ git checkout ch10
+$ git checkout ch11
 ```
 
 This version of the framework implements stateful components; each component is similar to a mini-application with its own lifecycle.
