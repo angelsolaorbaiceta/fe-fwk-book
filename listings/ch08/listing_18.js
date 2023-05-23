@@ -1,56 +1,17 @@
-import {
-  removeAttribute,
-  setAttribute,
-  removeStyle,
-  setStyle,
-} from './attributes'
-import { destroyDOM } from './destroy-dom'
-import { addEventListener } from './events'
-import { DOM_TYPES } from './h'
-import { mountDOM, /*--add--*/extractChildren/*--add--*/ } from './mount-dom'
-import { areNodesEqual } from './nodes-equal'
-import {
-  arraysDiff,
-  arraysDiffSequence,
-  ARRAY_DIFF_OP,
-} from './utils/arrays'
-import { objectsDiff } from './utils/objects'
-import { isNotBlankOrEmptyString } from './utils/strings
+export function extractChildren(vdom) {
+  if (vdom.children == null) { // --1--
+    return []
+  }
 
-// --snip-- //
+  const children = []
 
-// --add--
-function patchChildren(oldVdom, newVdom) {
-  const oldChildren = extractChildren(oldVdom) // --1--
-  const newChildren = extractChildren(newVdom) // --2--
-  const parentEl = oldVdom.el
-
-  const diffSeq = arraysDiffSequence( // --3--
-    oldChildren,
-    newChildren,
-    areNodesEqual
-  )
-
-  for (const operation of diffSeq) { // --4--
-    const { from, index, item } = operation
-
-    switch (operation.op) { // --5--
-      case ARRAY_DIFF_OP.ADD: {
-        // TODO: implement
-      }
-
-      case ARRAY_DIFF_OP.REMOVE: {
-        // TODO: implement
-      }
-
-      case ARRAY_DIFF_OP.MOVE: {
-        // TODO: implement
-      }
-
-      case ARRAY_DIFF_OP.NOOP: {
-        // TODO: implement
-      }
+  for (const child of vdom.children) { // --2--
+    if (child.type === DOM_TYPES.FRAGMENT) {
+      children.push(...extractChildren(child, children)) // --3--
+    } else {
+      children.push(child) // --4--
     }
   }
+
+  return children
 }
-// --add--

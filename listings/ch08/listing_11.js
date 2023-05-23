@@ -1,29 +1,29 @@
-// --add--
-import {
-  removeAttribute,
-  setAttribute,
-} from './attributes'
-// --add--
-import { destroyDOM } from './destroy-dom'
-import { DOM_TYPES } from './h'
-import { mountDOM } from './mount-dom'
-import { areNodesEqual } from './nodes-equal'
-// --add--
-import { objectsDiff } from './utils/objects'
-// --add--
+function patchElement(oldVdom, newVdom) {
+  const el = oldVdom.el
+  const {
+    class: oldClass,
+    style: oldStyle,
+    on: oldEvents,
+    ...oldAttrs
+  } = oldVdom.props
+  const {
+    class: newClass,
+    style: newStyle,
+    on: newEvents,
+    ...newAttrs
+  } = newVdom.props
+  const { listeners: oldListeners } = oldVdom
 
-// --snip-- //
-
-// --add--
-function patchAttrs(el, oldAttrs, newAttrs) {
-  const { added, removed, updated } = objectsDiff(oldAttrs, newAttrs) // --1--
-
-  for (const attr of removed) {
-    removeAttribute(el, attr) // --2--
-  }
-
-  for (const attr of added.concat(updated)) {
-    setAttribute(el, attr, newAttrs[attr]) // --3--
-  }
+  patchAttrs(el, oldAttrs, newAttrs)
+  patchClasses(el, oldClass, newClass)
+  patchStyles(el, oldStyle, newStyle)
+  newVdom.listeners = patchEvents(el, oldListeners, oldEvents, newEvents)
 }
-// --add--
+
+// TODO: implement patchAttrs()
+
+// TODO: implement patchClasses()
+
+// TODO: implement patchStyles()
+
+// TODO: implement patchEvents()

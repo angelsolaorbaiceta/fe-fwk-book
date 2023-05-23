@@ -1,13 +1,16 @@
-import { destroyDOM } from './destroy-dom'
-import { mountDOM } from './mount-dom'
-import { areNodesEqual } from './nodes-equal'
+import { DOM_TYPES } from './h'
 
-export function patchDOM(oldVdom, newVdom, parentEl) {
-  if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el) // --1--
-    destroyDOM(oldVdom) // --2--
-    mountDOM(newVdom, parentEl, index) // --3--
-
-    return newVdom
+export function areNodesEqual(nodeOne, nodeTwo) {
+  if (nodeOne.type !== nodeTwo.type) { // --1--
+    return false
   }
+
+  if (nodeOne.type === DOM_TYPES.ELEMENT) {
+    const { tag: tagOne } = nodeOne
+    const { tag: tagTwo } = nodeTwo
+
+    return tagOne === tagTwo // --2--
+  }
+
+  return true
 }

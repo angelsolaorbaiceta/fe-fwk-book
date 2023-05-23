@@ -1,16 +1,13 @@
-import { DOM_TYPES } from './h'
+function createFragmentNodes(vdom, parentEl/*--add--*/, index/*--add--*/) {
+  const { children } = vdom
+  vdom.el = parentEl
 
-export function areNodesEqual(nodeOne, nodeTwo) {
-  if (nodeOne.type !== nodeTwo.type) { // --1--
-    return false
-  }
-
-  if (nodeOne.type === DOM_TYPES.ELEMENT) {
-    const { tag: tagOne } = nodeOne
-    const { tag: tagTwo } = nodeTwo
-
-    return tagOne === tagTwo // --2--
-  }
-
-  return true
+  // --remove--
+  children.forEach((child) => mountDOM(child, parentEl))
+  // --remove--
+  // --add--
+  children.forEach((child, i) =>
+    mountDOM(child, parentEl, index ? index + i : null)
+  )
+  // --add--
 }

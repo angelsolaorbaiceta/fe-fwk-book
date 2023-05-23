@@ -1,13 +1,12 @@
 import {
   removeAttribute,
   setAttribute,
+  // --add--
   removeStyle,
   setStyle,
+  // --add--
 } from './attributes'
 import { destroyDOM } from './destroy-dom'
-// --add--
-import { addEventListener } from './events'
-// --add--
 import { DOM_TYPES } from './h'
 import { mountDOM } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
@@ -20,25 +19,15 @@ import { isNotBlankOrEmptyString } from './utils/strings'
 // --snip-- //
 
 // --add--
-function patchEvents(
-  el,
-  oldListeners = {},
-  oldEvents = {},
-  newEvents = {}
-) {
-  const { removed, added, updated } = objectsDiff(oldEvents, newEvents) // --1--
+function patchStyles(el, oldStyle = {}, newStyle = {}) {
+  const { added, removed, updated } = objectsDiff(oldStyle, newStyle)
 
-  for (const eventName of removed.concat(updated)) {
-    el.removeEventListener(eventName, oldListeners[eventName]) // --2--
+  for (const style of removed) {
+    removeStyle(el, style)
   }
 
-  const addedListeners = {} // --3--
-
-  for (const eventName of added.concat(updated)) {
-    const listener = addEventListener(eventName, newEvents[eventName], el) // --4--
-    addedListeners[eventName] = listener // --5--
+  for (const style of added.concat(updated)) {
+    setStyle(el, style, newStyle[style])
   }
-
-  return addedListeners // --6--
 }
 // --add--
