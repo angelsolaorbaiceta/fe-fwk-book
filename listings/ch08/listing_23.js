@@ -11,18 +11,25 @@ function patchChildren(oldVdom, newVdom) {
       }
 
       case ARRAY_DIFF_OP.REMOVE: {
-        // --add--
         destroyDOM(item)
         break
-        // --add--
       }
 
       case ARRAY_DIFF_OP.MOVE: {
-        // TODO: implement
+        const el = oldChildren[from].el
+        const elAtTargetIndex = parentEl.childNodes[index]
+
+        parentEl.insertBefore(el, elAtTargetIndex)
+        patchDOM(oldChildren[from], newChildren[index], parentEl)
+
+        break
       }
 
       case ARRAY_DIFF_OP.NOOP: {
-        // TODO: implement
+        // --add--
+        patchDOM(oldChildren[from], newChildren[index], parentEl)
+        break
+        // --add--
       }
     }
   }
