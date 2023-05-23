@@ -26,7 +26,7 @@ export function mountDOM(vdom, parentEl, index) {
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNodes(vdom, parentEl)
+      createFragmentNodes(vdom, parentEl, index)
       break
     }
 
@@ -101,12 +101,15 @@ function addProps(el, props, vdom) {
  *
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  */
-function createFragmentNodes(vdom, parentEl) {
+function createFragmentNodes(vdom, parentEl, index) {
   const { children } = vdom
   vdom.el = parentEl
 
-  children.forEach((child) => mountDOM(child, parentEl))
+  children.forEach((child, i) =>
+    mountDOM(child, parentEl, index ? index + i : null)
+  )
 }
 
 /**

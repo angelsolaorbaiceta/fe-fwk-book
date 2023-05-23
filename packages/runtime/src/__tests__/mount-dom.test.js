@@ -129,3 +129,13 @@ test('mounts an element with styles', () => {
   expect(document.body.innerHTML).toBe('<div style="color: red;"></div>')
   expect(el.style.color).toBe('red')
 })
+
+test('mount a fragment at index', () => {
+  document.body.innerHTML = '<p>one</p><p>two</p><p>five</p>'
+  const vdom = hFragment([h('p', {}, ['three']), h('p', {}, ['four'])])
+  mountDOM(vdom, document.body, 2)
+
+  expect(document.body.innerHTML).toBe(
+    '<p>one</p><p>two</p><p>three</p><p>four</p><p>five</p>'
+  )
+})
