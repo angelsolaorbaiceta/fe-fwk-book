@@ -30,7 +30,7 @@ import { hasOwnProperty } from './utils/objects'
  * @returns {Component}
  */
 export function defineComponent({ render, state, ...methods }) {
-  const Component = class {
+  class Component {
     #isMounted = false
     #vdom = null
     #hostEl = null

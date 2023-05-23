@@ -1,5 +1,5 @@
 export function defineComponent({ render }) {
-  const Component = class {
+  class Component {
     // --add--
     #isMounted = false // --1--
     // --add--

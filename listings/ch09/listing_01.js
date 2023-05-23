@@ -2,7 +2,7 @@ import { destroyDOM } from './destroy-dom'
 import { mountDOM } from './mount-dom'
 
 export function defineComponent({ render }) { // --1--
-  const Component = class { // --2--
+  class Component { // --2--
     #vdom = null
     #hostEl = null
 

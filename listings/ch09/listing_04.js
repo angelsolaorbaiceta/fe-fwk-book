@@ -4,7 +4,7 @@ import { patchDOM } from './patch-dom'
 // --add--
 
 export function defineComponent({ render, state }) {
-  const Component = class {
+  class Component {
     #isMounted = false
     #vdom = null
     #hostEl = null

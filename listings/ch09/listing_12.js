@@ -5,7 +5,7 @@ import { hasOwnProperty } from './utils/objects'
 // --add--
 
 export function defineComponent({ render, state/* --add-- */, ...methods/* --add-- */ }) { // --1--
-  const Component = class {
+  class Component {
     // --snip-- //
   }
 

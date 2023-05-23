@@ -4,7 +4,7 @@ import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
 
 export function defineComponent({ render, state, ...methods }) {
-  const Component = class {
+  class Component {
     #isMounted = false
     #vdom = null
     #hostEl = null

@@ -1,5 +1,5 @@
 export function defineComponent({ render/*--add--*/, state/*--add--*/ }) { // --1--
-  const Component = class {
+  class Component {
     #isMounted = false
     #vdom = null
     #hostEl = null

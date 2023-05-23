@@ -1,5 +1,5 @@
 export function defineComponent({ render, state, ...methods }) {
-  const Component = class {
+  class Component {
     // --snip-- //
 
     get elements() {

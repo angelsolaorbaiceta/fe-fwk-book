@@ -5,7 +5,7 @@ import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 
 export function defineComponent({ render, state }) {
-  const Component = class {
+  class Component {
     #isMounted = false
     #vdom = null
     #hostEl = null

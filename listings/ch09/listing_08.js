@@ -1,5 +1,5 @@
 export function defineComponent({ render, state }) {
-  const Component = class {
+  class Component {
     // --snip-- //
     
     #patch() {
