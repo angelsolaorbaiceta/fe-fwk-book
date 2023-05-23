@@ -1,9 +1,29 @@
-function patchText(oldVdom, newVdom) {
-  const el = oldVdom.el
-  const { value: oldText } = oldVdom
-  const { value: newText } = newVdom
+import { destroyDOM } from './destroy-dom'
+// --add--
+import { DOM_TYPES } from './h'
+// --add--
+import { mountDOM } from './mount-dom'
+import { areNodesEqual } from './nodes-equal'
 
-  if (oldText !== newText) {
-    el.nodeValue = newText
+export function patchDOM(oldVdom, newVdom, parentEl) {
+  if (!areNodesEqual(oldVdom, newVdom)) {
+    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
+    destroyDOM(oldVdom)
+    mountDOM(newVdom, parentEl, index)
+
+    return newVdom
   }
+
+  // --add--
+  newVdom.el = oldVdom.el // --1--
+
+  switch (newVdom.type) {
+    case DOM_TYPES.TEXT: {
+      patchText(oldVdom, newVdom) // --2--
+      return newVdom // --3--
+    }
+  }
+
+  return newVdom
+  // --add--
 }

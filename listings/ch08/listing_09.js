@@ -1,32 +1,9 @@
-import { destroyDOM } from './destroy-dom'
-import { DOM_TYPES } from './h'
-import { mountDOM } from './mount-dom'
-import { areNodesEqual } from './nodes-equal'
+function patchText(oldVdom, newVdom) {
+  const el = oldVdom.el
+  const { value: oldText } = oldVdom
+  const { value: newText } = newVdom
 
-export function patchDOM(oldVdom, newVdom, parentEl) {
-  if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
-    destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index)
-
-    return newVdom
+  if (oldText !== newText) {
+    el.nodeValue = newText
   }
-
-  newVdom.el = oldVdom.el
-  
-  switch (newVdom.type) {
-    case DOM_TYPES.TEXT: {
-      patchText(oldVdom, newVdom)
-      return newVdom
-    }
-
-    // --add--
-    case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom)
-      break
-    }
-    // --add--
-  }
-
-  return newVdom
 }

@@ -1,4 +1,4 @@
-function createTextNode(vdom, parentEl, /*--add--*/index/*--add--*/) {
+function createTextNode(vdom, parentEl/*--add--*/, index/*--add--*/) {
   const { value } = vdom
 
   const textNode = document.createTextNode(value)

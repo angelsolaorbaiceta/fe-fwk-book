@@ -5,48 +5,40 @@ import {
   setStyle,
 } from './attributes'
 import { destroyDOM } from './destroy-dom'
+// --add--
 import { addEventListener } from './events'
+// --add--
 import { DOM_TYPES } from './h'
 import { mountDOM } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
 import {
   arraysDiff,
-  // --add--
-  arraysDiffSequence,
-  ARRAY_DIFF_OP,
-  // --add--
 } from './utils/arrays'
 import { objectsDiff } from './utils/objects'
 import { isNotBlankOrEmptyString } from './utils/strings'
 
-export function patchDOM(oldVdom, newVdom, parentEl) {
-  if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
-    destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index)
+// --snip-- //
 
-    return newVdom
+// --add--
+function patchEvents(
+  el,
+  oldListeners = {},
+  oldEvents = {},
+  newEvents = {}
+) {
+  const { removed, added, updated } = objectsDiff(oldEvents, newEvents) // --1--
+
+  for (const eventName of removed.concat(updated)) {
+    el.removeEventListener(eventName, oldListeners[eventName]) // --2--
   }
 
-  newVdom.el = oldVdom.el
+  const addedListeners = {} // --3--
 
-  switch (newVdom.type) {
-    case DOM_TYPES.TEXT: {
-      patchText(oldVdom, newVdom)
-      return newVdom
-    }
-
-    case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom)
-      break
-    }
+  for (const eventName of added.concat(updated)) {
+    const listener = addEventListener(eventName, newEvents[eventName], el) // --4--
+    addedListeners[eventName] = listener // --5--
   }
 
-  // --add--
-  patchChildren(oldVdom, newVdom)
-  // --add--
-
-  return newVdom
+  return addedListeners // --6--
 }
-
-// TODO: implement patchChildren()
+// --add--
