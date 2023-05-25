@@ -1,5 +1,3 @@
-import { toPromise } from './utils/promises'
-
 /**
  * Adds event listeners to an event target and returns an object containing
  * the added listeners.

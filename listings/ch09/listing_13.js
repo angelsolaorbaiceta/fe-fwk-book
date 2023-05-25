@@ -1,7 +1,3 @@
-// --add--
-import { toPromise } from './utils/promises'
-// --add--
-
 export function addEventListeners(
   listeners = {},
   el,
