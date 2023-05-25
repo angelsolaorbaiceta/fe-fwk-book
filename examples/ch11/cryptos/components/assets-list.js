@@ -33,16 +33,18 @@ export const AssetsList = defineComponent({
     ])
   },
 
-  loadMore() {
+  async loadMore() {
+    const { offset, assets } = this.state
     this.updateState({ isLoading: true })
-    fetchAssets(10, this.state.offset).then((assets) => {
-      setTimeout(() => {
-        this.updateState({
-          assets: [...this.state.assets, ...assets],
-          isLoading: false,
-          offset: this.state.offset + 10,
-        })
-      }, 1000)
-    })
+
+    const newAssets = await fetchAssets(10, offset)
+
+    setTimeout(() => {
+      this.updateState({
+        assets: [...assets, ...newAssets],
+        isLoading: false,
+        offset: offset + 10,
+      })
+    }, 1000)
   },
 })

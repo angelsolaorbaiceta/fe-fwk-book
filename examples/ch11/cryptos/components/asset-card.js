@@ -36,15 +36,15 @@ export const AssetCard = defineComponent({
     ])
   },
 
-  showConverter() {
+  async showConverter() {
     const { asset } = this.props
 
     this.updateState({ isLoading: true })
 
-    fetchRates(asset.id).then((response) => {
-      const rate = parseFloat(response?.rateUsd)
-      this.updateState({ rate, showConverter: true, isLoading: false })
-    })
+    const response = await fetchRates(asset.id)
+    const rate = parseFloat(response?.rateUsd)
+
+    this.updateState({ rate, showConverter: true, isLoading: false })
   },
 })
 
