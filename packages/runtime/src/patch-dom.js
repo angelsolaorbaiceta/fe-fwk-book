@@ -35,7 +35,7 @@ import { isNotBlankOrEmptyString } from './utils/strings'
  */
 export function patchDOM(oldVdom, newVdom, parentEl) {
   if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
+    const index = findIndexInParent(parentEl, oldVdom.el)
     destroyDOM(oldVdom)
     mountDOM(newVdom, parentEl, index)
 
@@ -59,6 +59,23 @@ export function patchDOM(oldVdom, newVdom, parentEl) {
   patchChildren(oldVdom, newVdom)
 
   return newVdom
+}
+
+/**
+ * Returns the index of the `el` element in its parent's children.
+ * If the element is not found, returns `null`.
+ *
+ * @param {Element} parentEl the parent element
+ * @param {Element} el the element to find
+ * @returns {number | null} index
+ */
+function findIndexInParent(parentEl, el) {
+  const index = Array.from(parentEl.childNodes).indexOf(el)
+  if (index < 0) {
+    return null
+  }
+
+  return index
 }
 
 /**
