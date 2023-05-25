@@ -8,7 +8,7 @@ export function defineComponent({ render, state, ...methods }) {
       }
       
       this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index/*--add--*/, this/*--add--*/)
+      mountDOM(this.#vdom, hostEl, index/*--add--*/, this/*--add--*/) // --1--
       
       this.#hostEl = hostEl
       this.#isMounted = true

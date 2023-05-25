@@ -4,7 +4,7 @@ function patchEvents(
   oldEvents = {},
   newEvents = {},
   // --add--
-  hostComponent
+  hostComponent // --1--
   // --add--
 ) {
   const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
@@ -20,7 +20,7 @@ function patchEvents(
       newEvents[eventName],
       el,
       // --add--
-      hostComponent
+      hostComponent // --2--
       // --add--
     )
     addedListeners[eventName] = listener

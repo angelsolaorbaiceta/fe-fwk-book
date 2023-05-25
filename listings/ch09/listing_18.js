@@ -1,8 +1,8 @@
 export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
   if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
+    const index = findIndexInParent(parentEl, oldVdom.el)
     destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
+    mountDOM(newVdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) // --1--
 
     return newVdom
   }
@@ -16,7 +16,7 @@ export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/)
+      patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) // --2--
       break
     }
   }

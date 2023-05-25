@@ -1,4 +1,4 @@
-function patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
+function patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) { // --1--
   const el = oldVdom.el
   const {
     class: oldClass,
@@ -23,7 +23,7 @@ function patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
     oldEvents,
     newEvents,
     // --add--
-    hostComponent
+    hostComponent // --2--
     // --add--
   )
 }

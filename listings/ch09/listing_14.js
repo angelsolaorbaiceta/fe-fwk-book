@@ -1,4 +1,4 @@
-export function mountDOM(vdom, parentEl, index/*--add--*/, hostComponent = null/*--add--*/) {
+export function mountDOM(vdom, parentEl, index/*--add--*/, hostComponent = null/*--add--*/) { // --1--
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl, index)
@@ -6,12 +6,12 @@ export function mountDOM(vdom, parentEl, index/*--add--*/, hostComponent = null/
     }
 
     case DOM_TYPES.ELEMENT: {
-      createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
+      createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) // --2--
       break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNodes(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
+      createFragmentNodes(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) // --3--
       break
     }
 
