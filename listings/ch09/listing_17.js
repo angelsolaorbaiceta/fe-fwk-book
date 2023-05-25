@@ -1,6 +1,8 @@
-function addProps(el, props, vdom/*--add--*/, hostComponent/*--add--*/) {
-  const { on: events, ...attrs } = props
+function createFragmentNodes(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) {
+  const { children } = vdom
+  vdom.el = parentEl
 
-  vdom.listeners = addEventListeners(events, el/*--add--*/, hostComponent/*--add--*/)
-  setAttributes(el, attrs)
+  children.forEach((child) =>
+    mountDOM(child, parentEl, index ? index + i : null/*--add--*/, hostComponent/*--add--*/)
+  )
 }

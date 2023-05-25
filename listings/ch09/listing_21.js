@@ -1,30 +1,23 @@
-function patchEvents(
-  el,
-  oldListeners = {},
-  oldEvents = {},
-  newEvents = {},
-  // --add--
-  hostComponent
-  // --add--
-) {
-  const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
+export function defineComponent({ render, state, ...methods }) {
+  class Component {
+    // --snip-- //
 
-  for (const eventName of removed.concat(updated)) {
-    el.removeEventListener(eventName, oldListeners[eventName])
-  }
-  const addedListeners = {}
-
-  for (const eventName of added.concat(updated)) {
-    const listener = addEventListener(
-      eventName,
-      newEvents[eventName],
-      el,
-      // --add--
-      hostComponent
-      // --add--
-    )
-    addedListeners[eventName] = listener
+    mount(hostEl, index = null) {
+      if (this.#isMounted) {
+        throw new Error('Component is already mounted')
+      }
+      
+      this.#vdom = this.render()
+      mountDOM(this.#vdom, hostEl, index/*--add--*/, this/*--add--*/)
+      
+      this.#hostEl = hostEl
+      this.#isMounted = true
+    }
+    
+    // --snip-- //
   }
 
-  return addedListeners
+  // --snip-- //
+
+  return Component
 }

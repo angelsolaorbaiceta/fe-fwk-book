@@ -1,22 +1,10 @@
-export function mountDOM(vdom, parentEl, index/*--add--*/, hostComponent = null/*--add--*/) {
-  switch (vdom.type) {
-    case DOM_TYPES.TEXT: {
-      createTextNode(vdom, parentEl, index)
-      break
-    }
+function createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) {
+  const { tag, props, children } = vdom
 
-    case DOM_TYPES.ELEMENT: {
-      createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
-      break
-    }
+  const element = document.createElement(tag)
+  addProps(element, props, vdom/*--add--*/, hostComponent/*--add--*/)
+  vdom.el = element
 
-    case DOM_TYPES.FRAGMENT: {
-      createFragmentNodes(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
-      break
-    }
-
-    default: {
-      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
-    }
-  }
+  children.forEach((child) => mountDOM(child, element/*--add--*/, null, hostComponent/*--add--*/))
+  insert(element, parentEl, index)
 }

@@ -1,27 +1,29 @@
-export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
-  if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
-    destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index/*--add--*/, hostComponent/*--add--*/)
+function patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/) {
+  const el = oldVdom.el
+  const {
+    class: oldClass,
+    style: oldStyle,
+    on: oldEvents,
+    ...oldAttrs
+  } = oldVdom.props
+  const {
+    class: newClass,
+    style: newStyle,
+    on: newEvents,
+    ...newAttrs
+  } = newVdom.props
+  const { listeners: oldListeners } = oldVdom
 
-    return newVdom
-  }
-
-  newVdom.el = oldVdom.el
-
-  switch (newVdom.type) {
-    case DOM_TYPES.TEXT: {
-      patchText(oldVdom, newVdom)
-      return newVdom
-    }
-
-    case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom/*--add--*/, hostComponent/*--add--*/)
-      break
-    }
-  }
-
-  patchChildren(oldVdom, newVdom, hostComponent)
-
-  return newVdom
+  patchAttrs(el, oldAttrs, newAttrs)
+  patchClasses(el, oldClass, newClass)
+  patchStyles(el, oldStyle, newStyle)
+  newVdom.listeners = patchEvents(
+    el,
+    oldListeners,
+    oldEvents,
+    newEvents,
+    // --add--
+    hostComponent
+    // --add--
+  )
 }
