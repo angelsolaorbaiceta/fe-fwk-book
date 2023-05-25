@@ -1,8 +1,8 @@
-function createFragmentNodes(vdom, parentEl/*--add--*/, hostComponent/*--add--*/) {
+function createFragmentNodes(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) {
   const { children } = vdom
   vdom.el = parentEl
 
   children.forEach((child) =>
-    mountDOM(child, parentEl/*--add--*/, null, hostComponent/*--add--*/)
+    mountDOM(child, parentEl, index ? index + i : null/*--add--*/, hostComponent/*--add--*/)
   )
 }

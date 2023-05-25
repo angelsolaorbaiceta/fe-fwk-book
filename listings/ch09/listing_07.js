@@ -1,3 +1,4 @@
+import { destroyDOM } from './destroy-dom'
 // --add--
 import { DOM_TYPES, extractChildren } from './h'
 // --add--

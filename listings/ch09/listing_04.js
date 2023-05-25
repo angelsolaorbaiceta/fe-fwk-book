@@ -1,3 +1,4 @@
+import { destroyDOM } from './destroy-dom'
 import { mountDOM } from './mount-dom'
 // --add--
 import { patchDOM } from './patch-dom'

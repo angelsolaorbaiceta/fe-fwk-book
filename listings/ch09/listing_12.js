@@ -1,3 +1,5 @@
+import { destroyDOM } from './destroy-dom'
+import { DOM_TYPES, extractChildren } from './h'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 // --add--

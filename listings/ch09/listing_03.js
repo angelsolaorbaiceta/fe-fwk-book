@@ -16,27 +16,11 @@ export function defineComponent({ render/*--add--*/, state/*--add--*/ }) { // --
     }
 
     mount(hostEl, index = null) {
-      if (this.#isMounted) {
-        throw new Error('Component is already mounted')
-      }
-      
-      this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index)
-      
-      this.#hostEl = hostEl
-      this.#isMounted = true
+      // --snip-- //
     }
     
     unmount() {
-      if (!this.#isMounted) {
-        throw new Error('Component is not mounted')
-      }
-
-      destroyDOM(this.#vdom)
-
-      this.#vdom = null
-      this.#hostEl = null
-      this.#isMounted = false
+      // --snip-- //
     }
   }
 
