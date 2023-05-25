@@ -28,7 +28,7 @@ const App = defineComponent({
       return hFragment([
         h('h1', {}, ['Random Cocktail']),
         h('button', { on: { click: this.fetchCocktail } }, [
-          'Fetch random cocktail',
+          'Get a cocktail',
         ]),
       ])
     }
@@ -49,7 +49,7 @@ const App = defineComponent({
           on: { click: this.fetchCocktail },
           style: { display: 'block', margin: '1em auto' },
         },
-        ['Fetch another']
+        ['Get another cocktail']
       ),
     ])
   },
