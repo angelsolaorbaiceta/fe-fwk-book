@@ -28,15 +28,13 @@ export function addEventListener(
   return handler
   // --remove--
   // --add--
-  async function asyncHandler() { // --4--
-    await toPromise( // --5--
-      hostComponent
-        ? handler.call(hostComponent, ...arguments) // --6--
-        : handler(...arguments) // --7--
-    )
+  function boundHandler() {
+    hostComponent
+      ? handler.call(hostComponent, ...arguments) // --4--
+      : handler(...arguments) // --5--
   }
 
-  el.addEventListener(eventName, asyncHandler) // --8--
+  el.addEventListener(eventName, boundHandler) // --6--
 
   return asyncHandler
   // --add--

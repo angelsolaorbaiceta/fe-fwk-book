@@ -40,17 +40,15 @@ export function addEventListener(
   el,
   hostComponent = null
 ) {
-  async function asyncHandler() {
-    await toPromise(
-      hostComponent
-        ? handler.call(hostComponent, ...arguments)
-        : handler(...arguments)
-    )
+  function boundHandler() {
+    hostComponent
+      ? handler.call(hostComponent, ...arguments)
+      : handler(...arguments)
   }
 
-  el.addEventListener(eventName, asyncHandler)
+  el.addEventListener(eventName, boundHandler)
 
-  return asyncHandler
+  return boundHandler
 }
 
 /**
