@@ -1,25 +1,11 @@
-const TodoItem = defineComponent({
-  state({ todo }) {
-    return {
-      original: todo,
-      edited: todo,
-      isEditing: false,
+export function extractComponentProps(vdom) {
+  const props = vdom.props
+
+  for (const prop in props) {
+    if (prop.startsWith('data-')) {
+      delete props[prop]
     }
-  },
+  }
 
-  render() {
-    const { isEditing, original, edited } = this.state
-
-    return isEditing
-      ? this.renderInEditMode(edited)
-      : this.renderInViewMode(original)
-  },
-
-  renderInEditMode(edited) {
-    // TODO: implement me
-  },
-
-  renderInViewMode(original) {
-    // TODO: implement me
-  },
-})
+  return props
+}

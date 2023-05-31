@@ -1,39 +1,29 @@
-const CreateTodo = defineComponent({
-  state() {
-    return { text: '' }
-  },
+export function mountDOM(vdom, parentEl, index, hostComponent = null) {
+  switch (vdom.type) {
+    case DOM_TYPES.TEXT: {
+      createTextNode(vdom, parentEl, index)
+      break
+    }
 
-  render() {
-    const { text } = this.state
+    case DOM_TYPES.ELEMENT: {
+      createElementNode(vdom, parentEl, index, hostComponent)
+      break
+    }
 
-    return h('div', {}, [
-      h('label', { for: 'todo-input' }, ['New TODO']),
-      h('input', {
-        type: 'text',
-        id: 'todo-input',
-        value: text,
-        on: {
-          input: ({ target }) => this.updateState({ text: target.value }),
-          keydown: ({ key }) => {
-            if (key === 'Enter' && text.length >= 3) {
-              this.addTodo()
-            }
-          },
-        },
-      }),
-      h(
-        'button',
-        {
-          disabled: text.length < 3,
-          on: { click: this.addTodo },
-        },
-        ['Add']
-      ),
-    ])
-  },
+    case DOM_TYPES.FRAGMENT: {
+      createFragmentNodes(vdom, parentEl, hostComponent)
+      break
+    }
 
-  addTodo() {
-    this.emit('add', this.state.text)
-    this.updateState({ text: '' })
-  },
-})
+    // --add--
+    case DOM_TYPES.COMPONENT: {
+      createComponentNode(vdom, parentEl, index, hostComponent)
+      break
+    }
+    // --add--
+
+    default: {
+      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
+    }
+  }
+}

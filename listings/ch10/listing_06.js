@@ -1,33 +1,6 @@
-export function destroyDOM(vdom) {
-  const { type } = vdom
+function addProps(el, props, vdom/*--add--*/, hostComponent/*--add--*/) { // --1--
+  const { on: events, ...attrs } = props
 
-  switch (type) {
-    case DOM_TYPES.TEXT: {
-      removeTextNode(vdom)
-      break
-    }
-
-    case DOM_TYPES.ELEMENT: {
-      removeElementNode(vdom)
-      break
-    }
-
-    case DOM_TYPES.FRAGMENT: {
-      removeFragmentNodes(vdom)
-      break
-    }
-
-    // --add--
-    case DOM_TYPES.COMPONENT: {
-      vdom.component.unmount()
-      break
-    }
-    // --add--
-
-    default: {
-      throw new Error(`Can't destroy DOM of type: ${type}`)
-    }
-  }
-
-  delete vdom.el
+  vdom.listeners = addEventListeners(events, el/*--add--*/, hostComponent/*--add--*/) // --2--
+  setAttributes(el, attrs)
 }

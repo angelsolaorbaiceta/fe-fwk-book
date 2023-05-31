@@ -1,43 +1,34 @@
-const App = defineComponent({
-  state() {
-    return {
-      todos: ['Walk the dog', 'Water the plants', 'Sand the chairs'],
+export function defineComponent({ render, state, ...methods }) {
+  class Component {
+    // --snip-- //
+
+    get elements() {
+      if (this.#vdom == null) {
+        return []
+      }
+
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
+        // --remove--
+        return extractChildren(this.#vdom).map((child) => child.el)
+        // --remove--
+        // --add--
+        return extractChildren(this.#vdom).flatMap((child) => {
+          if (child.type === DOM_TYPES.COMPONENT) {
+            return child.component.elements
+          }
+
+          return [child.el]
+        })
+        // --add--
+      }
+
+      return [this.#vdom.el]
     }
-  },
 
-  render() {
-    const { todos } = this.state
+    // --snip-- //
+  }
+  
+  // --snip-- //
 
-    return hFragment([
-      h('h1', {}, ['My TODOs']),
-      h(CreateTodo, {
-        on: {
-          add: this.addTodo,
-        },
-      }),
-      h(TodoList, {
-        todos,
-        on: {
-          remove: this.removeTodo,
-          edit: this.editTodo,
-        },
-      }),
-    ])
-  },
-
-  addTodo(text) {
-    this.updateState({ todos: [...this.state.todos, text] })
-  },
-
-  removeTodo(idx) {
-    const newTodos = [...this.state.todos]
-    newTodos.splice(idx, 1)
-    this.updateState({ todos: newTodos })
-  },
-
-  editTodo({ edited, i }) {
-    const newTodos = [...this.state.todos]
-    newTodos[i] = edited
-    this.updateState({ todos: newTodos })
-  },
-})
+  return Component
+}

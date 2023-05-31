@@ -1,47 +1,33 @@
-const TodoItem = defineComponent({
-  state({ todo }) {
-    // --snip-- //
-  },
+export function destroyDOM(vdom) {
+  const { type } = vdom
 
-  render() {
-    // --snip-- //
-  },
+  switch (type) {
+    case DOM_TYPES.TEXT: {
+      removeTextNode(vdom)
+      break
+    }
 
-  renderInEditMode(edited) {
+    case DOM_TYPES.ELEMENT: {
+      removeElementNode(vdom)
+      break
+    }
+
+    case DOM_TYPES.FRAGMENT: {
+      removeFragmentNodes(vdom)
+      break
+    }
+
     // --add--
-    return h('li', {}, [
-      h('input', {
-        value: edited,
-        on: {
-          input: ({ target }) => this.updateState({ edited: target.value }),
-        },
-      }),
-      h(
-        'button',
-        {
-          on: {
-            click: this.saveEdition,
-          },
-        },
-        ['Save']
-      ),
-      h('button', { on: { click: this.cancelEdition } }, ['Cancel']),
-    ])
+    case DOM_TYPES.COMPONENT: {
+      vdom.component.unmount()
+      break
+    }
     // --add--
-  },
 
-  // --add--
-  saveEdition() {
-    this.updateState({ original: this.state.edited, isEditing: false })
-    this.emit('edit', { edited: this.state.edited, i: this.props.i })
-  },
+    default: {
+      throw new Error(`Can't destroy DOM of type: ${type}`)
+    }
+  }
 
-  cancelEdition() {
-    this.updateState({ edited: this.state.original, isEditing: false })
-  },
-  // --add--
-
-  renderInViewMode(original) {
-    // TODO: implement me
-  },
-})
+  delete vdom.el
+}

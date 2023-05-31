@@ -1,11 +1,10 @@
-export function extractComponentProps(vdom) {
-  const props = vdom.props
+function createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) { // --1--
+  const { tag, props, children } = vdom
 
-  for (const prop in props) {
-    if (prop.startsWith('data-')) {
-      delete props[prop]
-    }
-  }
+  const element = document.createElement(tag)
+  addProps(element, props, vdom/*--add--*/, hostComponent/*--add--*/) // --2--
+  vdom.el = element
 
-  return props
+  children.forEach((child) => mountDOM(child, element/*--add--*/, null, hostComponent/*--add--*/)) // --3--
+  insert(element, parentEl, index)
 }

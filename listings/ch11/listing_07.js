@@ -1,39 +1,36 @@
-const TodoItem = defineComponent({
-  state({ todo }) {
-    // --snip-- //
-  },
+export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
+  if (!areNodesEqual(oldVdom, newVdom)) {
+    const index = findIndexInParent(parentEl, oldVdom.el)
+    destroyDOM(oldVdom)
+    mountDOM(newVdom, parentEl, index, hostComponent)
 
-  render() {
-    // --snip-- //
-  },
+    return newVdom
+  }
 
-  renderInEditMode(edited) {
-    // --snip-- //
-  },
+  newVdom.el = oldVdom.el
 
-  saveEdition() {
-    this.updateState({ original: this.state.edited, isEditing: false })
-    this.emit('edit', { edited: this.state.edited, i: this.props.i })
-  },
+  switch (newVdom.type) {
+    case DOM_TYPES.TEXT: {
+      patchText(oldVdom, newVdom)
+      return newVdom
+    }
 
-  cancelEdition() {
-    this.updateState({ edited: this.state.original, isEditing: false })
-  },
+    case DOM_TYPES.ELEMENT: {
+      patchElement(oldVdom, newVdom, hostComponent)
+      break
+    }
 
-  renderInViewMode(original) {
     // --add--
-    return h('li', {}, [
-      h(
-        'span',
-        { on: { dblclick: () => this.updateState({ isEditing: true }) } },
-        [original]
-      ),
-      h(
-        'button',
-        { on: { click: () => this.emit('remove', this.props.i) } },
-        ['Done']
-      ),
-    ])
+    case DOM_TYPES.COMPONENT: {
+      patchComponent(oldVdom, newVdom)
+      break
+    }
     // --add--
-  },
-})
+  }
+
+  patchChildren(oldVdom, newVdom, hostComponent)
+
+  return newVdom
+}
+
+// TODO: implement patchComponent()

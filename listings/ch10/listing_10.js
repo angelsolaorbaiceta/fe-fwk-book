@@ -1,21 +1,30 @@
-export function extractComponentProps(vdom) {
-  // --remove--
-  const props = vdom.props
-  // --remove--
+function patchEvents(
+  el,
+  oldListeners = {},
+  oldEvents = {},
+  newEvents = {},
   // --add--
-  const { on: events = {}, ...props } = vdom.props
+  hostComponent // --1--
   // --add--
+) {
+  const { removed, added, updated } = objectsDiff(oldEvents, newEvents)
 
-  for (const prop in props) {
-    if (prop.startsWith('data-')) {
-      delete props[prop]
-    }
+  for (const eventName of removed.concat(updated)) {
+    el.removeEventListener(eventName, oldListeners[eventName])
+  }
+  const addedListeners = {}
+
+  for (const eventName of added.concat(updated)) {
+    const listener = addEventListener(
+      eventName,
+      newEvents[eventName],
+      el,
+      // --add--
+      hostComponent // --2--
+      // --add--
+    )
+    addedListeners[eventName] = listener
   }
 
-  // --remove--
-  return props
-  // --remove--
-  // --add--
-  return { props, events }
-  // --add--
+  return addedListeners
 }

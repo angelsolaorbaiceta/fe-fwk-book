@@ -1,34 +1,27 @@
-export function defineComponent({ render, state, ...methods }) {
+import { destroyDOM } from './destroy-dom'
+import { DOM_TYPES, extractChildren } from './h'
+import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
+// --add--
+import { hasOwnProperty } from './utils/objects'
+// --add--
+
+export function defineComponent({ render, state/* --add-- */, ...methods/* --add-- */ }) { // --1--
   class Component {
     // --snip-- //
+  }
 
-    get elements() {
-      if (this.#vdom == null) {
-        return []
-      }
-
-      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
-        // --remove--
-        return extractChildren(this.#vdom).map((child) => child.el)
-        // --remove--
-        // --add--
-        return extractChildren(this.#vdom).flatMap((child) => {
-          if (child.type === DOM_TYPES.COMPONENT) {
-            return child.component.elements
-          }
-
-          return [child.el]
-        })
-        // --add--
-      }
-
-      return [this.#vdom.el]
+  // --add--
+  for (const methodName in methods) { // --2--
+    if (hasOwnProperty(Component, methodName)) { // --3--
+      throw new Error(
+        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
+      )
     }
 
-    // --snip-- //
+    Component.prototype[methodName] = methods[methodName] // --4--
   }
-  
-  // --snip-- //
+  // --add--
 
   return Component
 }

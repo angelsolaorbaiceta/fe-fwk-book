@@ -1,29 +1,37 @@
-export function mountDOM(vdom, parentEl, index, hostComponent = null) {
-  switch (vdom.type) {
-    case DOM_TYPES.TEXT: {
-      createTextNode(vdom, parentEl, index)
-      break
-    }
+export function addEventListeners(
+  listeners = {},
+  el,
+  /*--add--*/hostComponent = null/*--add--*/ // --1--
+) {
+  const addedListeners = {}
 
-    case DOM_TYPES.ELEMENT: {
-      createElementNode(vdom, parentEl, index, hostComponent)
-      break
-    }
+  Object.entries(listeners).forEach(([eventName, handler]) => {
+    const listener = addEventListener(eventName, handler, el/*--add--*/, hostComponent/*--add--*/) // --2--
+    addedListeners[eventName] = listener
+  })
 
-    case DOM_TYPES.FRAGMENT: {
-      createFragmentNodes(vdom, parentEl, hostComponent)
-      break
-    }
+  return addedListeners
+}
 
-    // --add--
-    case DOM_TYPES.COMPONENT: {
-      createComponentNode(vdom, parentEl, index, hostComponent)
-      break
-    }
-    // --add--
-
-    default: {
-      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
-    }
+export function addEventListener(
+  eventName,
+  handler,
+  el,
+  /*--add--*/hostComponent = null/*--add--*/ // --3--
+) {
+  // --remove--
+  el.addEventListener(eventName, handler)
+  return handler
+  // --remove--
+  // --add--
+  function boundHandler() {
+    hostComponent
+      ? handler.call(hostComponent, ...arguments) // --4--
+      : handler(...arguments) // --5--
   }
+
+  el.addEventListener(eventName, boundHandler) // --6--
+
+  return asyncHandler
+  // --add--
 }

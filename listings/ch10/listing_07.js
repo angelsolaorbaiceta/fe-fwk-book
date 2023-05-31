@@ -1,36 +1,8 @@
-export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
-  if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = findIndexInParent(parentEl, oldVdom.el)
-    destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index, hostComponent)
+function createFragmentNodes(vdom, parentEl, index/*--add--*/, hostComponent/*--add--*/) { // --1--
+  const { children } = vdom
+  vdom.el = parentEl
 
-    return newVdom
-  }
-
-  newVdom.el = oldVdom.el
-
-  switch (newVdom.type) {
-    case DOM_TYPES.TEXT: {
-      patchText(oldVdom, newVdom)
-      return newVdom
-    }
-
-    case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom, hostComponent)
-      break
-    }
-
-    // --add--
-    case DOM_TYPES.COMPONENT: {
-      patchComponent(oldVdom, newVdom)
-      break
-    }
-    // --add--
-  }
-
-  patchChildren(oldVdom, newVdom, hostComponent)
-
-  return newVdom
+  children.forEach((child) =>
+    mountDOM(child, parentEl, index ? index + i : null/*--add--*/, hostComponent/*--add--*/) // --2--
+  )
 }
-
-// TODO: implement patchComponent()
