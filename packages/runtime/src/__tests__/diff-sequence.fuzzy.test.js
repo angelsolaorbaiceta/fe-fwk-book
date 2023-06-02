@@ -5,11 +5,9 @@ import {
 } from '../utils/arrays'
 
 const options = ['a', 'b', 'c', 'd', 'e', 'f']
-const minSize = 10
-const maxSize = 50
 
-function generateRandomArray() {
-  const length = Math.floor(Math.random() * (maxSize - minSize)) + minSize
+function generateRandomArray(min = 10, max = 50) {
+  const length = Math.floor(Math.random() * (max - min)) + min
   const array = []
 
   for (let i = 0; i < length; i++) {
@@ -19,18 +17,21 @@ function generateRandomArray() {
   return array
 }
 
-function generateRandomArrayPair() {
-  const oldArray = generateRandomArray()
-  const newArray = generateRandomArray()
+function generateRandomArrayPair(min = 10, max = 50) {
+  const oldArray = generateRandomArray(min, max)
+  const newArray = generateRandomArray(min, max)
 
   return [oldArray, newArray]
 }
 
 const testData = Array.from({ length: 50 }, generateRandomArrayPair)
 
-test.each(testData)('arrays diff sequence', (oldArray, newArray) => {
-  const sequence = arraysDiffSequence(oldArray, newArray)
-  const actual = applyArraysDiffSequence(oldArray, sequence)
+test.each(testData)(
+  '(fuzzy) arrays diff sequence',
+  (oldArray, newArray) => {
+    const sequence = arraysDiffSequence(oldArray, newArray)
+    const actual = applyArraysDiffSequence(oldArray, sequence)
 
-  expect(actual).toEqual(newArray)
-})
+    expect(actual).toEqual(newArray)
+  }
+)
