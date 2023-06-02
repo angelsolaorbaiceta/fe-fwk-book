@@ -73,6 +73,9 @@ export function arraysDiffSequence(
   equalsFn = (a, b) => a === b
 ) {
   const sequence = []
+  // This array maintains the old items and their original indices.
+  // Original indices are used for noop operations, to keep track of the
+  // natural movements of items in the array.
   const withOriginalIndices = oldArray.map((item, index) => ({
     item,
     index,
@@ -120,6 +123,7 @@ export function arraysDiffSequence(
           op: ARRAY_DIFF_OP.NOOP,
           from: originalIdx,
           index,
+          item: oldItem,
         })
 
         continue
