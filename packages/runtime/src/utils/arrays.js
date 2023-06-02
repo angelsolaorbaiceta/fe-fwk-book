@@ -83,7 +83,7 @@ export function arraysDiffSequence(
 
   function findFrom(item, index) {
     for (let i = index; i < withOriginalIndices.length; i++) {
-      const oldItem = withOriginalIndices[i].item
+      const { item: oldItem } = withOriginalIndices[i]
 
       if (equalsFn(item, oldItem)) {
         return i
