@@ -155,7 +155,7 @@ export function arraysDiffSequence(
   }
 
   // Items in the old array that are past the last index of the new array are
-  // removed
+  // removed.
   for (
     let index = newArray.length;
     index < withOriginalIndices.length;
@@ -165,7 +165,7 @@ export function arraysDiffSequence(
 
     sequence.push({
       op: ARRAY_DIFF_OP.REMOVE,
-      index,
+      index: newArray.length,
       item,
     })
   }
@@ -182,21 +182,24 @@ export function arraysDiffSequence(
  * @returns {any[]} The array after applying the operations
  */
 export function applyArraysDiffSequence(oldArray, diffSeq) {
-  return diffSeq.reduce((array, { op, item, index, from }) => {
-    switch (op) {
-      case ARRAY_DIFF_OP.ADD:
-        array.splice(index, 0, item)
-        break
+  return diffSeq.reduce(
+    (array, { op, item, index, from }) => {
+      switch (op) {
+        case ARRAY_DIFF_OP.ADD:
+          array.splice(index, 0, item)
+          break
 
-      case ARRAY_DIFF_OP.REMOVE:
-        array.splice(index, 1)
-        break
+        case ARRAY_DIFF_OP.REMOVE:
+          array.splice(index, 1)
+          break
 
-      case ARRAY_DIFF_OP.MOVE:
-        array.splice(index, 0, array.splice(from, 1)[0])
-        break
-    }
+        case ARRAY_DIFF_OP.MOVE:
+          array.splice(index, 0, array.splice(from, 1)[0])
+          break
+      }
 
-    return array
-  }, oldArray)
+      return array
+    },
+    [...oldArray]
+  )
 }

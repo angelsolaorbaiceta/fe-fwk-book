@@ -247,3 +247,41 @@ test.each([
     expect(applyArraysDiffSequence(oldArray, diffSeq)).toEqual(newArray)
   }
 )
+
+// Cases failing in fuzz testing
+test('removes the items at the end', () => {
+  const oldArray = [
+    'a',
+    'b',
+    'd',
+    'd',
+    'e',
+    'c',
+    'f',
+    'd',
+    'b',
+    'c',
+    'd',
+    'e',
+    'a',
+  ]
+  const newArray = [
+    'f',
+    'a',
+    'a',
+    'a',
+    'd',
+    'c',
+    'e',
+    'e',
+    'f',
+    'a',
+    'd',
+    'a',
+  ]
+
+  const diffSeq = arraysDiffSequence(oldArray, newArray)
+  const actual = applyArraysDiffSequence(oldArray, diffSeq)
+
+  expect(actual).toEqual(newArray)
+})
