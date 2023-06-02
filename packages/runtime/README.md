@@ -24,6 +24,79 @@ The application instance, created using the `createApp()` function, holds all th
 Every time a command is dispatched, the reducer subscribed to the command is run to update the state, and then, the entire view is destroyed and recreated from scratch.
 This is done by registering the application's `renderApp()` function to run after each command is processed in the dispatcher.
 
+### Virtual DOM
+
+The view of the application is represented by a virtual DOM tree.
+The virtual DOM tree can be broken down into components, which are functions that return a virtual DOM tree.
+There are three types of virtual DOM nodes:
+
+- `h()`: creates an element virtual DOM node.
+- `hString()`: creates a text virtual DOM node.
+- `hFragment()`: creates a fragment virtual DOM node. This is a special type of virtual DOM node that represents a list of virtual DOM nodes, but it doesn't create any HTML element in the DOM.
+
+The `h()` function takes as input the following arguments:
+
+- `tag`: the tag name of the HTML element to create.
+- `props`: an object with the attributes and event handlers to set on the HTML element.
+- `children`: an array of virtual DOM nodes to append as children of the HTML element. A child of type string will be converted to a text virtual DOM node.
+
+Here's an example of how to use the `h()` function to create a form with an input and a button:
+
+```js
+h('form', { class: 'form' }, [
+  h('input', { type: 'text', value: 'Hello world!' }),
+  h('button', { type: 'submit' }, ['Submit']),
+])
+```
+
+### Defining components
+
+A component is a pure function that returns a virtual DOM tree.
+Components get the state of the application, or a part of it, as input:
+
+```js
+function Counter(state) {
+  return h('p', { class: 'counter' }, [`Count: ${state.count}`])
+}
+```
+
+Components can receive the `emit()` function as second argument.
+This function can be used to dispatch commands to update the state of the application:
+
+```js
+function Counter(state, emit) {
+  return hFragment([
+    h('p', { class: 'counter' }, [`Count: ${state.count}`]),
+    h('button', { on: { click: () => emit('increment') } }, ['Increment']),
+  ])
+}
+```
+
+The commands dispatched by the component are handled by the reducers of the application.
+The reducers change the state of the application, and then, the entire view is recreated from scratch.
+
+### The application
+
+The application is created using the `createApp()` function.
+The function expects an object with three properties:
+
+- `view`: the function that returns the virtual DOM tree representing the view of the application.
+- `state`: the initial state of the application.
+- `reducers`: an object with the reducers of the application.
+
+Here's an example of a button that increments a counter (using the `Counter` component defined above):
+
+```js
+function view(state)
+const app = createApp({
+  view: Counter,
+  state: { count: 0 },
+  reducers: {
+    increment: (state) => ({ ...state, count: state.count + 1 }),
+  },
+})
+```
+
 ## [v2.0 - Chapter 8](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch8/packages/runtime)
 
 _See the example application in the [examples/ch08 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch08)_.
@@ -36,14 +109,14 @@ $ git checkout ch8
 
 This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
 
-## v3.0 - Chapter 11
+## v3.0 - Chapter 12
 
-_See the example application in the [examples/ch11 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch11)_.
+_See the example application in the [examples/ch12 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch12)_.
 
 To checkout this version of the code:
 
 ```bash
-$ git checkout ch11
+$ git checkout ch12
 ```
 
 This version of the framework implements stateful components; each component is similar to a mini-application with its own lifecycle.
