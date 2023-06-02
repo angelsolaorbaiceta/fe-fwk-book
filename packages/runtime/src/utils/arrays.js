@@ -72,102 +72,63 @@ export function arraysDiffSequence(
   newArray,
   equalsFn = (a, b) => a === b
 ) {
-  const { removals, movedPositions } = findRemovals(
-    oldArray,
-    newArray,
-    equalsFn
-  )
-  const additionsAndMoves = findAdditionsAndMoves(
-    oldArray,
-    newArray,
-    equalsFn,
-    movedPositions
-  )
-
-  // If there is a removal and addition for the same index, the removal should
-  // take precedence.
-  const sequence = [...removals, ...additionsAndMoves]
-  sequence.sort((a, b) => a.index - b.index)
-
-  return sequence
-}
-
-/**
- * Iterates the old array, looking for items that are not in the new array. It
- * returns a sequence of operations to remove those items and an array of
- * positions that have been moved to the left due to the removals.
- *
- * @param {any[]} oldArray
- * @param {any[]} newArray
- * @param {(a: any, b:any) => boolean} equalsFn
- * @returns {{ sequence: ArraysDiffSequenceOp[], movedPositions: number[]}}
- */
-function findRemovals(oldArray, newArray, equalsFn) {
-  const foundIndicesInNewArray = new Set()
-  // Keeps track of the positions that each item in the new array moves due
-  // to items being removed from their left.
-  const movedPositions = Array(oldArray.length).fill(0)
   const sequence = []
+  const withOriginalIndices = oldArray.map((item, index) => ({
+    item,
+    index,
+  }))
 
-  for (let index = 0; index < oldArray.length; index++) {
-    const item = oldArray[index]
-    const indexInNewArray = newArray.findIndex(
-      (newItem, newIndex) =>
-        equalsFn(item, newItem) && !foundIndicesInNewArray.has(newIndex)
-    )
-    const wasRemoved = indexInNewArray === -1
+  function findFrom(item, index) {
+    for (let i = index; i < withOriginalIndices.length; i++) {
+      const oldItem = withOriginalIndices[i].item
 
-    if (wasRemoved) {
-      sequence.push({
-        op: ARRAY_DIFF_OP.REMOVE,
-        index,
-        item,
-      })
-
-      // Removing one item, naturally shifts all the items to the right of it
-      // a position to the left.
-      for (let i = index + 1; i < movedPositions.length; i++) {
-        movedPositions[i] -= 1
+      if (equalsFn(item, oldItem)) {
+        return i
       }
-    } else {
-      foundIndicesInNewArray.add(indexInNewArray)
     }
+
+    return -1
   }
 
-  return { removals: sequence, movedPositions }
-}
-
-/**
- * Iterates the new array, looking for items that were moved from their original position
- * in the old array or that were added to the new array. It returns a sequence of operations
- * to add those items and move them to their new position.
- *
- * @param {any[]} oldArray
- * @param {any[]} newArray
- * @param {(a: any, b: any) => boolean} equalsFn
- * @param {number[]} movedPositions
- * @returns {ArraysDiffSequenceOp[]}
- */
-function findAdditionsAndMoves(
-  oldArray,
-  newArray,
-  equalsFn,
-  movedPositions
-) {
-  const foundIndicesInOldArray = new Set()
-  const sequence = []
-
   for (let index = 0; index < newArray.length; index++) {
-    const item = newArray[index]
-    const from = oldArray.findIndex(
-      (oldItem, oldIndex) =>
-        equalsFn(item, oldItem) && !foundIndicesInOldArray.has(oldIndex)
-    )
+    // Check if the old item at index is removal
+    if (index < withOriginalIndices.length) {
+      const { item: oldItem, index: originalIdx } =
+        withOriginalIndices[index]
+      const indexInNewArray = newArray.findIndex((newItem) =>
+        equalsFn(oldItem, newItem)
+      )
 
+      const isRemoved = indexInNewArray === -1
+
+      if (isRemoved) {
+        sequence.push({
+          op: ARRAY_DIFF_OP.REMOVE,
+          index,
+          item: oldItem,
+        })
+
+        withOriginalIndices.splice(index, 1)
+        index--
+
+        continue
+      }
+
+      const isNoop = equalsFn(oldItem, newArray[index])
+      if (isNoop) {
+        sequence.push({
+          op: ARRAY_DIFF_OP.NOOP,
+          from: originalIdx,
+          index,
+        })
+
+        continue
+      }
+    }
+
+    const item = newArray[index]
+    const from = findFrom(item, index)
     const isAdded = from === -1
-    const isPossiblyMoved = !isAdded && from !== index
-    const isMoved =
-      isPossiblyMoved && !hasOppositeMove(sequence, from, index)
 
     if (isAdded) {
       sequence.push({
@@ -176,49 +137,40 @@ function findAdditionsAndMoves(
         item,
       })
 
-      // Adding one item, naturally shifts all the items to the right of it
-      // a position to the right.
-      for (let i = index; i < movedPositions.length; i++) {
-        movedPositions[i] += 1
-      }
-    } else if (isMoved) {
-      const positions = index - from
+      withOriginalIndices.splice(index, 0, { item, index: -1 })
 
-      if (positions !== movedPositions[from]) {
-        sequence.push({ op: ARRAY_DIFF_OP.MOVE, from, index, item })
-
-        if (positions < 0) {
-          // Moving the item to the left causes the items to the right of it
-          // to shift a position to the right.
-          for (let i = 0; i < from; i++) {
-            movedPositions[i] += 1
-          }
-        } else {
-          // Moving the item to the right causes the items to the left of it
-          // to shift a position to the left.
-          for (let i = from + 1; i < index; i++) {
-            movedPositions[i] -= 1
-          }
-        }
-      } else {
-        sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index })
-      }
-
-      foundIndicesInOldArray.add(from)
-    } else {
-      sequence.push({ op: ARRAY_DIFF_OP.NOOP, from, index })
-      foundIndicesInOldArray.add(from)
+      continue
     }
+
+    // Move
+    sequence.push({
+      op: ARRAY_DIFF_OP.MOVE,
+      from,
+      index,
+      item,
+    })
+
+    const [moved] = withOriginalIndices.splice(from, 1)
+    withOriginalIndices.splice(index, 0, moved)
+  }
+
+  // Items in the old array that are past the last index of the new array are
+  // removed
+  for (
+    let index = newArray.length;
+    index < withOriginalIndices.length;
+    index++
+  ) {
+    const { item } = withOriginalIndices[index]
+
+    sequence.push({
+      op: ARRAY_DIFF_OP.REMOVE,
+      index,
+      item,
+    })
   }
 
   return sequence
-}
-
-function hasOppositeMove(sequence, from, to) {
-  return sequence.some(
-    ({ op, from: _from, index: _to }) =>
-      op === ARRAY_DIFF_OP.MOVE && _from === to && _to === from
-  )
 }
 
 /**
