@@ -31,6 +31,9 @@ const App = defineComponent({
         }),
       ]),
       h('h2', {}, ['Result']),
+      h('p', {}, [
+        "The following results are an approximation, as the calculation doesn't take into account the deductions on the gross salary. Below is the breakdown of the IRPF tiers, and the amount to pay in each tier.",
+      ]),
       h(IrpfTable, { tiers: irpf, grossSalary }),
     ])
   },
