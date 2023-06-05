@@ -1,34 +1,22 @@
-function findAdditionsAndMoves(
+export function arraysDiffSequence(
   oldArray,
   newArray,
-  equalsFn,
-  movedPositions
+  equalsFn = (a, b) => a === b // --1--
 ) {
-  const foundIndicesInOldArray = new Set() // --1--
   const sequence = []
+  const array = new ArrayWithOriginalIndices(oldArray, equalsFn) // --2--
 
-  for (let index = 0; index < newArray.length; index++) { // --2--
-    const item = newArray[index]
-    const from = oldArray.findIndex(
-      (oldItem, oldIndex) =>
-        equalsFn(item, oldItem) && !foundIndicesInOldArray.has(oldIndex) // --3--
-    )
+  for (let index = 0; index < newArray.length; index++) { // --3--
+    // TODO: removal case
 
-    const isAdded = from === -1 // --4--
-    const isPossiblyMoved = !isAdded && from !== index // --5--
-    const isMoved =
-      isPossiblyMoved && !hasOppositeMove(sequence, from, index) // --6--
- 
-    if (isAdded) {
-      // TODO: implement me
-    } else if (isMoved) {
-      // TODO: implement me
-    } else {
-      // TODO: implement me
-    }
+    // TODO: noop case
+
+    // TODO: addition case
+
+    // TODO: move case
   }
 
-  return sequence
-}
+  // TODO: remove extra items
 
-// TODO: implement hasOppositeMove()
+  return sequence // --4--
+}

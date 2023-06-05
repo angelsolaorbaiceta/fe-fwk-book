@@ -7,15 +7,18 @@ export function arraysDiffSequence(
   const array = new ArrayWithOriginalIndices(oldArray, equalsFn)
 
   for (let index = 0; index < newArray.length; index++) {
+    if (array.isRemoval(index, newArray)) {
+      sequence.push(array.removeItem(index))
+      index--
+      continue 
+    }
+
     // --add--
-    if (array.isRemoval(index, newArray)) { // --1--
-      sequence.push(array.removeItem(index)) // --2--
-      index-- // --3--
-      continue // --4-- 
+    if (array.isNoop(index, newArray)) { // --1--
+      sequence.push(array.noopItem(index)) // --2--
+      continue // --3--
     }
     // --add--
-
-    // TODO: noop case
 
     // TODO: addition case
 
