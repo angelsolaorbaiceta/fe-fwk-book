@@ -184,7 +184,13 @@ test('two items moved', () => {
   const diffSeq = arraysDiffSequence(oldArray, newArray)
 
   expect(diffSeq).toEqual([
-    { op: ARRAY_DIFF_OP.MOVE, from: 1, index: 0, item: 'b' },
+    {
+      op: ARRAY_DIFF_OP.MOVE,
+      originalIndex: 1,
+      from: 1,
+      index: 0,
+      item: 'b',
+    },
     { op: ARRAY_DIFF_OP.NOOP, originalIndex: 0, index: 1, item: 'a' },
     { op: ARRAY_DIFF_OP.NOOP, originalIndex: 2, index: 2, item: 'c' },
   ])
@@ -201,7 +207,13 @@ test('remove, add and move', () => {
     { op: ARRAY_DIFF_OP.REMOVE, item: 'a', index: 0 },
     { op: ARRAY_DIFF_OP.NOOP, originalIndex: 1, index: 0, item: 'b' },
     { op: ARRAY_DIFF_OP.ADD, item: 'X', index: 1 },
-    { op: ARRAY_DIFF_OP.MOVE, item: 'd', from: 3, index: 2 },
+    {
+      op: ARRAY_DIFF_OP.MOVE,
+      item: 'd',
+      originalIndex: 3,
+      from: 3,
+      index: 2,
+    },
     { op: ARRAY_DIFF_OP.NOOP, originalIndex: 2, index: 3, item: 'c' },
   ])
   expect(applyArraysDiffSequence(oldArray, diffSeq)).toEqual(newArray)
@@ -213,10 +225,22 @@ test('remove repeated element, add and move', () => {
 
   const diffSeq = arraysDiffSequence(oldArray, newArray)
   expect(diffSeq).toEqual([
-    { op: ARRAY_DIFF_OP.MOVE, from: 3, index: 0, item: 'c' },
+    {
+      op: ARRAY_DIFF_OP.MOVE,
+      originalIndex: 3,
+      from: 3,
+      index: 0,
+      item: 'c',
+    },
     { op: ARRAY_DIFF_OP.ADD, index: 1, item: 'k' },
     { op: ARRAY_DIFF_OP.NOOP, originalIndex: 0, index: 2, item: 'a' },
-    { op: ARRAY_DIFF_OP.MOVE, from: 4, index: 3, item: 'b' },
+    {
+      op: ARRAY_DIFF_OP.MOVE,
+      originalIndex: 2,
+      from: 4,
+      index: 3,
+      item: 'b',
+    },
     { op: ARRAY_DIFF_OP.REMOVE, index: 4, item: 'a' },
   ])
 
@@ -229,7 +253,13 @@ test.each([
     oldArray: ['a', 'b', 'c'],
     newArray: ['c', 'a', 'b'],
     expected: [
-      { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 0 },
+      {
+        op: ARRAY_DIFF_OP.MOVE,
+        item: 'c',
+        originalIndex: 2,
+        from: 2,
+        index: 0,
+      },
       { op: ARRAY_DIFF_OP.NOOP, originalIndex: 0, index: 1, item: 'a' },
       { op: ARRAY_DIFF_OP.NOOP, originalIndex: 1, index: 2, item: 'b' },
     ],
@@ -238,8 +268,20 @@ test.each([
     oldArray: ['a', 'b', 'c'],
     newArray: ['b', 'c', 'a'],
     expected: [
-      { op: ARRAY_DIFF_OP.MOVE, item: 'b', from: 1, index: 0 },
-      { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 1 },
+      {
+        op: ARRAY_DIFF_OP.MOVE,
+        item: 'b',
+        originalIndex: 1,
+        from: 1,
+        index: 0,
+      },
+      {
+        op: ARRAY_DIFF_OP.MOVE,
+        item: 'c',
+        originalIndex: 2,
+        from: 2,
+        index: 1,
+      },
       { op: ARRAY_DIFF_OP.NOOP, originalIndex: 0, index: 2, item: 'a' },
     ],
   },
@@ -247,7 +289,13 @@ test.each([
     oldArray: ['a', 'b', 'c', 'd'],
     newArray: ['c', 'a', 'b', 'd'],
     expected: [
-      { op: ARRAY_DIFF_OP.MOVE, item: 'c', from: 2, index: 0 },
+      {
+        op: ARRAY_DIFF_OP.MOVE,
+        item: 'c',
+        originalIndex: 2,
+        from: 2,
+        index: 0,
+      },
       { op: ARRAY_DIFF_OP.NOOP, originalIndex: 0, index: 1, item: 'a' },
       { op: ARRAY_DIFF_OP.NOOP, originalIndex: 1, index: 2, item: 'b' },
       { op: ARRAY_DIFF_OP.NOOP, originalIndex: 3, index: 3, item: 'd' },

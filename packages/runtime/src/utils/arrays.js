@@ -319,6 +319,7 @@ class ArrayWithOriginalIndices {
 
     const operation = {
       op: ARRAY_DIFF_OP.MOVE,
+      originalIndex: this.originalIndexAt(fromIndex),
       from: fromIndex,
       index: toIndex,
       item: this.#array[fromIndex],
