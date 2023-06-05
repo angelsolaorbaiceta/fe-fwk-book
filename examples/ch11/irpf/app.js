@@ -39,5 +39,4 @@ const App = defineComponent({
   },
 })
 
-const host = document.getElementById('app')
-createApp(App).mount(host)
+createApp(App).mount(document.body)

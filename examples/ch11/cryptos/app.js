@@ -14,4 +14,4 @@ const App = defineComponent({
   },
 })
 
-createApp(App).mount(document.getElementById('app'))
+createApp(App).mount(document.body)
