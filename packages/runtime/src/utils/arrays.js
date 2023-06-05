@@ -266,8 +266,8 @@ class ArrayWithOriginalIndices {
   noopItem(index) {
     return {
       op: ARRAY_DIFF_OP.NOOP,
-      from: this.originalIndexAt(index),
       index,
+      originalIndex: this.originalIndexAt(index),
       item: this.#array[index],
     }
   }
