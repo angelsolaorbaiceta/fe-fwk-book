@@ -30,12 +30,12 @@
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.31.1",
-    "eslint": "^8.41.0",
-    "jsdom": "^22.0.0",
-    "rollup": "^3.23.0",
+    "@vitest/coverage-c8": "^0.31.4",
+    "eslint": "^8.42.0",
+    "jsdom": "^22.1.0",
+    "rollup": "^3.23.1",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-filesize": "^10.0.0",
-    "vitest": "^0.31.1"
+    "vitest": "^0.31.4"
   }
 }
