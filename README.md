@@ -14,7 +14,7 @@ In this book, you build a frontend framework yourself to learn how frontend fram
 To create an empty project where you can write the code for your framework, you can use the CLI:
 
 ```bash
-$ npx fe-fwk init my-framework-name
+$ npx fe-fwk-cli init my-framework-name
 ```
 
 Where `my-framework-name` is the name of your framework.
