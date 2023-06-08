@@ -17,12 +17,14 @@ function patchChildren(oldVdom, newVdom) {
 
       case ARRAY_DIFF_OP.MOVE: {
         // --add--
-        const el = oldChildren[from].el
-        const elAtTargetIndex = parentEl.childNodes[index]
+        const oldChild = oldChildren[originalIndex] // --1--
+        const newChild = newChildren[index] // --2--
+        const el = oldChild.el // --3--
+        const elAtTargetIndex = parentEl.childNodes[index] // --4--
 
-        parentEl.insertBefore(el, elAtTargetIndex)
-        patchDOM(oldChildren[from], newChildren[index], parentEl)
-        
+        parentEl.insertBefore(el, elAtTargetIndex) // --5--
+        patchDOM(oldChild, newChild, parentEl) // --6--
+
         break
         // --add--
       }

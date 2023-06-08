@@ -27,7 +27,7 @@ function patchChildren(oldVdom, newVdom) {
 
       case ARRAY_DIFF_OP.NOOP: {
         // --add--
-        patchDOM(oldChildren[from], newChildren[index], parentEl)
+        patchDOM(oldChildren[originalIndex], newChildren[index], parentEl)
         break
         // --add--
       }
