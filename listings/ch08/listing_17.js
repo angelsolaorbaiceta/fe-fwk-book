@@ -21,7 +21,7 @@ import { isNotBlankOrEmptyString } from './utils/strings'
 
 export function patchDOM(oldVdom, newVdom, parentEl) {
   if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = findIndexInParent(parentEl, oldVdom.el)
+    const index = Array.from(parentEl.childNodes).indexOf(oldVdom.el)
     destroyDOM(oldVdom)
     mountDOM(newVdom, parentEl, index)
 

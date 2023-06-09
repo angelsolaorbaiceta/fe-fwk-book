@@ -395,6 +395,24 @@ describe('patch children', () => {
 
       expect(document.body.innerHTML).toBe('<div>CAB</div>')
     })
+
+    test('recursively', () => {
+      const oldVdom = hFragment([
+        h('p', {}, ['A']),
+        h('span', {}, ['B']),
+        h('div', {}, ['C']),
+      ])
+      const newVdom = hFragment([
+        h('div', {}, ['C']),
+        h('span', { id: 'b' }, ['B']),
+      ])
+
+      patch(oldVdom, newVdom)
+
+      expect(document.body.innerHTML).toBe(
+        '<div>C</div><span id="b">B</span>'
+      )
+    })
   })
 
   describe('element vnode', () => {
