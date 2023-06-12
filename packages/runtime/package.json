@@ -30,7 +30,7 @@
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.31.4",
+    "@vitest/coverage-c8": "^0.32.0",
     "eslint": "^8.42.0",
     "jsdom": "^22.1.0",
     "rollup": "^3.25.1",
