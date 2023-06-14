@@ -4,5 +4,8 @@ export default defineConfig({
   test: {
     reporters: 'verbose',
     environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+    }
   },
 })

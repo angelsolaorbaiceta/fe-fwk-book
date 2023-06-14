@@ -32,7 +32,7 @@ function patchChildren(oldVdom, newVdom) {
   )
 
   for (const operation of diffSeq) { // --4--
-    const { from, index, item } = operation
+    const { originalIndex, index, item } = operation
 
     switch (operation.op) { // --5--
       case ARRAY_DIFF_OP.ADD: {
