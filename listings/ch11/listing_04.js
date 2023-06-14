@@ -1,17 +1,9 @@
-// --add--
-import { extractComponentProps } from './utils/props'
-// --add--
-
-// --snip-- //
-
-// --add--
 function createComponentNode(vdom, parentEl, index, hostComponent) {
-  const Component = vdom.tag
-  const props = extractComponentProps(vdom)
-  const component = new Component(props)
+  const Component = vdom.tag // --1--
+  const props = vdom.props // --2--
+  const component = new Component(props) // --3--
 
-  component.mount(parentEl, index)
-  vdom.component = component
-  vdom.el = component.firstElement
+  component.mount(parentEl, index) // --4--
+  vdom.component = component // --5--
+  vdom.el = component.firstElement // --6--
 }
-// --add--

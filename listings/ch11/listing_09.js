@@ -1,26 +1,21 @@
-export function defineComponent({ render, state, ...methods }) {
-  class Component {
-    #isMounted = false
-    #vdom = null
-    #hostEl = null
-    // --add--
-    #eventHandlers = null
-    #parentComponent = null
-    // --add--
+export function extractComponentProps(vdom) {
+  // --remove--
+  const props = vdom.props
+  // --remove--
+  // --add--
+  const { on: events = {}, ...props } = vdom.props
+  // --add--
 
-    constructor(props = {}/*--add--*/, eventHandlers = {}, parentComponent = null/*--add--*/) {
-      this.props = props
-      this.state = state ? state(props) : {}
-      // --add--
-      this.#eventHandlers = eventHandlers
-      this.#parentComponent = parentComponent
-      // --add--
+  for (const prop in props) {
+    if (prop.startsWith('data-')) {
+      delete props[prop]
     }
-
-    // --snip-- //
   }
 
-  // --snip-- //
-
-  return Component
+  // --remove--
+  return props
+  // --remove--
+  // --add--
+  return { props, events }
+  // --add--
 }

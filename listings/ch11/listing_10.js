@@ -1,21 +1,21 @@
-export function extractComponentProps(vdom) {
+// --add--
+import { extractComponentProps } from './utils/props'
+// --add--
+
+// --snip-- //
+
+function createComponentNode(vdom, parentEl, index, hostComponent) {
+  const Component = vdom.tag
   // --remove--
   const props = vdom.props
+  const component = new Component(props)
   // --remove--
   // --add--
-  const { on: events = {}, ...props } = vdom.props
+  const { props, events } = extractComponentProps(vdom)
+  const component = new Component(props, events, hostComponent)
   // --add--
 
-  for (const prop in props) {
-    if (prop.startsWith('data-')) {
-      delete props[prop]
-    }
-  }
-
-  // --remove--
-  return props
-  // --remove--
-  // --add--
-  return { props, events }
-  // --add--
+  component.mount(parentEl, index)
+  vdom.component = component
+  vdom.el = component.firstElement
 }

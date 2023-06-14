@@ -12,12 +12,12 @@ export function defineComponent({ render, state, ...methods }) {
         return extractChildren(this.#vdom).map((child) => child.el)
         // --remove--
         // --add--
-        return extractChildren(this.#vdom).flatMap((child) => {
-          if (child.type === DOM_TYPES.COMPONENT) {
-            return child.component.elements
+        return extractChildren(this.#vdom).flatMap((child) => { // --1--
+          if (child.type === DOM_TYPES.COMPONENT) { // --2--
+            return child.component.elements // --3--
           }
 
-          return [child.el]
+          return [child.el] // --4--
         })
         // --add--
       }

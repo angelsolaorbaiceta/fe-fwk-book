@@ -1,11 +1,33 @@
-export function extractComponentProps(vdom) {
-  const props = vdom.props
+export function destroyDOM(vdom) {
+  const { type } = vdom
 
-  for (const prop in props) {
-    if (prop.startsWith('data-')) {
-      delete props[prop]
+  switch (type) {
+    case DOM_TYPES.TEXT: {
+      removeTextNode(vdom)
+      break
+    }
+
+    case DOM_TYPES.ELEMENT: {
+      removeElementNode(vdom)
+      break
+    }
+
+    case DOM_TYPES.FRAGMENT: {
+      removeFragmentNodes(vdom)
+      break
+    }
+
+    // --add--
+    case DOM_TYPES.COMPONENT: {
+      vdom.component.unmount() // --1--
+      break
+    }
+    // --add--
+
+    default: {
+      throw new Error(`Can't destroy DOM of type: ${type}`)
     }
   }
 
-  return props
+  delete vdom.el
 }

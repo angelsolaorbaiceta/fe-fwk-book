@@ -1,7 +1,26 @@
-function patchComponent(oldVdom, newVdom) {
-  const { component } = oldVdom
-  const { props: newProps } = newVdom
+export function defineComponent({ render, state, ...methods }) {
+  class Component {
+    #isMounted = false
+    #vdom = null
+    #hostEl = null
+    // --add--
+    #eventHandlers = null
+    #parentComponent = null
+    // --add--
 
-  newVdom.component = component
-  component.updateProps(newProps)
+    constructor(props = {}/*--add--*/, eventHandlers = {}, parentComponent = null/*--add--*/) {
+      this.props = props
+      this.state = state ? state(props) : {}
+      // --add--
+      this.#eventHandlers = eventHandlers
+      this.#parentComponent = parentComponent
+      // --add--
+    }
+
+    // --snip-- //
+  }
+
+  // --snip-- //
+
+  return Component
 }

@@ -1,33 +1,36 @@
-export function destroyDOM(vdom) {
-  const { type } = vdom
+export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
+  if (!areNodesEqual(oldVdom, newVdom)) {
+    const index = findIndexInParent(parentEl, oldVdom.el)
+    destroyDOM(oldVdom)
+    mountDOM(newVdom, parentEl, index, hostComponent)
 
-  switch (type) {
+    return newVdom
+  }
+
+  newVdom.el = oldVdom.el
+
+  switch (newVdom.type) {
     case DOM_TYPES.TEXT: {
-      removeTextNode(vdom)
-      break
+      patchText(oldVdom, newVdom)
+      return newVdom
     }
 
     case DOM_TYPES.ELEMENT: {
-      removeElementNode(vdom)
-      break
-    }
-
-    case DOM_TYPES.FRAGMENT: {
-      removeFragmentNodes(vdom)
+      patchElement(oldVdom, newVdom, hostComponent)
       break
     }
 
     // --add--
     case DOM_TYPES.COMPONENT: {
-      vdom.component.unmount()
+      patchComponent(oldVdom, newVdom)
       break
     }
     // --add--
-
-    default: {
-      throw new Error(`Can't destroy DOM of type: ${type}`)
-    }
   }
 
-  delete vdom.el
+  patchChildren(oldVdom, newVdom, hostComponent)
+
+  return newVdom
 }
+
+// TODO: implement patchComponent()

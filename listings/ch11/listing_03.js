@@ -16,8 +16,8 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     // --add--
-    case DOM_TYPES.COMPONENT: {
-      createComponentNode(vdom, parentEl, index, hostComponent)
+    case DOM_TYPES.COMPONENT: { // --1--
+      createComponentNode(vdom, parentEl, index, hostComponent) // --2--
       break
     }
     // --add--
