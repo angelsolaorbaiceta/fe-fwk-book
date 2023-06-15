@@ -808,6 +808,16 @@ describe('patch keyed component list', () => {
     )
   })
 
+  test('the key is not passed as prop to the component', () => {
+    const oldVdom = h(Component, { key: 'a', text: 'A' })
+    const newVdom = h(Component, { key: 'a', text: 'B' })
+
+    patch(oldVdom, newVdom)
+
+    const component = newVdom.component
+    expect(component.props).toEqual({ text: 'B' })
+  })
+
   test('add a new component in the middle', () => {
     const oldVdom = hFragment([
       h(Component, { key: 'a', text: 'A' }),
