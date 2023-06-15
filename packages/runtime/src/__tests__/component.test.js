@@ -80,7 +80,9 @@ describe('Component props', () => {
 
   test("can't patch the DOM if the component isn't mounted", () => {
     const comp = new PropsComp({ pClass: 'definition' })
-    expect(() => comp.updateProps()).toThrow(/not mounted/)
+    expect(() => comp.updateProps({ pClass: 'lemma' })).toThrow(
+      /not mounted/
+    )
   })
 
   test('when the props are updated, the DOM is patched', () => {
@@ -92,6 +94,17 @@ describe('Component props', () => {
     expect(document.body.innerHTML).toBe(
       '<p class="definition updated">A point is that which has no part.</p>'
     )
+  })
+
+  test('Does not patch the DOM if the props are the same', () => {
+    const comp = new PropsComp({ pClass: 'definition' })
+    comp.mount(document.body)
+
+    const renderSpy = vi.spyOn(comp, 'render')
+
+    comp.updateProps({ pClass: 'definition' })
+
+    expect(renderSpy).not.toHaveBeenCalled()
   })
 })
 

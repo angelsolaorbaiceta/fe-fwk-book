@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import { destroyDOM } from './destroy-dom'
 import { Dispatcher } from './dispatcher'
 import { DOM_TYPES, extractChildren } from './h'
@@ -106,7 +107,12 @@ export function defineComponent({ render, state, ...methods }) {
      * @param {Object.<string, Any>} props the new props to be merged with the existing props
      */
     updateProps(props) {
-      this.props = { ...this.props, ...props }
+      const newProps = { ...this.props, ...props }
+      if (equal(this.props, newProps)) {
+        return
+      }
+
+      this.props = newProps
       this.#patch()
     }
 
@@ -182,6 +188,7 @@ export function defineComponent({ render, state, ...methods }) {
         throw new Error('Component is not mounted')
       }
 
+      console.log('PATCHING...')
       const vdom = this.render()
       this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }

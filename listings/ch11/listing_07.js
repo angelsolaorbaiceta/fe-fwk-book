@@ -1,7 +1,7 @@
 function patchComponent(oldVdom, newVdom) {
-  const { component } = oldVdom
-  const { props: newProps } = newVdom
+  const { component } = oldVdom // --1--
+  const { props } = newVdom // --2--
 
-  newVdom.component = component
-  component.updateProps(newProps)
+  newVdom.component = component // --3--
+  component.updateProps(props) // --4--
 }

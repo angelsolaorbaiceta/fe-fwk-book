@@ -22,7 +22,7 @@ export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
 
     // --add--
     case DOM_TYPES.COMPONENT: {
-      patchComponent(oldVdom, newVdom)
+      patchComponent(oldVdom, newVdom) // --1--
       break
     }
     // --add--
