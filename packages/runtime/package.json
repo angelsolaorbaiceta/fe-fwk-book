@@ -1,6 +1,6 @@
 {
   "name": "fe-fwk",
-  "version": "3.0.11",
+  "version": "3.0.12",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
   "keywords": [
     "frontend",
@@ -30,6 +30,8 @@
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.1",
+    "@rollup/plugin-node-resolve": "^15.1.0",
     "@vitest/coverage-v8": "^0.32.0",
     "eslint": "^8.42.0",
     "jsdom": "^22.1.0",
