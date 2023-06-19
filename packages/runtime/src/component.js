@@ -188,7 +188,6 @@ export function defineComponent({ render, state, ...methods }) {
         throw new Error('Component is not mounted')
       }
 
-      console.log('PATCHING...')
       const vdom = this.render()
       this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }
