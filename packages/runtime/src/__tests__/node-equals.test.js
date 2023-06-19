@@ -36,6 +36,22 @@ test('Element nodes are equal if they have the same tag', () => {
   expect(areNodesEqual(nodeOne, nodeThree)).toBe(false)
 })
 
+test('Keyed elements are equal if they have the same tag and key', () => {
+  const nodeOne = h('p', { key: 'foo' }, ['foo'])
+  const nodeTwo = h('p', { key: 'foo' }, ['bar'])
+  const nodeThree = h('p', { key: 'bar' }, ['foo'])
+
+  expect(areNodesEqual(nodeOne, nodeTwo)).toBe(true)
+  expect(areNodesEqual(nodeOne, nodeThree)).toBe(false)
+})
+
+test('Element nodes with different key props are not equal', () => {
+  const nodeOne = h('p', { key: 'foo' }, ['foo'])
+  const nodeTwo = h('p', { key: 'bar' }, ['bar'])
+
+  expect(areNodesEqual(nodeOne, nodeTwo)).toBe(false)
+})
+
 test('Component nodes with different components are not equal', () => {
   const ComponentA = defineComponent({})
   const ComponentB = defineComponent({})
