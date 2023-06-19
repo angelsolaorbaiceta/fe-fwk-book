@@ -2,20 +2,20 @@ import { DOM_TYPES } from '../h'
 import { assert } from './assert'
 
 /**
- * @typedef ExtractedComponentProps
+ * @typedef ExtractedPropsEvents
  * @type {object}
  * @property {Object.<string,Function>} events - The event listeners to add to the element.
  * @property {Object.<string,any} props - The props to add to the element.
  */
 
 /**
- * Extracts the events and props of a component virtual node, ignoring the 'key' attribute
- * and the 'data-' attributes.
+ * Extracts the events and props of a component or element virtual node, ignoring
+ * the 'key' attribute.
  *
  * @param {import('../h').VNode} vdom
- * @returns {ExtractedComponentProps} the events and props of the component
+ * @returns {ExtractedPropsEvents} the events and props of the component
  */
-export function extractComponentProps(vdom) {
+export function extractPropsAndEvents(vdom) {
   assert(
     vdom.type === DOM_TYPES.COMPONENT,
     "Can't extract props from a non-component virtual node"
@@ -23,12 +23,6 @@ export function extractComponentProps(vdom) {
 
   const { on: events = {}, ...props } = vdom.props
   delete props.key
-
-  for (const prop in props) {
-    if (prop.startsWith('data-')) {
-      delete props[prop]
-    }
-  }
 
   return { props, events }
 }

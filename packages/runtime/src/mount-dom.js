@@ -1,7 +1,7 @@
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
-import { extractComponentProps } from './utils/props'
+import { extractPropsAndEvents } from './utils/props'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
@@ -144,7 +144,7 @@ function createFragmentNodes(vdom, parentEl, index, hostComponent) {
  */
 function createComponentNode(vdom, parentEl, index, hostComponent) {
   const Component = vdom.tag
-  const { props, events } = extractComponentProps(vdom)
+  const { props, events } = extractPropsAndEvents(vdom)
   const component = new Component(props, events, hostComponent)
 
   component.mount(parentEl, index)

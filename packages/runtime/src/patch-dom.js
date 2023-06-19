@@ -15,7 +15,7 @@ import {
   ARRAY_DIFF_OP,
 } from './utils/arrays'
 import { objectsDiff } from './utils/objects'
-import { extractComponentProps } from './utils/props'
+import { extractPropsAndEvents } from './utils/props'
 import { isNotBlankOrEmptyString } from './utils/strings'
 
 /**
@@ -281,7 +281,7 @@ function patchEvents(
  */
 function patchComponent(oldVdom, newVdom) {
   const { component } = oldVdom
-  const { props } = extractComponentProps(newVdom)
+  const { props } = extractPropsAndEvents(newVdom)
 
   newVdom.component = component
   component.updateProps(props)
