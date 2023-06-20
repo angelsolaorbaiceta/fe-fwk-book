@@ -1,3 +1,13 @@
+import equal from 'fast-deep-equal'
+import { destroyDOM } from './destroy-dom'
+// --add--
+import { Dispatcher } from './dispatcher'
+// --add--
+import { DOM_TYPES, extractChildren } from './h'
+import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
+import { hasOwnProperty } from './utils/objects'
+
 export function defineComponent({ render, state, ...methods }) {
   class Component {
     #isMounted = false
@@ -6,30 +16,15 @@ export function defineComponent({ render, state, ...methods }) {
     #eventHandlers = null
     #parentComponent = null
     // --add--
-    #dispatcher = new Dispatcher()
-    #subscriptions = []
+    #dispatcher = new Dispatcher() // --1--
+    #subscriptions = [] // --2--
     // --add--
 
     // --snip-- //
 
-    mount(hostEl, index = null) {
-      if (this.#isMounted) {
-        throw new Error('Component is already mounted')
-      }
-
-      this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index, this)
-      // --add--
-      this.#wireEventHandlers()
-      // --add--
-
-      this.#isMounted = true
-      this.#hostEl = hostEl
-    }
-
     // --add--
     #wireEventHandlers() {
-      this.#subscriptions = Object.entries(this.#eventHandlers).map(
+      this.#subscriptions = Object.entries(this.#eventHandlers).map( // --3--
         ([eventName, handler]) => this.#wireEventHandler(eventName, handler)
       )
     }
@@ -37,31 +32,13 @@ export function defineComponent({ render, state, ...methods }) {
     #wireEventHandler(eventName, handler) {
       return this.#dispatcher.subscribe(eventName, (payload) => {
         if (this.#parentComponent) {
-          handler.call(this.#parentComponent, payload)
+          handler.call(this.#parentComponent, payload) // --4--
         } else {
-          handler(payload)
+          handler(payload) // --5--
         }
       })
     }
     // --add--
-    
-    unmount() {
-      if (!this.#isMounted) {
-        throw new Error('Component is not mounted')
-      }
-
-      destroyDOM(this.#vdom)
-      // --add--
-      this.#subscriptions.forEach((unsubscribe) => unsubscribe())
-      // --add--
-
-      this.#vdom = null
-      this.#isMounted = false
-      this.#hostEl = null
-      // --add--
-      this.#subscriptions = []
-      // --add--
-    }
 
     // --snip-- //
   }
@@ -70,4 +47,3 @@ export function defineComponent({ render, state, ...methods }) {
 
   return Component
 }
-

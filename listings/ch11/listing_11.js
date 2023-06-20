@@ -1,12 +1,18 @@
-export function extractComponentProps(vdom) {
-  const { on: events = {}, ...props } = vdom.props
-  delete props.key
+// --add--
+import { extractPropsAndEvents } from './utils/props'
+// --add--
 
-  for (const prop in props) {
-    if (prop.startsWith('data-')) {
-      delete props[prop]
-    }
-  }
+// --snip--
 
-  return { props, events }
+function patchComponent(oldVdom, newVdom) {
+  const { component } = oldVdom
+  // --remove--
+  const { props } = newVdom
+  // --remove--
+  // --add--
+  const { props } = extractPropsAndEvents(newVdom)
+  // --add--
+
+  newVdom.component = component
+  component.updateProps(props)
 }

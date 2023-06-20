@@ -1,5 +1,5 @@
 // --add--
-import { extractComponentProps } from './utils/props'
+import { extractPropsAndEvents } from './utils/props'
 // --add--
 
 // --snip-- //
@@ -11,8 +11,8 @@ function createComponentNode(vdom, parentEl, index, hostComponent) {
   const component = new Component(props)
   // --remove--
   // --add--
-  const { props, events } = extractComponentProps(vdom)
-  const component = new Component(props, events, hostComponent)
+  const { props, events } = extractPropsAndEvents(vdom) // --1--
+  const component = new Component(props, events, hostComponent) // --2--
   // --add--
 
   component.mount(parentEl, index)

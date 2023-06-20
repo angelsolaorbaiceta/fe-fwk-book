@@ -4,16 +4,16 @@ export function defineComponent({ render, state, ...methods }) {
     #vdom = null
     #hostEl = null
     // --add--
-    #eventHandlers = null
-    #parentComponent = null
+    #eventHandlers = null // --1--
+    #parentComponent = null // --2--
     // --add--
 
     constructor(props = {}/*--add--*/, eventHandlers = {}, parentComponent = null/*--add--*/) {
       this.props = props
       this.state = state ? state(props) : {}
       // --add--
-      this.#eventHandlers = eventHandlers
-      this.#parentComponent = parentComponent
+      this.#eventHandlers = eventHandlers // --3--
+      this.#parentComponent = parentComponent // --4--
       // --add--
     }
 
