@@ -1,39 +1,44 @@
+import equal from 'fast-deep-equal'
+import { destroyDOM } from './destroy-dom'
+// --add--
+import { Dispatcher } from './dispatcher'
+// --add--
+import { DOM_TYPES, extractChildren } from './h'
+import { mountDOM } from './mount-dom'
+import { patchDOM } from './patch-dom'
+import { hasOwnProperty } from './utils/objects'
+
 export function defineComponent({ render, state, ...methods }) {
   class Component {
+    #isMounted = false
+    #vdom = null
+    #hostEl = null
+    #eventHandlers = null
+    #parentComponent = null
+    // --add--
+    #dispatcher = new Dispatcher() // --1--
+    #subscriptions = [] // --2--
+    // --add--
+
     // --snip-- //
 
-    mount(hostEl, index = null) {
-      if (this.#isMounted) {
-        throw new Error('Component is already mounted')
-      }
-
-      this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index, this)
-      // --add--
-      this.#wireEventHandlers() // --1--
-      // --add--
-
-      this.#isMounted = true
-      this.#hostEl = hostEl
+    // --add--
+    #wireEventHandlers() {
+      this.#subscriptions = Object.entries(this.#eventHandlers).map( // --3--
+        ([eventName, handler]) => this.#wireEventHandler(eventName, handler)
+      )
     }
 
-    unmount() {
-      if (!this.#isMounted) {
-        throw new Error('Component is not mounted')
-      }
-
-      destroyDOM(this.#vdom)
-      // --add--
-      this.#subscriptions.forEach((unsubscribe) => unsubscribe()) // --2--
-      // --add--
-
-      this.#vdom = null
-      this.#isMounted = false
-      this.#hostEl = null
-      // --add--
-      this.#subscriptions = [] // --3--
-      // --add--
+    #wireEventHandler(eventName, handler) {
+      return this.#dispatcher.subscribe(eventName, (payload) => {
+        if (this.#parentComponent) {
+          handler.call(this.#parentComponent, payload) // --4--
+        } else {
+          handler(payload) // --5--
+        }
+      })
     }
+    // --add--
 
     // --snip-- //
   }

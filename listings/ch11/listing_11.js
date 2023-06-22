@@ -2,17 +2,20 @@
 import { extractPropsAndEvents } from './utils/props'
 // --add--
 
-// --snip--
+// --snip-- //
 
-function patchComponent(oldVdom, newVdom) {
-  const { component } = oldVdom
+function createComponentNode(vdom, parentEl, index, hostComponent) {
+  const Component = vdom.tag
   // --remove--
-  const { props } = newVdom
+  const props = vdom.props
+  const component = new Component(props)
   // --remove--
   // --add--
-  const { props } = extractPropsAndEvents(newVdom)
+  const { props, events } = extractPropsAndEvents(vdom) // --1--
+  const component = new Component(props, events, hostComponent) // --2--
   // --add--
 
-  newVdom.component = component
-  component.updateProps(props)
+  component.mount(parentEl, index)
+  vdom.component = component
+  vdom.el = component.firstElement
 }

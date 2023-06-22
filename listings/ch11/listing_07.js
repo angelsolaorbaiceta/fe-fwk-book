@@ -1,7 +1,36 @@
-function patchComponent(oldVdom, newVdom) {
-  const { component } = oldVdom // --1--
-  const { props } = newVdom // --2--
+export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
+  if (!areNodesEqual(oldVdom, newVdom)) {
+    const index = findIndexInParent(parentEl, oldVdom.el)
+    destroyDOM(oldVdom)
+    mountDOM(newVdom, parentEl, index, hostComponent)
 
-  newVdom.component = component // --3--
-  component.updateProps(props) // --4--
+    return newVdom
+  }
+
+  newVdom.el = oldVdom.el
+
+  switch (newVdom.type) {
+    case DOM_TYPES.TEXT: {
+      patchText(oldVdom, newVdom)
+      return newVdom
+    }
+
+    case DOM_TYPES.ELEMENT: {
+      patchElement(oldVdom, newVdom, hostComponent)
+      break
+    }
+
+    // --add--
+    case DOM_TYPES.COMPONENT: {
+      patchComponent(oldVdom, newVdom) // --1--
+      break
+    }
+    // --add--
+  }
+
+  patchChildren(oldVdom, newVdom, hostComponent)
+
+  return newVdom
 }
+
+// TODO: implement patchComponent()

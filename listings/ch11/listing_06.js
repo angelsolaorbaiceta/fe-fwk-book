@@ -1,36 +1,21 @@
-export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
-  if (!areNodesEqual(oldVdom, newVdom)) {
-    const index = findIndexInParent(parentEl, oldVdom.el)
-    destroyDOM(oldVdom)
-    mountDOM(newVdom, parentEl, index, hostComponent)
-
-    return newVdom
-  }
-
-  newVdom.el = oldVdom.el
-
-  switch (newVdom.type) {
-    case DOM_TYPES.TEXT: {
-      patchText(oldVdom, newVdom)
-      return newVdom
-    }
-
-    case DOM_TYPES.ELEMENT: {
-      patchElement(oldVdom, newVdom, hostComponent)
-      break
-    }
+export function defineComponent({ render, state, ...methods }) {
+  class Component {
+    // --snip-- //
 
     // --add--
-    case DOM_TYPES.COMPONENT: {
-      patchComponent(oldVdom, newVdom) // --1--
-      break
+    updateProps(props) {
+      this.props = { ...this.props, ...props } // --1--
+      this.#patch() // --2--
     }
     // --add--
+    
+    updateState(state) {
+      this.state = { ...this.state, ...state }
+      this.#patch()
+    }
+
+    // --snip-- //
   }
 
-  patchChildren(oldVdom, newVdom, hostComponent)
-
-  return newVdom
+  // --snip-- //
 }
-
-// TODO: implement patchComponent()

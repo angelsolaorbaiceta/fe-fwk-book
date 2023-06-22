@@ -1,26 +1,7 @@
-export function defineComponent({ render, state, ...methods }) {
-  class Component {
-    #isMounted = false
-    #vdom = null
-    #hostEl = null
-    // --add--
-    #eventHandlers = null // --1--
-    #parentComponent = null // --2--
-    // --add--
+function patchComponent(oldVdom, newVdom) {
+  const { component } = oldVdom // --1--
+  const { props } = newVdom // --2--
 
-    constructor(props = {}/*--add--*/, eventHandlers = {}, parentComponent = null/*--add--*/) {
-      this.props = props
-      this.state = state ? state(props) : {}
-      // --add--
-      this.#eventHandlers = eventHandlers // --3--
-      this.#parentComponent = parentComponent // --4--
-      // --add--
-    }
-
-    // --snip-- //
-  }
-
-  // --snip-- //
-
-  return Component
+  newVdom.component = component // --3--
+  component.updateProps(props) // --4--
 }
