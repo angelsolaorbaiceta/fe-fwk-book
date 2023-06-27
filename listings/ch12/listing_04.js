@@ -4,13 +4,22 @@ export function areNodesEqual(nodeOne, nodeTwo) {
   }
 
   if (nodeOne.type === DOM_TYPES.ELEMENT) {
-    const { tag: tagOne } = nodeOne
-    const { tag: tagTwo } = nodeTwo
+    const {
+      tag: tagOne,
+      // --add--
+      props: { key: keyOne },
+      // --add--
+    } = nodeOne
+    const {
+      tag: tagTwo,
+      // --add--
+      props: { key: keyTwo },
+      // --add--
+    } = nodeTwo
 
-    return tagOne === tagTwo
+    return tagOne === tagTwo/* --add-- */ && keyOne === keyTwo/* --add-- */
   }
 
-  // --add--
   if (nodeOne.type === DOM_TYPES.COMPONENT) {
     const {
       tag: componentOne,
@@ -23,7 +32,6 @@ export function areNodesEqual(nodeOne, nodeTwo) {
 
     return componentOne === componentTwo && keyOne === keyTwo
   }
-  // --add--
 
   return true
 }
