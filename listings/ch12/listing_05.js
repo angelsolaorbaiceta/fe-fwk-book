@@ -3,7 +3,7 @@ function createElementNode(vdom, parentEl, index, hostComponent) {
   const { tag, props, children } = vdom
   // --remove--
   // --add--
-  const { tag, children } = vdom
+  const { tag, children } = vdom // --1--
   // --add--
 
   const element = document.createElement(tag)
@@ -11,7 +11,7 @@ function createElementNode(vdom, parentEl, index, hostComponent) {
   addProps(element, props, vdom, hostComponent)
   // --remove--
   // --add--
-  addProps(element, vdom, hostComponent)
+  addProps(element, vdom, hostComponent) // --2--
   // --add--
   vdom.el = element
 

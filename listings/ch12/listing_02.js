@@ -14,17 +14,17 @@ export function areNodesEqual(nodeOne, nodeTwo) {
     const {
       tag: componentOne,
       // --add--
-      props: { key: keyOne },
+      props: { key: keyOne }, // --1--
       // --add--
     } = nodeOne
     const {
       tag: componentTwo,
       // --add--
-      props: { key: keyTwo },
+      props: { key: keyTwo }, // --2--
       // --add--
     } = nodeTwo
 
-    return componentOne === componentTwo/* --add-- */ && keyOne === keyTwo/* --add-- */
+    return componentOne === componentTwo/* --add-- */ && keyOne === keyTwo/* --add-- */ // --3--
   }
 
   return true

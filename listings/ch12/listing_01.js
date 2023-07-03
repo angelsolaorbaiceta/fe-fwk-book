@@ -11,11 +11,11 @@ export function areNodesEqual(nodeOne, nodeTwo) {
   }
   
   // --add--
-  if (nodeOne.type === DOM_TYPES.COMPONENT) {
-    const { tag: componentOne } = nodeOne
-    const { tag: componentTwo } = nodeTwo
+  if (nodeOne.type === DOM_TYPES.COMPONENT) { // --1--
+    const { tag: componentOne } = nodeOne // --2--
+    const { tag: componentTwo } = nodeTwo // --3--
 
-    return componentOne === componentTwo
+    return componentOne === componentTwo // --4--
   }
   // --add--
 

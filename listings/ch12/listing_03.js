@@ -1,7 +1,7 @@
-export function extractComponentProps(vdom) {
+export function extractPropsAndEvents(vdom) {
   const { on: events = {}, ...props } = vdom.props
   // --add--
-  delete props.key
+  delete props.key // --1--
   // --add--
 
   return { props, events }

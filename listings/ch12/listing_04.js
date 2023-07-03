@@ -7,17 +7,17 @@ export function areNodesEqual(nodeOne, nodeTwo) {
     const {
       tag: tagOne,
       // --add--
-      props: { key: keyOne },
+      props: { key: keyOne }, // --1--
       // --add--
     } = nodeOne
     const {
       tag: tagTwo,
       // --add--
-      props: { key: keyTwo },
+      props: { key: keyTwo }, // --2--
       // --add--
     } = nodeTwo
 
-    return tagOne === tagTwo/* --add-- */ && keyOne === keyTwo/* --add-- */
+    return tagOne === tagTwo/* --add-- */ && keyOne === keyTwo/* --add-- */ // --3--
   }
 
   if (nodeOne.type === DOM_TYPES.COMPONENT) {
