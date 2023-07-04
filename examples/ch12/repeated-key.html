@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index as key problem</title>
+
+    <script type="module">
+      import {
+        createApp,
+        defineComponent,
+        h,
+        hFragment,
+        hString,
+      } from 'https://unpkg.com/fe-fwk@3'
+
+      const MyCounter = defineComponent({
+        state() {
+          return { count: 1 }
+        },
+
+        render() {
+          const { count } = this.state
+
+          return h('div', { style: { 'padding-left': '2em' } }, [
+            h(
+              'button',
+              {
+                on: { click: () => this.updateState({ count: count + 1 }) },
+              },
+              [hString(count)]
+            ),
+            h('span', {}, [' — ']),
+            h(
+              'button',
+              {
+                on: { click: () => this.emit('remove') },
+              },
+              ['Remove']
+            ),
+          ])
+        },
+      })
+
+      const App = defineComponent({
+        state() {
+          return {
+            counters: 3,
+          }
+        },
+
+        render() {
+          const { counters } = this.state
+
+          return hFragment([
+            h('h1', {}, ['Repeated key problem']),
+            h('p', {}, [
+              'Set a different count in each counter, then remove the middle one.',
+            ]),
+            h(
+              'div',
+              {},
+              Array(counters)
+                .fill()
+                .map(() => {
+                  return h(MyCounter, {
+                    key: 'abc',
+                    on: {
+                      remove: () => {
+                        this.updateState({ counters: counters - 1 })
+                      },
+                    },
+                  })
+                })
+            ),
+          ])
+        },
+      })
+
+      createApp(App).mount(document.querySelector('#app'))
+    </script>
+  </head>
+
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
