@@ -92,10 +92,18 @@ export function defineComponent({ render, state, ...methods }) {
     }
 
     /**
-     * Returns the component's offset (with respect with the component's first element) in the DOM.
+     * Returns the component's offset (with respect with the component's first element) in the DOM,
+     * when the component's top-level node is a fragment.
+     *
+     * When the component's top-level node is not a fragment, returns 0, as the component is
+     * considered to not be offset.
      */
     get offset() {
-      return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
+        return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+      }
+
+      return 0
     }
 
     /**

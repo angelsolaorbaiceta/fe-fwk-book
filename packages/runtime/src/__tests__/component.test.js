@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { singleHtmlLine } from './utils'
+import { mountDOM } from '../mount-dom'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -484,6 +485,34 @@ describe('Mounted elements', () => {
       expectedThree,
       expectedFour,
     ])
+  })
+})
+
+describe('Offset', () => {
+  test('when the components top-level element is a fragment, it has an offset', () => {
+    const vdom = h('div', {}, [h(FragComp), h(FragComp), h(FragComp)])
+    mountDOM(vdom, document.body)
+
+    const firstComponent = vdom.children[0].component
+    const secondComponent = vdom.children[1].component
+    const thirdComponent = vdom.children[2].component
+
+    expect(firstComponent.offset).toBe(0)
+    expect(secondComponent.offset).toBe(2)
+    expect(thirdComponent.offset).toBe(4)
+  })
+
+  test('when the components top-level element is not a fragment, it has NO offset', () => {
+    const vdom = h('div', {}, [h(Comp), h(Comp), h(Comp)])
+    mountDOM(vdom, document.body)
+
+    const firstComponent = vdom.children[0].component
+    const secondComponent = vdom.children[1].component
+    const thirdComponent = vdom.children[2].component
+
+    expect(firstComponent.offset).toBe(0)
+    expect(secondComponent.offset).toBe(0)
+    expect(thirdComponent.offset).toBe(0)
   })
 })
 
