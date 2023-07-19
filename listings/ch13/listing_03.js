@@ -1,6 +1,6 @@
 const CreateTodo = defineComponent({
   state() {
-    return { text: '' }
+    return { text: '' } // --1--
   },
 
   render() {
@@ -11,10 +11,10 @@ const CreateTodo = defineComponent({
       h('input', {
         type: 'text',
         id: 'todo-input',
-        value: text,
+        value: text, // --2--
         on: {
-          input: ({ target }) => this.updateState({ text: target.value }),
-          keydown: ({ key }) => {
+          input: ({ target }) => this.updateState({ text: target.value }), // --3--
+          keydown: ({ key }) => { // --4--
             if (key === 'Enter' && text.length >= 3) {
               this.addTodo()
             }
@@ -24,15 +24,15 @@ const CreateTodo = defineComponent({
       h(
         'button',
         {
-          disabled: text.length < 3,
-          on: { click: this.addTodo },
+          disabled: text.length < 3, // --5--
+          on: { click: this.addTodo }, // --6--
         },
         ['Add']
       ),
     ])
   },
 
-  addTodo() {
+  addTodo() { // --7--
     this.emit('add', this.state.text)
     this.updateState({ text: '' })
   },

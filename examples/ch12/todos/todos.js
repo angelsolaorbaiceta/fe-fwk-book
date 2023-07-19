@@ -8,7 +8,11 @@ import {
 const App = defineComponent({
   state() {
     return {
-      todos: ['Walk the dog', 'Water the plants', 'Sand the chairs'],
+      todos: [
+        { id: crypto.randomUUID(), text: 'Walk the dog' },
+        { id: crypto.randomUUID(), text: 'Water the plants' },
+        { id: crypto.randomUUID(), text: 'Sand the chairs' },
+      ],
     }
   },
 
@@ -33,7 +37,8 @@ const App = defineComponent({
   },
 
   addTodo(text) {
-    this.updateState({ todos: [...this.state.todos, text] })
+    const todo = { id: crypto.randomUUID(), text }
+    this.updateState({ todos: [...this.state.todos, todo] })
   },
 
   removeTodo(idx) {
@@ -44,7 +49,7 @@ const App = defineComponent({
 
   editTodo({ edited, i }) {
     const newTodos = [...this.state.todos]
-    newTodos[i] = edited
+    newTodos[i] = { ...newTodos[i], text: edited }
     this.updateState({ todos: newTodos })
   },
 })
@@ -98,8 +103,8 @@ const TodoList = defineComponent({
       {},
       todos.map((todo, i) =>
         h(TodoItem, {
-          key: todo.replaceAll(' ', '-'),
-          todo,
+          key: todo.id,
+          todo: todo.text,
           i,
           on: {
             remove: (i) => this.emit('remove', i),
