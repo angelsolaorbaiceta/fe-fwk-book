@@ -32,7 +32,11 @@ export function defineComponent({ render, state, ...methods }) {
     }
 
     get offset() {
-      return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) {
+        return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+      }
+
+      return 0
     }
     
     updateState(state) {

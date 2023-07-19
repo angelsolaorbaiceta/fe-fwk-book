@@ -34,7 +34,11 @@ export function defineComponent({ render, state }) {
     }
 
     get offset() {
-      return Array.from(this.#hostEl.children).indexOf(this.firstElement) // --5--
+      if (this.#vdom.type === DOM_TYPES.FRAGMENT) { // --5--
+        return Array.from(this.#hostEl.children).indexOf(this.firstElement)
+      }
+
+      return 0 // --6--
     }
     // --add--
     
