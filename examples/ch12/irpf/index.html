@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js"
+      integrity="sha512-mlz/Fs1VtBou2TrUkGzX4VoGvybkD9nkeXWJm3rle0DPHssYYx4j+8kIS15T78ttGfmOjH0lLaBXGcShaVkdkg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script> -->
+    <script type="module" src="app.js"></script>
+
+    <style>
+      body {
+        width: 600px;
+        margin: 2em auto;
+      }
+
+      form label {
+        display: block;
+        font-style: italic;
+      }
+
+      canvas {
+        border: 1px dashed;
+      }
+
+      table {
+        border: 1px solid;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      table td,
+      table th {
+        padding: 0.5em 2em;
+        border-bottom: 1px solid;
+      }
+      table th {
+        background-color: aliceblue;
+      }
+      table tr.empty {
+        background-color: #eee;
+      }
+
+      .result-grid {
+        margin-top: 1em;
+        display: inline-grid;
+        grid-template-columns: auto auto;
+        grid-gap: 0.5em;
+        text-align: right;
+      }
+      .result-grid span:nth-child(even) {
+        font-weight: bold;
+      }
+    </style>
+
+    <title>IRPF Calculator</title>
+  </head>
+
+  <body></body>
+</html>

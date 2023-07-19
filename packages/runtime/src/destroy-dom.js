@@ -31,6 +31,11 @@ export function destroyDOM(vdom) {
       break
     }
 
+    case DOM_TYPES.COMPONENT: {
+      vdom.component.unmount()
+      break
+    }
+
     default: {
       throw new Error(`Can't destroy DOM of type: ${type}`)
     }

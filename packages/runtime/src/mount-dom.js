@@ -1,6 +1,7 @@
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
+import { extractPropsAndEvents } from './utils/props'
 
 /**
  * Creates the DOM nodes for a virtual DOM tree, mounts them in the DOM, and
@@ -9,11 +10,15 @@ import { DOM_TYPES } from './h'
  * If an index is given, the created DOM node is inserted at that index in the parent element.
  * Otherwise, it is appended to the parent element.
  *
+ * If a host component is given, the event listeners attached to the DOM nodes are bound to
+ * the host component.
+ *
  * @param {import('./h').VNode} vdom the virtual DOM node to mount
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-export function mountDOM(vdom, parentEl, index) {
+export function mountDOM(vdom, parentEl, index, hostComponent = null) {
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl, index)
@@ -21,12 +26,17 @@ export function mountDOM(vdom, parentEl, index) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      createElementNode(vdom, parentEl, index)
+      createElementNode(vdom, parentEl, index, hostComponent)
       break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNodes(vdom, parentEl, index)
+      createFragmentNodes(vdom, parentEl, index, hostComponent)
+      break
+    }
+
+    case DOM_TYPES.COMPONENT: {
+      createComponentNode(vdom, parentEl, index, hostComponent)
       break
     }
 
@@ -69,15 +79,16 @@ function createTextNode(vdom, parentEl, index) {
  * @param {import('./h').ElementVNode} vdom the virtual DOM node of type "element"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createElementNode(vdom, parentEl, index) {
-  const { tag, props, children } = vdom
+function createElementNode(vdom, parentEl, index, hostComponent) {
+  const { tag, children } = vdom
 
   const element = document.createElement(tag)
-  addProps(element, props, vdom)
+  addProps(element, vdom, hostComponent)
   vdom.el = element
 
-  children.forEach((child) => mountDOM(child, element))
+  children.forEach((child) => mountDOM(child, element, null, hostComponent))
   insert(element, parentEl, index)
 }
 
@@ -85,13 +96,13 @@ function createElementNode(vdom, parentEl, index) {
  * Adds the attributes and event listeners to an element.
  *
  * @param {Element} el The element to add the attributes to
- * @param {import('./h').ElementVNodeProps} props The props to add
  * @param {import('./h').ElementVNode} vdom The vdom node
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function addProps(el, props, vdom) {
-  const { on: events, ...attrs } = props
+function addProps(el, vdom, hostComponent) {
+  const { props: attrs, events } = extractPropsAndEvents(vdom)
 
-  vdom.listeners = addEventListeners(events, el)
+  vdom.listeners = addEventListeners(events, el, hostComponent)
   setAttributes(el, attrs)
 }
 
@@ -102,14 +113,42 @@ function addProps(el, props, vdom) {
  * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createFragmentNodes(vdom, parentEl, index) {
+function createFragmentNodes(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
   vdom.el = parentEl
 
   children.forEach((child, i) =>
-    mountDOM(child, parentEl, index ? index + i : null)
+    mountDOM(child, parentEl, index ? index + i : null, hostComponent)
   )
+}
+
+/**
+ * Creates the component node, and all of its subcomponents recursively.
+ *
+ * The created `Component` is added to the `component` property of the vdom.
+ * The created `Element` is added to the `el` property of the vdom. If the component
+ * has a fragment, and thus several top-level elements, the first one is added to the `el`.
+ *
+ * The use case for the `el` reference is the reconciliation algorithm. In the case of
+ * a component, it's sole use is to move a component to a different position using the
+ * `insertBefore()` method. To insert an element before a component, the `el` property
+ * points at the component's first element.
+ *
+ * @param {import('./h').FragmentVNode} vdom the virtual DOM node of type "fragment"
+ * @param {Element} parentEl the host element to mount the virtual DOM node to
+ * @param {number} [index] the index at the parent element to mount the virtual DOM node to
+ * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ */
+function createComponentNode(vdom, parentEl, index, hostComponent) {
+  const Component = vdom.tag
+  const { props, events } = extractPropsAndEvents(vdom)
+  const component = new Component(props, events, hostComponent)
+
+  component.mount(parentEl, index)
+  vdom.component = component
+  vdom.el = component.firstElement
 }
 
 /**

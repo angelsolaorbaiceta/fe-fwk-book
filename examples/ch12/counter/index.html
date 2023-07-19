@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        text-align: center;
+        margin: 2em;
+        font-size: 2em;
+      }
+      button {
+        font-size: 1em;
+        width: 1.5em;
+      }
+      span {
+        margin: 0 1em;
+      }
+      span.negative {
+        color: #e91e61;
+      }
+    </style>
+
+    <script type="module">
+      import {
+        createApp,
+        defineComponent,
+        h,
+        hString,
+        hFragment,
+      } from 'https://unpkg.com/fe-fwk@3'
+
+      const View = defineComponent({
+        state() {
+          return { count: 0 }
+        },
+
+        render() {
+          const { count } = this.state
+
+          return hFragment([
+            h(
+              'button',
+              {
+                on: { click: () => this.updateState({ count: count - 1 }) },
+              },
+              ['-']
+            ),
+            h('span', { class: `${count < 0 ? 'negative' : 'positive'}` }, [
+              hString(count),
+            ]),
+            h(
+              'button',
+              {
+                on: { click: () => this.updateState({ count: count + 1 }) },
+              },
+              ['+']
+            ),
+          ])
+        },
+      })
+
+      createApp(View).mount(document.body)
+    </script>
+
+    <title>Counter</title>
+  </head>
+  <body>
+    <h1>Counter</h1>
+  </body>
+</html>

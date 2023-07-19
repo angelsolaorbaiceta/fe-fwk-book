@@ -31,7 +31,7 @@ test('remove key', () => {
   expect(updated).toEqual([])
 })
 
-test('update key', () => {
+test('update value', () => {
   const arr = [1, 2, 3]
   const oldObj = { foo: 'bar', arr }
   const newObj = { foo: 'baz', arr }

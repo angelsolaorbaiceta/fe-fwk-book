@@ -1,0 +1,1 @@
+createApp(App).mount(document.body)

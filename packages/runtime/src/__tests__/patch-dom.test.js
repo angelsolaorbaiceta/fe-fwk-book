@@ -1,7 +1,9 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { patchDOM } from '../patch-dom'
+import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -644,7 +646,393 @@ describe('patch children', () => {
   })
 })
 
-function patch(oldVdom, newVdom) {
+describe('patch vdom with component host', () => {
+  const component = { count: 5 }
+  const props = {
+    on: {
+      // Use method syntax to bind the component to the event handler.
+      // Arrow function's `this` can't be bound.
+      click() {
+        this.count++
+      },
+    },
+  }
+
+  afterEach(() => {
+    component.count = 5
+  })
+
+  test('when the root node changes, bounds the component to the event handlers', () => {
+    const oldVdom = h('button', ['Click'])
+    const newVdom = h('div', props, ['Click'])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('div').click()
+
+    expect(document.body.innerHTML).toBe('<div>Click</div>')
+    expect(component.count).toBe(6)
+  })
+
+  test('when a child node is added, bounds its event handlers to the component', () => {
+    const oldVdom = h('div', {}, ['hi'])
+    const newVdom = h('div', {}, ['hi', h('button', props, ['Click'])])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe(
+      '<div>hi<button>Click</button></div>'
+    )
+    expect(component.count).toBe(6)
+  })
+
+  test('when an event is patched, binds the event handler to the component', () => {
+    const oldVdom = h('button', {}, ['Click'])
+    const newVdom = h('button', props, ['Click'])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe('<button>Click</button>')
+    expect(component.count).toBe(6)
+  })
+
+  test('when a child node is moved, binds its event handlers to the component', () => {
+    const oldVdom = hFragment([
+      h('span', {}, ['A']),
+      h('button', {}, ['B']),
+    ])
+    const newVdom = hFragment([
+      h('button', props, ['B']),
+      h('span', {}, ['A']),
+    ])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe('<button>B</button><span>A</span>')
+    expect(component.count).toBe(6)
+  })
+
+  test('when a child node is moved naturally (noop), binds its event handlers to the component', () => {
+    const oldVdom = hFragment([h('button', {}, ['A'])])
+    const newVdom = hFragment([h('button', props, ['A'])])
+
+    patch(oldVdom, newVdom, component)
+    document.querySelector('button').click()
+
+    expect(document.body.innerHTML).toBe('<button>A</button>')
+    expect(component.count).toBe(6)
+  })
+})
+
+describe('patch component with props', () => {
+  const Component = defineComponent({
+    render() {
+      return h('span', { class: 'foo' }, [this.props.text])
+    },
+  })
+
+  test('the new prop is patched into the DOM', () => {
+    const oldVdom = h(Component, { text: 'one' })
+    const newVdom = h(Component, { text: 'two' })
+
+    patch(oldVdom, newVdom)
+
+    expect(document.body.innerHTML).toBe('<span class="foo">two</span>')
+  })
+
+  test("the component instance is preserved (the component isn't re-created)", () => {
+    const oldVdom = h(Component, { text: 'one' })
+    const newVdom = h(Component, { text: 'two' })
+
+    patch(oldVdom, newVdom)
+
+    expect(newVdom.component).toBe(oldVdom.component)
+  })
+})
+
+describe('patch keyed component list', () => {
+  // A component with internal state
+  const Component = defineComponent({
+    state() {
+      return { highlighted: false }
+    },
+
+    render() {
+      const { highlighted } = this.state
+      const { text } = this.props
+
+      return h(
+        'span',
+        {
+          class: highlighted ? 'highlighted' : '',
+          id: text,
+          on: {
+            click: () => this.updateState({ highlighted: !highlighted }),
+          },
+        },
+        [text]
+      )
+    },
+  })
+
+  test('swap two components', () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'b', text: 'B' }),
+      h(Component, { key: 'a', text: 'A' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of the first component.
+    document.querySelector('#A').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="B">B</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="B">B</span>
+      <span id="A" class="highlighted">A</span>
+      `
+    )
+  })
+
+  test('the key is not passed as prop to the component', () => {
+    const oldVdom = h(Component, { key: 'a', text: 'A' })
+    const newVdom = h(Component, { key: 'a', text: 'B' })
+
+    patch(oldVdom, newVdom)
+
+    const component = newVdom.component
+    expect(component.props).toEqual({ text: 'B' })
+  })
+
+  test('add a new component in the middle', () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'c', text: 'C' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of the two components
+    document.querySelector('#A').click()
+    document.querySelector('#B').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="B" class="highlighted">B</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="C">C</span>
+      <span id="B" class="highlighted">B</span>
+      `
+    )
+  })
+
+  test('remove a component in the middle', () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+      h(Component, { key: 'c', text: 'C' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'c', text: 'C' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of the middle component
+    document.querySelector('#B').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A">A</span>
+      <span id="B" class="highlighted">B</span>
+      <span id="C">C</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A">A</span>
+      <span id="C">C</span>
+      `
+    )
+  })
+
+  test("when a component changes its key, loses it's internal state (it's recreated)", () => {
+    const oldVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'b', text: 'B' }),
+    ])
+    const newVdom = hFragment([
+      h(Component, { key: 'a', text: 'A' }),
+      h(Component, { key: 'c', text: 'C' }),
+    ])
+
+    mountDOM(oldVdom, document.body)
+
+    // Change the internal state of two components
+    document.querySelector('#A').click()
+    document.querySelector('#B').click()
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="B" class="highlighted">B</span>
+      `
+    )
+
+    patchDOM(oldVdom, newVdom, document.body)
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span id="A" class="highlighted">A</span>
+      <span id="C">C</span>
+      `
+    )
+  })
+})
+
+/**
+ * These cases are interesting because, the indices of the list operations over the children
+ * of the component require an offset: the number of children before the component's first child.
+ *
+ * The component patches its view, independently of the other components above it, but when
+ * the component isn't the first child of the parent, the indices of the list operations
+ * need to be offset.
+ *
+ * At mounting time, that offset is the passed index to the `mount()` method.
+ * But things can move around, and the component can be moved to a different position.
+ */
+describe('Components inside children arrays', () => {
+  const SwapComponent = defineComponent({
+    state() {
+      return { swap: false }
+    },
+    render() {
+      return hFragment([
+        h('span', {}, ['B']),
+        this.state.swap ? h('p', {}, ['XX']) : h('span', {}, ['C']),
+      ])
+    },
+  })
+
+  const MoveComponent = defineComponent({
+    state() {
+      return { move: false }
+    },
+    render() {
+      if (this.state.move) {
+        return hFragment([h('p', {}, ['C']), h('span', {}, ['B'])])
+      }
+
+      return hFragment([h('span', {}, ['B']), h('p', {}, ['C'])])
+    },
+  })
+
+  test('swapping an item (remove + add) inside a component that goes after an element in the same parent node', () => {
+    // Parent element is a <div>
+    // The component inside the <div> goes after the <span> (at index 1)
+    const vdom = h('div', {}, [h('span', {}, ['A']), h(SwapComponent)])
+    mountDOM(vdom, document.body)
+
+    const component = vdom.children[1].component
+    component.updateState({ swap: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <div>
+        <span>A</span>
+        <span>B</span>
+        <p>XX</p>
+      </div>
+      `
+    )
+  })
+
+  test('moving an item inside a component that goes after an element in the same parent node', () => {
+    // Parent element is a <div>
+    // The component inside the <div> goes after the <span> (at index 1)
+    const vdom = h('div', {}, [h('span', {}, ['A']), h(MoveComponent)])
+    mountDOM(vdom, document.body)
+
+    const component = vdom.children[1].component
+    component.updateState({ move: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <div>
+        <span>A</span>
+        <p>C</p>
+        <span>B</span>
+      </div>
+      `
+    )
+  })
+
+  test('swapping an item (remove + add) inside a component that goes after an element in a fragment', () => {
+    // Parent element is the <body>
+    // The component inside the <body> goes after the <span> (at index 1)
+    const vdom = hFragment([h('span', {}, ['A']), h(SwapComponent)])
+    mountDOM(vdom, document.body)
+
+    const component = vdom.children[1].component
+    component.updateState({ swap: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span>A</span>
+      <span>B</span>
+      <p>XX</p>
+      `
+    )
+  })
+
+  test('moving an item inside a component that goes after an element in a fragment', () => {
+    // Parent element is the <body>
+    // The component inside the <body> goes after the <span> (at index 1)
+    const vdom = hFragment([h('span', {}, ['A']), h(MoveComponent)])
+    mountDOM(vdom, document.body)
+
+    const component = vdom.children[1].component
+    component.updateState({ move: true })
+
+    expect(document.body.innerHTML).toBe(
+      singleHtmlLine`
+      <span>A</span>
+      <p>C</p>
+      <span>B</span>
+      `
+    )
+  })
+})
+
+function patch(oldVdom, newVdom, hostComponent = null) {
   mountDOM(oldVdom, document.body)
-  return patchDOM(oldVdom, newVdom, document.body)
+  return patchDOM(oldVdom, newVdom, document.body, hostComponent)
 }

@@ -1,40 +1,16 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
-import { h, hFragment } from '../h'
+import { App } from './app'
+import { singleHtmlLine } from './utils'
 
-const state = { count: 0 }
-
-const reducers = {
-  decrement: (state) => ({ count: state.count - 1 }),
-  increment: (state) => ({ count: state.count + 1 }),
-}
-
-function View(state, emit) {
-  return hFragment([
-    h(
-      'button',
-      {
-        on: { click: () => emit('decrement') },
-        'data-qa': 'minus-btn',
-      },
-      ['-']
-    ),
-    h('span', {}, [`${state.count}`]),
-    h(
-      'button',
-      {
-        on: { click: () => emit('increment') },
-        'data-qa': 'plus-btn',
-      },
-      ['+']
-    ),
-  ])
-}
-
+/** @type {import('../app').Application} */
 let app
 
 beforeEach(() => {
-  app = createApp({ state, reducers, view: View })
+  app = createApp(App, { todos: ['Water the plants', 'Walk the dog'] })
+})
+
+afterEach(() => {
   document.body.innerHTML = ''
 })
 
@@ -45,44 +21,94 @@ describe('when the application is mounted', () => {
 
   test('it is rendered into the parent element', () => {
     expect(document.body.innerHTML).toBe(
-      normalizeLines(`
-      <button data-qa="minus-btn">-</button>
-      <span>0</span>
-      <button data-qa="plus-btn">+</button>`)
+      singleHtmlLine`
+      <h1>Todos</h1>
+      <input type="text">
+      <button>Add</button>
+      <ul>
+        <li>
+          <span>Water the plants</span>
+          <button>Done</button>
+        </li>
+        <li>
+          <span>Walk the dog</span>
+          <button>Done</button>
+        </li>
+      </ul>`
     )
   })
 
-  describe('when the user clicks the increment button', () => {
+  describe('when the application is unmounted', () => {
     beforeEach(() => {
-      document.querySelector('[data-qa="plus-btn"]').click()
+      app.unmount()
     })
 
-    test('it increments the counter', () => {
+    test('it is removed from the parent element', () => {
+      expect(document.body.innerHTML).toBe('')
+    })
+  })
+
+  describe('when the user adds a todo', () => {
+    beforeEach(() => {
+      writeInInput('Buy milk')
+      clickAddButton()
+    })
+
+    test('renders the new todo in read mode', () => {
       expect(document.body.innerHTML).toBe(
-        normalizeLines(`
-        <button data-qa="minus-btn">-</button>
-        <span>1</span>
-        <button data-qa="plus-btn">+</button>`)
+        singleHtmlLine`
+        <h1>Todos</h1>
+        <input type="text">
+        <button>Add</button>
+        <ul>
+          <li>
+            <span>Water the plants</span>
+            <button>Done</button>
+          </li>
+          <li>
+            <span>Walk the dog</span>
+            <button>Done</button>
+          </li>
+          <li>
+            <span>Buy milk</span>
+            <button>Done</button>
+          </li>
+        </ul>`
       )
     })
   })
 
-  describe('when the user clicks the decrement button', () => {
+  describe('when the user removes a todo', () => {
     beforeEach(() => {
-      document.querySelector('[data-qa="minus-btn"]').click()
+      clickDoneButton(0)
     })
 
-    test('it decrements the counter', () => {
+    test('removes the todo from the list', () => {
       expect(document.body.innerHTML).toBe(
-        normalizeLines(`
-        <button data-qa="minus-btn">-</button>
-        <span>-1</span>
-        <button data-qa="plus-btn">+</button>`)
+        singleHtmlLine`
+        <h1>Todos</h1>
+        <input type="text">
+        <button>Add</button>
+        <ul>
+          <li>
+            <span>Walk the dog</span>
+            <button>Done</button>
+          </li>
+        </ul>`
       )
     })
   })
 })
 
-function normalizeLines(str) {
-  return str.replace(/\n/g, '').trim().replace(/>\s+</g, '><')
+function writeInInput(text) {
+  document.querySelector('input').value = text
+  document.querySelector('input').dispatchEvent(new Event('input'))
+}
+
+function clickAddButton() {
+  document.querySelector('button').click()
+}
+
+function clickDoneButton(index) {
+  document.querySelectorAll('li button')[index].click()
 }
