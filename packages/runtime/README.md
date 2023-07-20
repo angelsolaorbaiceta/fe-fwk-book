@@ -349,3 +349,28 @@ const Counter = defineComponent({
   },
 })
 ```
+
+## [v3.0 - Chapter 14](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch14/packages/runtime)
+
+_See the example application in the [examples/ch14 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch14)_.
+
+To checkout this version of the code:
+
+```bash
+$ git checkout ch14
+```
+
+This version of the framework implements the `onMounted()` and `onUnmounted()` _lifecycle hooks_ for components.
+You can react to a component being mounted and unmounted by passing the `defineComponent()` function you own functions:
+
+```js
+defineComponent({
+  onMounted() {
+    // Called when the component is mounted
+  },
+
+  onUnmounted() {
+    // Called when the component is unmounted
+  },
+})
+```
