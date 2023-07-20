@@ -6,6 +6,8 @@ import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
 
+const emptyFn = () => {}
+
 /**
  * @typedef Component
  * @type {object}
@@ -30,7 +32,12 @@ import { hasOwnProperty } from './utils/objects'
  * @param {DefineComponentArgs} definitionArguments
  * @returns {Component}
  */
-export function defineComponent({ render, state, ...methods }) {
+export function defineComponent({
+  render,
+  state,
+  onMounted = emptyFn,
+  ...methods
+}) {
   class Component {
     #isMounted = false
     #vdom = null
@@ -53,6 +60,10 @@ export function defineComponent({ render, state, ...methods }) {
       this.state = state ? state(props) : {}
       this.#eventHandlers = eventHandlers
       this.#parentComponent = parentComponent
+
+      this.onMounted = function () {
+        return Promise.resolve(onMounted.call(this))
+      }
     }
 
     get parentComponent() {
@@ -138,6 +149,15 @@ export function defineComponent({ render, state, ...methods }) {
       return render.call(this)
     }
 
+    /**
+     * Mounts the component into the parent HTML element and wires the event handlers.
+     * Then calls the `onMounted()` lifecycle method and returns a promise that resolves
+     * when the `onMounted()` method resolves.
+     *
+     * @param {HTMLElement} hostEl the element into which the component should be mounted
+     * @param {[number]} index the index in the parent element at which the component should be mounted
+     * @returns {Promise<void>} a promise that resolves when the component `onMounted()` lifecycle method resolves
+     */
     mount(hostEl, index = null) {
       if (this.#isMounted) {
         throw new Error('Component is already mounted')
@@ -149,6 +169,8 @@ export function defineComponent({ render, state, ...methods }) {
 
       this.#isMounted = true
       this.#hostEl = hostEl
+
+      return this.onMounted()
     }
 
     #wireEventHandlers() {
