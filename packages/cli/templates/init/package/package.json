@@ -24,11 +24,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^8.32.0",
+    "eslint": "^8.45.0",
     "jsdom": "^21.1.0",
-    "rollup": "^3.10.1",
+    "rollup": "^3.26.2",
     "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-filesize": "^9.1.2",
-    "vitest": "^0.27.3"
+    "rollup-plugin-filesize": "^10.0.0",
+    "vitest": "^0.33.0"
   }
 }
