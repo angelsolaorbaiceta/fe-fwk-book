@@ -1,8 +1,6 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
-import { h, hFragment, hString } from '../h'
-import { singleHtmlLine } from './utils'
-import { mountDOM } from '../mount-dom'
+import { h, hString } from '../h'
 
 beforeEach(() => {
   document.body.innerHTML = ''
