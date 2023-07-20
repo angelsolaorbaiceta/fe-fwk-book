@@ -23,6 +23,8 @@ const emptyFn = () => {}
  * @type {object}
  * @property {function} render - The component's render function returning the virtual DOM tree representing the component in its current state.
  * @property {(props: Object?) => Object} state - The component's state function returning the component's initial state.
+ * @property {function} onMounted - The component's onMounted lifecycle hook.
+ * @property {function} onUnmounted - The component's onUnmounted lifecycle hook.
  * @property {Object<string, Function>} methods - The component's methods.
  */
 
@@ -36,6 +38,7 @@ export function defineComponent({
   render,
   state,
   onMounted = emptyFn,
+  onUnmounted = emptyFn,
   ...methods
 }) {
   class Component {
@@ -63,6 +66,9 @@ export function defineComponent({
 
       this.onMounted = function () {
         return Promise.resolve(onMounted.call(this))
+      }
+      this.onUnmounted = function () {
+        return Promise.resolve(onUnmounted.call(this))
       }
     }
 
@@ -189,6 +195,11 @@ export function defineComponent({
       })
     }
 
+    /**
+     * Unmounts the component from the DOM and calls the `onUnmounted()` lifecycle method.
+     *
+     * @returns {Promise<void>} a promise that resolves when the component `onUnmounted()` lifecycle method resolves
+     */
     unmount() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
@@ -201,6 +212,8 @@ export function defineComponent({
       this.#isMounted = false
       this.#hostEl = null
       this.#subscriptions = []
+
+      return this.onUnmounted()
     }
 
     /**
