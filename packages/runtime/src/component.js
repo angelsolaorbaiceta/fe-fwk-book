@@ -11,8 +11,8 @@ const emptyFn = () => {}
 /**
  * @typedef Component
  * @type {object}
- * @property {function} mount - Mounts the component into the DOM.
- * @property {function} unmount - Unmounts the component from the DOM.
+ * @property {() => Promise<void>} mount - Mounts the component into the DOM.
+ * @property {() => Promise<void>} unmount - Unmounts the component from the DOM.
  * @property {function} patch - Updates the component's virtual DOM tree and patches the DOM to reflect the changes.
  * @property {function} updateProps - Updates all or part of the component's props.
  * @property {function} updateState - Updates all or part of the component's state and patches the DOM.

@@ -36,7 +36,14 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     case DOM_TYPES.COMPONENT: {
-      createComponentNode(vdom, parentEl, index, hostComponent)
+      void createComponentNode(vdom, parentEl, index, hostComponent).catch(
+        (err) => {
+          console.error(
+            `Error mounting component: ${err.message}`,
+            vdom.component
+          )
+        }
+      )
       break
     }
 
@@ -140,15 +147,19 @@ function createFragmentNodes(vdom, parentEl, index, hostComponent) {
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
+ * @returns {Promise<void>} A promise that resolves when the component is mounted
  */
 function createComponentNode(vdom, parentEl, index, hostComponent) {
   const Component = vdom.tag
   const { props, events } = extractPropsAndEvents(vdom)
   const component = new Component(props, events, hostComponent)
 
-  component.mount(parentEl, index)
+  const result = component.mount(parentEl, index)
   vdom.component = component
   vdom.el = component.firstElement
+
+  return result
 }
 
 /**
