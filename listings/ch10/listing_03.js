@@ -26,12 +26,12 @@ export function addEventListener(
   // --add--
   function boundHandler() {
     hostComponent
-      ? handler.call(hostComponent, ...arguments) // --4--
+      ? handler.apply(hostComponent, arguments) // --4--
       : handler(...arguments) // --5--
   }
 
   el.addEventListener(eventName, boundHandler) // --6--
 
-  return asyncHandler
+  return boundHandler
   // --add--
 }
