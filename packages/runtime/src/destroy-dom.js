@@ -32,7 +32,12 @@ export function destroyDOM(vdom) {
     }
 
     case DOM_TYPES.COMPONENT: {
-      vdom.component.unmount()
+      vdom.component.unmount().catch((err) => {
+        console.error(
+          `Error unmounting component: ${err.message}`,
+          vdom.component
+        )
+      })
       break
     }
 

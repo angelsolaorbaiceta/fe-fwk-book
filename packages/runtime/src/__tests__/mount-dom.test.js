@@ -300,8 +300,6 @@ test('mount a fragment at index', () => {
 })
 
 test('when onMounted() in a component throws an error, the DOM still renders correctly', async () => {
-  // Mock global console.error() so we don't get a bunch of error messages
-
   const consoleErrorMock = vi.fn()
   vi.stubGlobal('console', { error: consoleErrorMock })
 
