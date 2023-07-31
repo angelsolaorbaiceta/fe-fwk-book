@@ -40,7 +40,7 @@ export function addEventListener(
 ) {
   function boundHandler() {
     hostComponent
-      ? handler.call(hostComponent, ...arguments)
+      ? handler.apply(hostComponent, arguments)
       : handler(...arguments)
   }
 
