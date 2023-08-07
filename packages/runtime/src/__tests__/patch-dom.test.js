@@ -1032,6 +1032,30 @@ describe('Components inside children arrays', () => {
   })
 })
 
+test('patch component where the top-level element changes between renders', () => {
+  const Component = defineComponent({
+    render() {
+      if (this.props.show) {
+        return h('div', {}, ['A'])
+      }
+
+      return h('span', {}, ['B'])
+    },
+  })
+
+  const oldVdom = h(Component, { show: true })
+  const newVdom = h(Component, { show: false })
+  mountDOM(oldVdom, document.body)
+
+  expect(document.body.innerHTML).toBe('<div>A</div>')
+  expect(oldVdom.el).toBeInstanceOf(HTMLDivElement)
+
+  patchDOM(oldVdom, newVdom, document.body)
+
+  expect(document.body.innerHTML).toBe('<span>B</span>')
+  expect(newVdom.el).toBeInstanceOf(HTMLSpanElement)
+})
+
 function patch(oldVdom, newVdom, hostComponent = null) {
   mountDOM(oldVdom, document.body)
   return patchDOM(oldVdom, newVdom, document.body, hostComponent)
