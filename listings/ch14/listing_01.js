@@ -2,7 +2,6 @@
 const emptyFn = () => {}
 // --add--
 
-
 export function defineComponent({
   render,
   state,
