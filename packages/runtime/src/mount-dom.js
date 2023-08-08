@@ -17,8 +17,19 @@ import { extractPropsAndEvents } from './utils/props'
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
+ * @returns {Promise<void>} a promise that resolves when the DOM is mounted
  */
-export function mountDOM(vdom, parentEl, index, hostComponent = null) {
+export async function mountDOM(
+  vdom,
+  parentEl,
+  index,
+  hostComponent = null
+) {
+  if (parentEl == null) {
+    throw new Error('Parent element is null')
+  }
+
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl, index)
@@ -26,24 +37,25 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      createElementNode(vdom, parentEl, index, hostComponent)
+      await createElementNode(vdom, parentEl, index, hostComponent)
       break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      createFragmentNodes(vdom, parentEl, index, hostComponent)
+      await createFragmentNodes(vdom, parentEl, index, hostComponent)
       break
     }
 
     case DOM_TYPES.COMPONENT: {
-      createComponentNode(vdom, parentEl, index, hostComponent).catch(
-        (err) => {
-          console.error(
-            `Error mounting component: ${err.message}`,
-            vdom.component
-          )
-        }
-      )
+      try {
+        await createComponentNode(vdom, parentEl, index, hostComponent)
+      } catch (err) {
+        console.error(
+          `Error mounting component: ${err.message}`,
+          vdom.component
+        )
+      }
+
       break
     }
 
@@ -88,14 +100,17 @@ function createTextNode(vdom, parentEl, index) {
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createElementNode(vdom, parentEl, index, hostComponent) {
+async function createElementNode(vdom, parentEl, index, hostComponent) {
   const { tag, children } = vdom
 
   const element = document.createElement(tag)
   addProps(element, vdom, hostComponent)
   vdom.el = element
 
-  children.forEach((child) => mountDOM(child, element, null, hostComponent))
+  await Promise.allSettled(
+    children.map((child) => mountDOM(child, element, null, hostComponent))
+  )
+
   insert(element, parentEl, index)
 }
 
@@ -122,12 +137,14 @@ function addProps(el, vdom, hostComponent) {
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
-function createFragmentNodes(vdom, parentEl, index, hostComponent) {
+async function createFragmentNodes(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
   vdom.el = parentEl
 
-  children.forEach((child, i) =>
-    mountDOM(child, parentEl, index ? index + i : null, hostComponent)
+  return Promise.allSettled(
+    children.map((child, i) =>
+      mountDOM(child, parentEl, index ? index + i : null, hostComponent)
+    )
   )
 }
 

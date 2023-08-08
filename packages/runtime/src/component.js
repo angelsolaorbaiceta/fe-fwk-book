@@ -13,9 +13,9 @@ const emptyFn = () => {}
  * @type {object}
  * @property {() => Promise<void>} mount - Mounts the component into the DOM.
  * @property {() => Promise<void>} unmount - Unmounts the component from the DOM.
- * @property {function} patch - Updates the component's virtual DOM tree and patches the DOM to reflect the changes.
- * @property {function} updateProps - Updates all or part of the component's props.
- * @property {function} updateState - Updates all or part of the component's state and patches the DOM.
+ * @property {() => Promise<void>} patch - Updates the component's virtual DOM tree and patches the DOM to reflect the changes.
+ * @property {() => Promise<void>} updateProps - Updates all or part of the component's props.
+ * @property {() => Promise<void>} updateState - Updates all or part of the component's state and patches the DOM.
  */
 
 /**
@@ -23,8 +23,8 @@ const emptyFn = () => {}
  * @type {object}
  * @property {function} render - The component's render function returning the virtual DOM tree representing the component in its current state.
  * @property {(props: Object?) => Object} state - The component's state function returning the component's initial state.
- * @property {function} onMounted - The component's onMounted lifecycle hook.
- * @property {function} onUnmounted - The component's onUnmounted lifecycle hook.
+ * @property {() => Promise<void>} onMounted - The component's onMounted lifecycle hook.
+ * @property {() => Promise<void>} onUnmounted - The component's onUnmounted lifecycle hook.
  * @property {Object<string, Function>} methods - The component's methods.
  */
 
@@ -130,6 +130,8 @@ export function defineComponent({
      * of its child components.
      *
      * @param {Object.<string, Any>} props the new props to be merged with the existing props
+     *
+     * @returns {Promise<void>} a promise that resolves when the component's props have been updated
      */
     updateProps(props) {
       const newProps = { ...this.props, ...props }
@@ -138,17 +140,19 @@ export function defineComponent({
       }
 
       this.props = newProps
-      this.#patch()
+      return this.#patch()
     }
 
     /**
      * Updates all or part of the component's state and patches the DOM to reflect the changes.
      *
      * @param {Object.<string, Any>} state the new state to be merged with the existing state
+     *
+     * @returns {Promise<void>} a promise that resolves when the component's state has been updated
      */
     updateState(state) {
       this.state = { ...this.state, ...state }
-      this.#patch()
+      return this.#patch()
     }
 
     render() {
@@ -162,15 +166,16 @@ export function defineComponent({
      *
      * @param {HTMLElement} hostEl the element into which the component should be mounted
      * @param {[number]} index the index in the parent element at which the component should be mounted
+     *
      * @returns {Promise<void>} a promise that resolves when the component `onMounted()` lifecycle method resolves
      */
-    mount(hostEl, index = null) {
+    async mount(hostEl, index = null) {
       if (this.#isMounted) {
         throw new Error('Component is already mounted')
       }
 
       this.#vdom = this.render()
-      mountDOM(this.#vdom, hostEl, index, this)
+      await mountDOM(this.#vdom, hostEl, index, this)
       this.#wireEventHandlers()
 
       this.#isMounted = true
@@ -200,12 +205,12 @@ export function defineComponent({
      *
      * @returns {Promise<void>} a promise that resolves when the component `onUnmounted()` lifecycle method resolves
      */
-    unmount() {
+    async unmount() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
       }
 
-      destroyDOM(this.#vdom)
+      await destroyDOM(this.#vdom)
       this.#subscriptions.forEach((unsubscribe) => unsubscribe())
 
       this.#vdom = null
@@ -226,13 +231,13 @@ export function defineComponent({
       this.#dispatcher.dispatch(eventName, payload)
     }
 
-    #patch() {
+    async #patch() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
       }
 
       const vdom = this.render()
-      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
+      this.#vdom = await patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }
   }
 

@@ -15,8 +15,8 @@ afterEach(() => {
 })
 
 describe('when the application is mounted', () => {
-  beforeEach(() => {
-    app.mount(document.body)
+  beforeEach(async () => {
+    await app.mount(document.body)
   })
 
   test('it is rendered into the parent element', () => {
@@ -39,8 +39,8 @@ describe('when the application is mounted', () => {
   })
 
   describe('when the application is unmounted', () => {
-    beforeEach(() => {
-      app.unmount()
+    beforeEach(async () => {
+      await app.unmount()
     })
 
     test('it is removed from the parent element', () => {

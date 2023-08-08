@@ -9,8 +9,10 @@ import { assert } from './utils/assert'
  * listeners from the DOM.
  *
  * @param {import('./h').VNode} vdom the virtual DOM node to destroy
+ *
+ * @returns {Promise<void>} a promise that resolves when the DOM is destroyed
  */
-export function destroyDOM(vdom) {
+export async function destroyDOM(vdom) {
   const { type, el } = vdom
 
   assert(!!el, 'Can only destroy DOM nodes that have been mounted')
@@ -32,12 +34,14 @@ export function destroyDOM(vdom) {
     }
 
     case DOM_TYPES.COMPONENT: {
-      vdom.component.unmount().catch((err) => {
+      try {
+        await vdom.component.unmount()
+      } catch (err) {
         console.error(
           `Error unmounting component: ${err.message}`,
           vdom.component
         )
-      })
+      }
       break
     }
 

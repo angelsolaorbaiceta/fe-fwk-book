@@ -16,7 +16,7 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     }
 
     case DOM_TYPES.COMPONENT: {
-      void createComponentNode(vdom, parentEl, index, hostComponent)/*--add--*/.catch(/*--add--*/
+      createComponentNode(vdom, parentEl, index, hostComponent)/*--add--*/.catch(/*--add--*/
         // --add--
         (err) => {
           console.error(

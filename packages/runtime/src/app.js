@@ -2,8 +2,8 @@
  * @typedef Application
  * @type {object}
  *
- * @property {(parentEl: HTMLElement) => void} mount - Mounts the application into the DOM.
- * @property {function} unmount - Unmounts the application from the DOM.
+ * @property {(parentEl: HTMLElement) => Promise<void>} mount - Mounts the application into the DOM.
+ * @property {() => Promise<void>} unmount - Unmounts the application from the DOM.
  */
 
 /**
@@ -28,24 +28,24 @@ export function createApp(RootComponent, props = {}) {
   }
 
   return {
-    mount(_parentEl) {
+    async mount(_parentEl) {
       if (isMounted) {
         throw new Error('The application is already mounted')
       }
 
       parentEl = _parentEl
       component = new RootComponent(props)
-      component.mount(parentEl)
+      await component.mount(parentEl)
 
       isMounted = true
     },
 
-    unmount() {
+    async unmount() {
       if (!isMounted) {
         throw new Error('The application is not mounted')
       }
 
-      component.unmount()
+      await component.unmount()
       reset()
     },
   }

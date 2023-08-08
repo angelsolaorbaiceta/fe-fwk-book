@@ -6,7 +6,7 @@ beforeEach(() => {
   document.body.innerHTML = ''
 })
 
-test('a component reacts to being mounted', () => {
+test('a component reacts to being mounted', async () => {
   const onMounted = vi.fn()
   const Component = defineComponent({
     state() {
@@ -25,7 +25,7 @@ test('a component reacts to being mounted', () => {
     },
   })
 
-  new Component().mount(document.body)
+  await new Component().mount(document.body)
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(document.body.textContent).toBe('mounted')
@@ -56,7 +56,7 @@ test('a component reacts asynchronously to being mounted', async () => {
   expect(document.body.textContent).toBe('mounted')
 })
 
-test('a component reacts to being unmounted', () => {
+test('a component reacts to being unmounted', async () => {
   const onMounted = vi.fn()
   const onUnmounted = vi.fn()
   const Component = defineComponent({
@@ -68,8 +68,8 @@ test('a component reacts to being unmounted', () => {
   })
 
   const component = new Component()
-  component.mount(document.body)
-  component.unmount()
+  await component.mount(document.body)
+  await component.unmount()
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(onUnmounted).toHaveBeenCalledTimes(1)
