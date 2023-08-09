@@ -3,5 +3,5 @@ export {
   defineComponent,
   h,
   hFragment,
-} from '../../../packages/runtime/dist/fe-fwk.js'
-// from 'https://unpkg.com/fe-fwk@4'
+} from 'https://unpkg.com/fe-fwk@4'
+//from '../../../packages/runtime/dist/fe-fwk.js'
