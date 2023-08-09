@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
 import { App } from './app'
-import { singleHtmlLine } from './utils'
+import { flushPromises, singleHtmlLine } from './utils'
 
 /** @type {import('../app').Application} */
 let app
@@ -49,9 +49,11 @@ describe('when the application is mounted', () => {
   })
 
   describe('when the user adds a todo', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       writeInInput('Buy milk')
       clickAddButton()
+
+      await flushPromises()
     })
 
     test('renders the new todo in read mode', () => {

@@ -99,6 +99,8 @@ function createTextNode(vdom, parentEl, index) {
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
+ * @returns {Promise<void>} a promise that resolves when the DOM is mounted
  */
 async function createElementNode(vdom, parentEl, index, hostComponent) {
   const { tag, children } = vdom
@@ -107,9 +109,9 @@ async function createElementNode(vdom, parentEl, index, hostComponent) {
   addProps(element, vdom, hostComponent)
   vdom.el = element
 
-  await Promise.allSettled(
-    children.map((child) => mountDOM(child, element, null, hostComponent))
-  )
+  for (const child of children) {
+    await mountDOM(child, element, null, hostComponent)
+  }
 
   insert(element, parentEl, index)
 }
@@ -136,16 +138,16 @@ function addProps(el, vdom, hostComponent) {
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
+ * @returns {Promise<void>} a promise that resolves when the DOM is mounted
  */
 async function createFragmentNodes(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
   vdom.el = parentEl
 
-  return Promise.allSettled(
-    children.map((child, i) =>
-      mountDOM(child, parentEl, index ? index + i : null, hostComponent)
-    )
-  )
+  for (const [i, child] of children.entries()) {
+    await mountDOM(child, parentEl, index ? index + i : null, hostComponent)
+  }
 }
 
 /**
