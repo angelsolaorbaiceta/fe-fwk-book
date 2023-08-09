@@ -63,6 +63,18 @@ export async function mountDOM(
       throw new Error(`Can't mount DOM of type: ${vdom.type}`)
     }
   }
+
+  return allowBrowserRepaint()
+}
+
+/**
+ * Returns a promise that resolves in the macrotask queue.
+ * Awaiting for this promise allows the browser to repaint the DOM.
+ *
+ * @returns {Promise<void>} a promise that resolves in the macrotask queue
+ */
+function allowBrowserRepaint() {
+  return new Promise((resolve) => setTimeout(resolve))
 }
 
 /**

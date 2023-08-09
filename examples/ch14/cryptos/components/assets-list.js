@@ -12,9 +12,9 @@ export const AssetsList = defineComponent({
   },
 
   async onMounted() {
-    this.updateState({ isLoading: true })
+    await this.updateState({ isLoading: true })
     const assets = await fetchAssets()
-    this.updateState({ assets, isLoading: false })
+    await this.updateState({ assets, isLoading: false })
   },
 
   render() {
