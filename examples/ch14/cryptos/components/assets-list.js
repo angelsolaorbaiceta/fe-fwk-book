@@ -1,5 +1,5 @@
-import { defineComponent, h, hFragment } from 'https://unpkg.com/fe-fwk@4'
 import { fetchAssets } from '../api.js'
+import { defineComponent, h, hFragment } from '../fwk.js'
 import { AssetCard } from './asset-card.js'
 
 export const AssetsList = defineComponent({
@@ -12,9 +12,9 @@ export const AssetsList = defineComponent({
   },
 
   async onMounted() {
-    await this.updateState({ isLoading: true })
+    this.updateState({ isLoading: true })
     const assets = await fetchAssets()
-    await this.updateState({ assets, isLoading: false })
+    this.updateState({ assets, isLoading: false })
   },
 
   render() {

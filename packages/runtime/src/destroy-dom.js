@@ -1,5 +1,6 @@
 import { removeEventListeners } from './events'
 import { DOM_TYPES } from './h'
+import { enqueueJob } from './scheduler'
 import { assert } from './utils/assert'
 
 /**
@@ -9,10 +10,8 @@ import { assert } from './utils/assert'
  * listeners from the DOM.
  *
  * @param {import('./h').VNode} vdom the virtual DOM node to destroy
- *
- * @returns {Promise<void>} a promise that resolves when the DOM is destroyed
  */
-export async function destroyDOM(vdom) {
+export function destroyDOM(vdom) {
   const { type, el } = vdom
 
   assert(!!el, 'Can only destroy DOM nodes that have been mounted')
@@ -24,24 +23,18 @@ export async function destroyDOM(vdom) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      await removeElementNode(vdom)
+      removeElementNode(vdom)
       break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      await removeFragmentNodes(vdom)
+      removeFragmentNodes(vdom)
       break
     }
 
     case DOM_TYPES.COMPONENT: {
-      try {
-        await vdom.component.unmount()
-      } catch (err) {
-        console.error(
-          `Error unmounting component: ${err.message}`,
-          vdom.component
-        )
-      }
+      vdom.component.unmount()
+      enqueueJob(vdom.component.onUnmounted)
       break
     }
 
@@ -61,14 +54,14 @@ function removeTextNode(vdom) {
   el.remove()
 }
 
-async function removeElementNode(vdom) {
+function removeElementNode(vdom) {
   const { el, children, listeners } = vdom
 
   assert(el instanceof HTMLElement)
 
   el.remove()
   for (const child of children) {
-    await destroyDOM(child)
+    destroyDOM(child)
   }
 
   if (listeners) {
@@ -77,12 +70,12 @@ async function removeElementNode(vdom) {
   }
 }
 
-async function removeFragmentNodes(vdom) {
+function removeFragmentNodes(vdom) {
   const { el, children } = vdom
 
   assert(el instanceof HTMLElement)
 
   for (const child of children) {
-    await destroyDOM(child)
+    destroyDOM(child)
   }
 }

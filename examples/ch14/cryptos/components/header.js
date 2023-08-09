@@ -1,4 +1,4 @@
-import { defineComponent, h, hFragment } from 'https://unpkg.com/fe-fwk@4'
+import { defineComponent, h, hFragment } from '../fwk.js'
 
 export const Header = defineComponent({
   render() {

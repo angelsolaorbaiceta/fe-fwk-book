@@ -1,6 +1,7 @@
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
+import { enqueueJob } from './scheduler'
 import { extractPropsAndEvents } from './utils/props'
 
 /**
@@ -17,15 +18,8 @@ import { extractPropsAndEvents } from './utils/props'
  * @param {HTMLElement} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
- *
- * @returns {Promise<void>} a promise that resolves when the DOM is mounted
  */
-export async function mountDOM(
-  vdom,
-  parentEl,
-  index,
-  hostComponent = null
-) {
+export function mountDOM(vdom, parentEl, index, hostComponent = null) {
   if (parentEl == null) {
     throw new Error('Parent element is null')
   }
@@ -37,25 +31,18 @@ export async function mountDOM(
     }
 
     case DOM_TYPES.ELEMENT: {
-      await createElementNode(vdom, parentEl, index, hostComponent)
+      createElementNode(vdom, parentEl, index, hostComponent)
       break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      await createFragmentNodes(vdom, parentEl, index, hostComponent)
+      createFragmentNodes(vdom, parentEl, index, hostComponent)
       break
     }
 
     case DOM_TYPES.COMPONENT: {
-      try {
-        await createComponentNode(vdom, parentEl, index, hostComponent)
-      } catch (err) {
-        console.error(
-          `Error mounting component: ${err.message}`,
-          vdom.component
-        )
-      }
-
+      createComponentNode(vdom, parentEl, index, hostComponent)
+      enqueueJob(vdom.component.onMounted)
       break
     }
 
@@ -63,18 +50,6 @@ export async function mountDOM(
       throw new Error(`Can't mount DOM of type: ${vdom.type}`)
     }
   }
-
-  return allowBrowserRepaint()
-}
-
-/**
- * Returns a promise that resolves in the macrotask queue.
- * Awaiting for this promise allows the browser to repaint the DOM.
- *
- * @returns {Promise<void>} a promise that resolves in the macrotask queue
- */
-function allowBrowserRepaint() {
-  return new Promise((resolve) => setTimeout(resolve))
 }
 
 /**
@@ -111,10 +86,8 @@ function createTextNode(vdom, parentEl, index) {
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
- *
- * @returns {Promise<void>} a promise that resolves when the DOM is mounted
  */
-async function createElementNode(vdom, parentEl, index, hostComponent) {
+function createElementNode(vdom, parentEl, index, hostComponent) {
   const { tag, children } = vdom
 
   const element = document.createElement(tag)
@@ -122,7 +95,7 @@ async function createElementNode(vdom, parentEl, index, hostComponent) {
   vdom.el = element
 
   for (const child of children) {
-    await mountDOM(child, element, null, hostComponent)
+    mountDOM(child, element, null, hostComponent)
   }
 
   insert(element, parentEl, index)
@@ -150,15 +123,13 @@ function addProps(el, vdom, hostComponent) {
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
- *
- * @returns {Promise<void>} a promise that resolves when the DOM is mounted
  */
-async function createFragmentNodes(vdom, parentEl, index, hostComponent) {
+function createFragmentNodes(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
   vdom.el = parentEl
 
   for (const [i, child] of children.entries()) {
-    await mountDOM(child, parentEl, index ? index + i : null, hostComponent)
+    mountDOM(child, parentEl, index ? index + i : null, hostComponent)
   }
 }
 
@@ -178,15 +149,13 @@ async function createFragmentNodes(vdom, parentEl, index, hostComponent) {
  * @param {Element} parentEl the host element to mount the virtual DOM node to
  * @param {number} [index] the index at the parent element to mount the virtual DOM node to
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
- *
- * @returns {Promise<void>} A promise that resolves when the component is mounted
  */
-async function createComponentNode(vdom, parentEl, index, hostComponent) {
+function createComponentNode(vdom, parentEl, index, hostComponent) {
   const Component = vdom.tag
   const { props, events } = extractPropsAndEvents(vdom)
   const component = new Component(props, events, hostComponent)
 
-  await component.mount(parentEl, index)
+  component.mount(parentEl, index)
   vdom.component = component
   vdom.el = component.firstElement
 }

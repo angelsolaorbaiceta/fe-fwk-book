@@ -28,24 +28,24 @@ export function createApp(RootComponent, props = {}) {
   }
 
   return {
-    async mount(_parentEl) {
+    mount(_parentEl) {
       if (isMounted) {
         throw new Error('The application is already mounted')
       }
 
       parentEl = _parentEl
       component = new RootComponent(props)
-      await component.mount(parentEl)
+      component.mount(parentEl)
 
       isMounted = true
     },
 
-    async unmount() {
+    unmount() {
       if (!isMounted) {
         throw new Error('The application is not mounted')
       }
 
-      await component.unmount()
+      component.unmount()
       reset()
     },
   }

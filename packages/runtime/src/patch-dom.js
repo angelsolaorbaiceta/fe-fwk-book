@@ -33,19 +33,12 @@ import { isNotBlankOrEmptyString } from './utils/strings'
  * @param {import('./h').VNode} newVdom the new virtual dom
  * @param {Node} parentEl the parent element
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
- *
- * @returns {Promise<Element>} the patched element
  */
-export async function patchDOM(
-  oldVdom,
-  newVdom,
-  parentEl,
-  hostComponent = null
-) {
+export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
   if (!areNodesEqual(oldVdom, newVdom)) {
     const index = findIndexInParent(parentEl, oldVdom.el)
     destroyDOM(oldVdom)
-    await mountDOM(newVdom, parentEl, index, hostComponent)
+    mountDOM(newVdom, parentEl, index, hostComponent)
 
     return newVdom
   }
@@ -64,12 +57,12 @@ export async function patchDOM(
     }
 
     case DOM_TYPES.COMPONENT: {
-      await patchComponent(oldVdom, newVdom)
+      patchComponent(oldVdom, newVdom)
       break
     }
   }
 
-  await patchChildren(oldVdom, newVdom, hostComponent)
+  patchChildren(oldVdom, newVdom, hostComponent)
 
   return newVdom
 }
@@ -283,14 +276,12 @@ function patchEvents(
  *
  * @param {import('./h').ElementVNode} oldVdom the old virtual node
  * @param {import('./h').ElementVNode} newVdom the new virtual node
- *
- * @returns {Promise<void>} a promise that resolves when the component is patched
  */
-async function patchComponent(oldVdom, newVdom) {
+function patchComponent(oldVdom, newVdom) {
   const { component } = oldVdom
   const { props } = extractPropsAndEvents(newVdom)
 
-  await component.updateProps(props)
+  component.updateProps(props)
 
   newVdom.component = component
   newVdom.el = component.firstElement
@@ -320,10 +311,8 @@ async function patchComponent(oldVdom, newVdom) {
  * @param {import('./h').VNode} oldVdom The old virtual node
  * @param {import('./h').VNode} newVdom the new virtual node
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
- *
- * @returns {Promise<void>} a promise that resolves when the children are patched
  */
-async function patchChildren(oldVdom, newVdom, hostComponent) {
+function patchChildren(oldVdom, newVdom, hostComponent) {
   const oldChildren = extractChildren(oldVdom)
   const newChildren = extractChildren(newVdom)
   const parentEl = oldVdom.el
@@ -340,7 +329,7 @@ async function patchChildren(oldVdom, newVdom, hostComponent) {
 
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
-        await mountDOM(item, parentEl, index + offset, hostComponent)
+        mountDOM(item, parentEl, index + offset, hostComponent)
         break
       }
 

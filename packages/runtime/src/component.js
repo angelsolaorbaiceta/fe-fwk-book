@@ -63,13 +63,14 @@ export function defineComponent({
       this.state = state ? state(props) : {}
       this.#eventHandlers = eventHandlers
       this.#parentComponent = parentComponent
+    }
 
-      this.onMounted = function () {
-        return Promise.resolve(onMounted.call(this))
-      }
-      this.onUnmounted = function () {
-        return Promise.resolve(onUnmounted.call(this))
-      }
+    onMounted() {
+      return Promise.resolve(onMounted.call(this))
+    }
+
+    onUnmounted() {
+      return Promise.resolve(onUnmounted.call(this))
     }
 
     get parentComponent() {
@@ -130,8 +131,6 @@ export function defineComponent({
      * of its child components.
      *
      * @param {Object.<string, Any>} props the new props to be merged with the existing props
-     *
-     * @returns {Promise<void>} a promise that resolves when the component's props have been updated
      */
     updateProps(props) {
       const newProps = { ...this.props, ...props }
@@ -140,19 +139,17 @@ export function defineComponent({
       }
 
       this.props = newProps
-      return this.#patch()
+      this.#patch()
     }
 
     /**
      * Updates all or part of the component's state and patches the DOM to reflect the changes.
      *
      * @param {Object.<string, Any>} state the new state to be merged with the existing state
-     *
-     * @returns {Promise<void>} a promise that resolves when the component's state has been updated
      */
     updateState(state) {
       this.state = { ...this.state, ...state }
-      return this.#patch()
+      this.#patch()
     }
 
     render() {
@@ -166,22 +163,18 @@ export function defineComponent({
      *
      * @param {HTMLElement} hostEl the element into which the component should be mounted
      * @param {[number]} index the index in the parent element at which the component should be mounted
-     *
-     * @returns {Promise<void>} a promise that resolves when the component `onMounted()` lifecycle method resolves
      */
-    async mount(hostEl, index = null) {
+    mount(hostEl, index = null) {
       if (this.#isMounted) {
         throw new Error('Component is already mounted')
       }
 
       this.#vdom = this.render()
-      await mountDOM(this.#vdom, hostEl, index, this)
+      mountDOM(this.#vdom, hostEl, index, this)
       this.#wireEventHandlers()
 
       this.#isMounted = true
       this.#hostEl = hostEl
-
-      return this.onMounted()
     }
 
     #wireEventHandlers() {
@@ -202,23 +195,19 @@ export function defineComponent({
 
     /**
      * Unmounts the component from the DOM and calls the `onUnmounted()` lifecycle method.
-     *
-     * @returns {Promise<void>} a promise that resolves when the component `onUnmounted()` lifecycle method resolves
      */
-    async unmount() {
+    unmount() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
       }
 
-      await destroyDOM(this.#vdom)
+      destroyDOM(this.#vdom)
       this.#subscriptions.forEach((unsubscribe) => unsubscribe())
 
       this.#vdom = null
       this.#isMounted = false
       this.#hostEl = null
       this.#subscriptions = []
-
-      return this.onUnmounted()
     }
 
     /**
@@ -237,7 +226,7 @@ export function defineComponent({
       }
 
       const vdom = this.render()
-      this.#vdom = await patchDOM(this.#vdom, vdom, this.#hostEl, this)
+      this.#vdom = patchDOM(this.#vdom, vdom, this.#hostEl, this)
     }
   }
 

@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'https://unpkg.com/fe-fwk@4'
+import { defineComponent, h } from '../fwk.js'
 
 export const CoinConverter = defineComponent({
   state() {

@@ -1,9 +1,4 @@
-import {
-  createApp,
-  defineComponent,
-  h,
-  hFragment,
-} from 'https://unpkg.com/fe-fwk@4'
+import { createApp, defineComponent, h, hFragment } from './fwk.js'
 import { AssetsList } from './components/assets-list.js'
 import { Footer } from './components/footer.js'
 import { Header } from './components/header.js'

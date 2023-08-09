@@ -1,5 +1,5 @@
-import { defineComponent, h } from 'https://unpkg.com/fe-fwk@4'
 import { fetchRates } from '../api.js'
+import { defineComponent, h } from '../fwk.js'
 import { CoinConverter } from './coin-converter.js'
 
 export const AssetCard = defineComponent({
