@@ -220,7 +220,7 @@ export function defineComponent({
       this.#dispatcher.dispatch(eventName, payload)
     }
 
-    async #patch() {
+    #patch() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')
       }

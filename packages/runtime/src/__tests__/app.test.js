@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
+import { flushPromises } from '../scheduler'
 import { App } from './app'
-import { flushPromises, singleHtmlLine } from './utils'
+import { singleHtmlLine } from './utils'
 
 /** @type {import('../app').Application} */
 let app
@@ -15,8 +16,8 @@ afterEach(() => {
 })
 
 describe('when the application is mounted', () => {
-  beforeEach(async () => {
-    await app.mount(document.body)
+  beforeEach(() => {
+    app.mount(document.body)
   })
 
   test('it is rendered into the parent element', () => {
@@ -39,8 +40,8 @@ describe('when the application is mounted', () => {
   })
 
   describe('when the application is unmounted', () => {
-    beforeEach(async () => {
-      await app.unmount()
+    beforeEach(() => {
+      app.unmount()
     })
 
     test('it is removed from the parent element', () => {

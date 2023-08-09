@@ -2,7 +2,7 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
-import { flushPromises } from './utils'
+import { flushPromises } from '../scheduler'
 
 beforeEach(() => {
   vi.unstubAllGlobals()
@@ -11,35 +11,34 @@ beforeEach(() => {
 
 test("can't mount an element without a host element", () => {
   const vdom = h('div', {}, [hString('hello')])
-  expect(() => mountDOM(vdom)).rejects.toThrow()
+  expect(() => mountDOM(vdom)).toThrow()
 })
 
-test('mount a text element in a host element', async () => {
+test('mount a text element in a host element', () => {
   const vdom = hString('hello')
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('hello')
 })
 
-test('save the created text element in the vdom', async () => {
+test('save the created text element in the vdom', () => {
   const vdom = hString('hello')
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
   const el = vdom.el
 
   expect(el).toBeInstanceOf(Text)
   expect(el.textContent).toBe('hello')
 })
 
-test('mount an element in a host element', async () => {
+test('mount an element in a host element', () => {
   const vdom = h('div', {}, [hString('hello')])
-  await mountDOM(vdom, document.body)
-
+  mountDOM(vdom, document.body)
   expect(document.body.innerHTML).toBe('<div>hello</div>')
 })
 
-test('save the created element in the vdom', async () => {
+test('save the created element in the vdom', () => {
   const vdom = h('div')
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
   const el = vdom.el
 
   expect(el).toBeInstanceOf(HTMLDivElement)
@@ -47,75 +46,75 @@ test('save the created element in the vdom', async () => {
 
 test("can't mount a fragment without a parent element", () => {
   const vdom = hFragment([hString('hello')])
-  expect(() => mountDOM(vdom)).rejects.toThrow()
+  expect(() => mountDOM(vdom)).toThrow()
 })
 
-test('mount a fragment in a host element', async () => {
+test('mount a fragment in a host element', () => {
   const vdom = hFragment([hString('hello, '), hString('world')])
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('hello, world')
 })
 
-test('mount a fragment inside a fragment inside a host element', async () => {
+test('mount a fragment inside a fragment inside a host element', () => {
   const vdom = hFragment([
     h('p', {}, ['foo']),
     hFragment([h('p', {}, ['bar']), h('p', {}, ['baz'])]),
   ])
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('<p>foo</p><p>bar</p><p>baz</p>')
 })
 
-test('all nested fragments el references point to the parent element (where they are mounted)', async () => {
+test('all nested fragments el references point to the parent element (where they are mounted)', () => {
   const vdomOne = hFragment([hString('hello, '), hString('world')])
   const vdomTwo = hFragment([vdomOne])
   const vdomThree = hFragment([vdomTwo])
 
-  await mountDOM(vdomThree, document.body)
+  mountDOM(vdomThree, document.body)
 
   expect(vdomThree.el).toBe(document.body)
   expect(vdomTwo.el).toBe(document.body)
   expect(vdomOne.el).toBe(document.body)
 })
 
-test('mount fragment with children that have attributes', async () => {
+test('mount fragment with children that have attributes', () => {
   const vdom = hFragment([
     h('span', { id: 'foo' }, [hString('hello, ')]),
     h('span', { id: 'bar' }, [hString('world')]),
   ])
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe(
     '<span id="foo">hello, </span><span id="bar">world</span>'
   )
 })
 
-test('mount an element with id', async () => {
+test('mount an element with id', () => {
   const vdom = h('div', { id: 'foo' })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('<div id="foo"></div>')
 })
 
-test('mount an element with class', async () => {
+test('mount an element with class', () => {
   const vdom = h('div', { class: 'foo' })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('<div class="foo"></div>')
 })
 
-test('mount an element with a list of classes', async () => {
+test('mount an element with a list of classes', () => {
   const vdom = h('div', { class: ['foo', 'bar'] })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('<div class="foo bar"></div>')
 })
 
-test('mount an element with event handlers', async () => {
+test('mount an element with event handlers', () => {
   const onClick = vi.fn()
   const vdom = h('div', { on: { click: onClick } })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   vdom.el?.click()
 
@@ -124,16 +123,16 @@ test('mount an element with event handlers', async () => {
   expect(vdom.listeners).toEqual({ click: expect.any(Function) })
 })
 
-test('mounts an element with styles', async () => {
+test('mounts an element with styles', () => {
   const vdom = h('div', { style: { color: 'red' } })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
   const el = vdom.el
 
   expect(document.body.innerHTML).toBe('<div style="color: red;"></div>')
   expect(el.style.color).toBe('red')
 })
 
-test('where there is a host component, the event handlers are bound to it', async () => {
+test('where there is a host component, the event handlers are bound to it', () => {
   const comp = { count: 5 }
   const vdom = hFragment([
     h(
@@ -168,7 +167,7 @@ test('where there is a host component, the event handlers are bound to it', asyn
     ]),
   ])
 
-  await mountDOM(vdom, document.body, null, comp)
+  mountDOM(vdom, document.body, null, comp)
 
   document.querySelector('#btn-1').click()
   expect(comp.count).toBe(6)
@@ -177,20 +176,20 @@ test('where there is a host component, the event handlers are bound to it', asyn
   expect(comp.count).toBe(7)
 })
 
-test('mount a component with props', async () => {
+test('mount a component with props', () => {
   const Component = defineComponent({
     render() {
       return h('p', { class: 'important' }, [this.props.message])
     },
   })
   const vdom = h(Component, { message: 'hello' })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe('<p class="important">hello</p>')
   expect(vdom.component).toBeInstanceOf(Component)
 })
 
-test('mount a component with children', async () => {
+test('mount a component with children', () => {
   const ChildComp = defineComponent({
     render() {
       return h('p', {}, [this.props.message])
@@ -206,7 +205,7 @@ test('mount a component with children', async () => {
     },
   })
   const vdom = h(ParentComp, { messages: ['hello', 'world'] })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(document.body.innerHTML).toBe(
     '<div><p>hello</p><p>world</p></div>'
@@ -214,7 +213,7 @@ test('mount a component with children', async () => {
   expect(vdom.component).toBeInstanceOf(ParentComp)
 })
 
-test('mount a component with event handlers', async () => {
+test('mount a component with event handlers', () => {
   const onClick = vi.fn()
   const Component = defineComponent({
     render() {
@@ -224,14 +223,14 @@ test('mount a component with event handlers', async () => {
     },
   })
   const vdom = h(Component, { on: { click: onClick } })
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   document.querySelector('button').click()
 
   expect(onClick).toBeCalledTimes(1)
 })
 
-test('mount a component with a parent component', async () => {
+test('mount a component with a parent component', () => {
   // Parent component just as a stub; won't get rendered.
   const Parent = {}
   const Component = defineComponent({
@@ -240,13 +239,13 @@ test('mount a component with a parent component', async () => {
     },
   })
   const vdom = h(Component)
-  await mountDOM(vdom, document.body, null, Parent)
+  mountDOM(vdom, document.body, null, Parent)
 
   expect(document.body.innerHTML).toBe('<p>child</p>')
   expect(vdom.component.parentComponent).toBe(Parent)
 })
 
-test('child components keep a reference to their parent component', async () => {
+test('child components keep a reference to their parent component', () => {
   const CompC = defineComponent({
     render() {
       return h('p', {}, ['c'])
@@ -263,7 +262,7 @@ test('child components keep a reference to their parent component', async () => 
     },
   })
   const vdom = h(CompA)
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   const compA = vdom.component
   const compB = compA.vdom.component
@@ -274,7 +273,7 @@ test('child components keep a reference to their parent component', async () => 
   expect(compC.parentComponent).toBe(compB)
 })
 
-test('when a component with multiple elements is mounted, the vdom keeps a reference to the first element', async () => {
+test('when a component with multiple elements is mounted, the vdom keeps a reference to the first element', () => {
   const Component = defineComponent({
     render() {
       return hFragment([
@@ -284,15 +283,15 @@ test('when a component with multiple elements is mounted, the vdom keeps a refer
     },
   })
   const vdom = h(Component)
-  await mountDOM(vdom, document.body)
+  mountDOM(vdom, document.body)
 
   expect(vdom.el).toBe(document.querySelector('p#one'))
 })
 
-test('mount a fragment at index', async () => {
+test('mount a fragment at index', () => {
   document.body.innerHTML = '<p>one</p><p>two</p><p>five</p>'
   const vdom = hFragment([h('p', {}, ['three']), h('p', {}, ['four'])])
-  await mountDOM(vdom, document.body, 2)
+  mountDOM(vdom, document.body, 2)
 
   expect(document.body.innerHTML).toBe(
     '<p>one</p><p>two</p><p>three</p><p>four</p><p>five</p>'
@@ -326,15 +325,13 @@ test('when onMounted() in a component throws an error, the DOM still renders cor
     h(GoodBoy),
     h(GoodBoy),
   ])
-  await mountDOM(vdom, document.body)
-  const badComponent = vdom.children[1].component
+  mountDOM(vdom, document.body)
   await flushPromises()
 
   expect(document.body.innerHTML).toBe(
     '<p>good</p><p>problem</p><p>good</p><p>good</p>'
   )
   expect(consoleErrorMock).toBeCalledWith(
-    expect.stringMatching(/oops/),
-    badComponent
+    expect.stringMatching(/scheduler/)
   )
 })

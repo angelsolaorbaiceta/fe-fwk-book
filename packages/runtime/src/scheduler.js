@@ -1,4 +1,4 @@
-let isRunning = false
+let isScheduled = false
 const jobs = []
 
 const promise = Promise.resolve()
@@ -9,18 +9,18 @@ export function enqueueJob(job) {
 }
 
 function scheduleUpdate() {
-  if (isRunning) return
+  if (isScheduled) return
 
-  isRunning = true
+  isScheduled = true
   promise.then(processJobs)
 }
 
 function processJobs() {
-  isRunning = true
-
   let job
   while ((job = jobs.shift())) {
-    Promise.resolve(job()).then(
+    const result = job()
+
+    Promise.resolve(result).then(
       () => {
         // Job completed successfully
       },
@@ -30,16 +30,21 @@ function processJobs() {
     )
   }
 
-  isRunning = false
+  isScheduled = false
 }
 
 /**
  * Returns a promise that resolves once all pending jobs have been processed.
+ * If the jobs are asynchronous, the promise will resolve before all the jobs have completed.
+ * To account for this asynchronous behavior, you can use `await nextTick()` in an async function.
  *
  * @returns {Promise<void>} A promise that resolves when all pending jobs have been processed.
  */
 export function nextTick() {
   scheduleUpdate()
-  console.log('nextTick')
   return promise
+}
+
+export function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve))
 }

@@ -1,69 +1,68 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
-import { flushPromises, singleHtmlLine } from './utils'
 import { mountDOM } from '../mount-dom'
+import { flushPromises } from '../scheduler'
+import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
   document.body.innerHTML = ''
 })
 
 describe('Mounting and unmounting', () => {
-  test('can be mounted into the DOM', async () => {
-    await new Comp().mount(document.body)
+  test('can be mounted into the DOM', () => {
+    new Comp().mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       '<p>A point is that which has no part.</p>'
     )
   })
 
-  test('can be mounted at a specific position', async () => {
+  test('can be mounted at a specific position', () => {
     document.body.innerHTML = '<h1>Definitions</h1><hr>'
 
     const comp = new Comp()
-    await comp.mount(document.body, 1)
+    comp.mount(document.body, 1)
 
     expect(document.body.innerHTML).toBe(
       '<h1>Definitions</h1><p>A point is that which has no part.</p><hr>'
     )
   })
 
-  test("can't be mounted twice", async () => {
+  test("can't be mounted twice", () => {
     const comp = new Comp()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
-    expect(() => comp.mount(document.body)).rejects.toThrow(
-      /already mounted/
-    )
+    expect(() => comp.mount(document.body)).toThrow(/already mounted/)
   })
 
-  test('can be unmounted', async () => {
+  test('can be unmounted', () => {
     const comp = new Comp()
-    await comp.mount(document.body)
-    await comp.unmount()
+    comp.mount(document.body)
+    comp.unmount()
 
     expect(document.body.innerHTML).toBe('')
   })
 
   test("can't be unmounted if it wasn't mounted", () => {
     const comp = new Comp()
-    expect(() => comp.unmount()).rejects.toThrow(/not mounted/)
+    expect(() => comp.unmount()).toThrow(/not mounted/)
   })
 
-  test('can be mounted after being unmounted', async () => {
+  test('can be mounted after being unmounted', () => {
     const comp = new Comp()
-    await comp.mount(document.body)
-    await comp.unmount()
-    await comp.mount(document.body)
+    comp.mount(document.body)
+    comp.unmount()
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       '<p>A point is that which has no part.</p>'
     )
   })
 
-  test('can be mounted as a fragment', async () => {
+  test('can be mounted as a fragment', () => {
     const comp = new FragComp()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       '<p>A point is that which has no part.</p><p>A line is breadthless length.</p>'
@@ -72,27 +71,27 @@ describe('Mounting and unmounting', () => {
 })
 
 describe('Component props', () => {
-  test('can have props', async () => {
+  test('can have props', () => {
     const comp = new PropsComp({ pClass: 'definition' })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       '<p class="definition">A point is that which has no part.</p>'
     )
   })
 
-  test("can't patch the DOM if the component isn't mounted", async () => {
+  test("can't patch the DOM if the component isn't mounted", () => {
     const comp = new PropsComp({ pClass: 'definition' })
-    expect(() => comp.updateProps({ pClass: 'lemma' })).rejects.toThrow(
+    expect(() => comp.updateProps({ pClass: 'lemma' })).toThrow(
       /not mounted/
     )
   })
 
-  test('when the props are updated, the DOM is patched', async () => {
+  test('when the props are updated, the DOM is patched', () => {
     const comp = new PropsComp({ pClass: 'definition' })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
-    await comp.updateProps({ pClass: ['definition', 'updated'] })
+    comp.updateProps({ pClass: ['definition', 'updated'] })
 
     expect(document.body.innerHTML).toBe(
       '<p class="definition updated">A point is that which has no part.</p>'
@@ -112,14 +111,14 @@ describe('Component props', () => {
 })
 
 describe('Component state', () => {
-  test('can have its own internal state', async () => {
+  test('can have its own internal state', () => {
     const comp = new StateComp()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe('<button>0</button>')
   })
 
-  test('can be based on the props', async () => {
+  test('can be based on the props', () => {
     const Comp = defineComponent({
       state(props) {
         return { count: props.initialCount }
@@ -130,23 +129,23 @@ describe('Component state', () => {
     })
     const comp = new Comp({ initialCount: 10 })
 
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe('<p>10</p>')
   })
 
-  test('when the state changes, the DOM is patched', async () => {
+  test('when the state changes, the DOM is patched', () => {
     const comp = new StateComp()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
-    await comp.updateState({ count: 5 })
+    comp.updateState({ count: 5 })
 
     expect(document.body.innerHTML).toBe('<button>5</button>')
   })
 
-  test('an event can change the state', async () => {
+  test('an event can change the state', () => {
     const comp = new StateComp()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     document.querySelector('button').click()
 
@@ -155,7 +154,7 @@ describe('Component state', () => {
 })
 
 describe('Component methods', () => {
-  test('can use methods to handle events', async () => {
+  test('can use methods to handle events', () => {
     const Comp = defineComponent({
       state() {
         return { count: 0 }
@@ -176,7 +175,7 @@ describe('Component methods', () => {
       },
     })
     const comp = new Comp()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     document.querySelector('button').click()
 
@@ -229,7 +228,7 @@ describe('Patching the DOM', () => {
     })
 
     const comp = new Component()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       '<span>0</span><button id="plus-btn">+</button>'
@@ -254,27 +253,27 @@ describe('Child components', () => {
     'A line is breadthless length',
   ]
 
-  test('can mount child components', async () => {
+  test('can mount child components', () => {
     const comp = new List({ items })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       '<ul><li>A point is that which has no part</li><li>A line is breadthless length</li></ul>'
     )
   })
 
-  test('can unmount child components', async () => {
+  test('can unmount child components', () => {
     const comp = new List({ items })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
-    await comp.unmount()
+    comp.unmount()
 
     expect(document.body.innerHTML).toBe('')
   })
 
-  test('the state of children is preserved through a re-render', async () => {
+  test('the state of children is preserved through a re-render', () => {
     const comp = new List({ items })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     // Highlight the first item
     document.querySelectorAll('li')[0].click()
@@ -288,7 +287,7 @@ describe('Child components', () => {
     )
 
     // Force a re-render of the component by adding a new item
-    await comp.updateProps({
+    comp.updateProps({
       items: [...items, 'The ends of a line are points'],
     })
 
@@ -303,11 +302,11 @@ describe('Child components', () => {
     )
   })
 
-  test('children can be added', async () => {
+  test('children can be added', () => {
     const comp = new List({ items })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
-    await comp.updateProps({
+    comp.updateProps({
       items: [...items, 'The ends of a line are points'],
     })
 
@@ -322,11 +321,11 @@ describe('Child components', () => {
     )
   })
 
-  test('children can be removed', async () => {
+  test('children can be removed', () => {
     const comp = new List({ items })
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
-    await comp.updateProps({ items: [items[0]] })
+    comp.updateProps({ items: [items[0]] })
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`
@@ -339,13 +338,13 @@ describe('Child components', () => {
 })
 
 describe('Events', () => {
-  test('components can emit events', async () => {
+  test('components can emit events', () => {
     const handler = vi.fn()
     const comp = new ListItem(
       { text: 'A point is that which has no part' },
       { 'remove-item': handler }
     )
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     document.querySelector('li').dispatchEvent(new Event('dblclick'))
 
@@ -367,23 +366,23 @@ describe('Events', () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
-  test('when the component is unmounted, its event handlers are removed', async () => {
+  test('when the component is unmounted, its event handlers are removed', () => {
     const handler = vi.fn()
     const comp = new ListItem(
       { text: 'A point is that which has no part' },
       { 'remove-item': handler }
     )
-    await comp.mount(document.body)
-    await comp.unmount()
+    comp.mount(document.body)
+    comp.unmount()
 
     comp.emit('remove-item')
 
     expect(handler).not.toHaveBeenCalled()
   })
 
-  test('event handlers can be bound to the component', async () => {
+  test('event handlers can be bound to the component', () => {
     const comp = new DefinitionsComponent()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`
@@ -421,21 +420,21 @@ describe('Mounted elements', () => {
     expect(comp.elements).toEqual([])
   })
 
-  test('component with a single root element', async () => {
+  test('component with a single root element', () => {
     const Component = defineComponent({
       render() {
         return h('p', {}, ['A point is that which has no part.'])
       },
     })
     const comp = new Component()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     const expectedEl = document.querySelector('p')
 
     expect(comp.elements).toEqual([expectedEl])
   })
 
-  test('component with a root fragment containing elements', async () => {
+  test('component with a root fragment containing elements', () => {
     const Component = defineComponent({
       render() {
         return hFragment([
@@ -445,14 +444,14 @@ describe('Mounted elements', () => {
       },
     })
     const comp = new Component()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     const [expectedOne, expectedTwo] = document.querySelectorAll('p')
 
     expect(comp.elements).toEqual([expectedOne, expectedTwo])
   })
 
-  test('component with a root fragment containing other components', async () => {
+  test('component with a root fragment containing other components', () => {
     const Subcomponent = defineComponent({
       render() {
         return h('p', {}, ['A point is that which has no part.'])
@@ -464,14 +463,14 @@ describe('Mounted elements', () => {
       },
     })
     const comp = new Component()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     const [expectedOne, expectedTwo] = document.querySelectorAll('p')
 
     expect(comp.elements).toEqual([expectedOne, expectedTwo])
   })
 
-  test('component with a root fragment containing other nested components', async () => {
+  test('component with a root fragment containing other nested components', () => {
     const Subcomponent = defineComponent({
       render() {
         return hFragment([h('p', {}, ['One']), h('p', {}, ['Two'])])
@@ -483,7 +482,7 @@ describe('Mounted elements', () => {
       },
     })
     const comp = new Component()
-    await comp.mount(document.body)
+    comp.mount(document.body)
 
     const [expectedOne, expectedTwo, expectedThree, expectedFour] =
       document.querySelectorAll('p')
@@ -498,9 +497,9 @@ describe('Mounted elements', () => {
 })
 
 describe('Offset', () => {
-  test('when the components top-level element is a fragment, it has an offset', async () => {
+  test('when the components top-level element is a fragment, it has an offset', () => {
     const vdom = h('div', {}, [h(FragComp), h(FragComp), h(FragComp)])
-    await mountDOM(vdom, document.body)
+    mountDOM(vdom, document.body)
 
     const firstComponent = vdom.children[0].component
     const secondComponent = vdom.children[1].component
@@ -511,9 +510,9 @@ describe('Offset', () => {
     expect(thirdComponent.offset).toBe(4)
   })
 
-  test('when the components top-level element is not a fragment, it has NO offset', async () => {
+  test('when the components top-level element is not a fragment, it has NO offset', () => {
     const vdom = h('div', {}, [h(Comp), h(Comp), h(Comp)])
-    await mountDOM(vdom, document.body)
+    mountDOM(vdom, document.body)
 
     const firstComponent = vdom.children[0].component
     const secondComponent = vdom.children[1].component

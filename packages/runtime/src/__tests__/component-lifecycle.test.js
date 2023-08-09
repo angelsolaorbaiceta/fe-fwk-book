@@ -1,6 +1,9 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hString } from '../h'
+import { mountDOM } from '../mount-dom'
+import { flushPromises, nextTick } from '../scheduler'
+import { destroyDOM } from '../destroy-dom'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -25,7 +28,8 @@ test('a component reacts to being mounted', async () => {
     },
   })
 
-  await new Component().mount(document.body)
+  mountDOM(h(Component, {}), document.body)
+  await nextTick()
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(document.body.textContent).toBe('mounted')
@@ -50,7 +54,11 @@ test('a component reacts asynchronously to being mounted', async () => {
     },
   })
 
-  await new Component().mount(document.body)
+  mountDOM(h(Component, {}), document.body)
+  await nextTick()
+  // The asychronicity of onMounted is resolved after the next tick finishes
+  // so we need to wait for all promises to be resolved to see the resul
+  await flushPromises()
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(document.body.textContent).toBe('mounted')
@@ -66,10 +74,13 @@ test('a component reacts to being unmounted', async () => {
       return h('div')
     },
   })
+  const vdom = h(Component, {})
 
-  const component = new Component()
-  await component.mount(document.body)
-  await component.unmount()
+  mountDOM(vdom, document.body)
+  await nextTick()
+
+  destroyDOM(vdom)
+  await nextTick()
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(onUnmounted).toHaveBeenCalledTimes(1)
@@ -85,10 +96,13 @@ test('a component reacts to being unmounted asynchronously', async () => {
       return h('div')
     },
   })
+  const vdom = h(Component, {})
 
-  const component = new Component()
-  await component.mount(document.body)
-  await component.unmount()
+  mountDOM(vdom, document.body)
+  await nextTick()
+
+  destroyDOM(vdom)
+  await nextTick()
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(onUnmounted).toHaveBeenCalledTimes(1)
