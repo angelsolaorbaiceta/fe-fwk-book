@@ -24,12 +24,12 @@ export async function destroyDOM(vdom) {
     }
 
     case DOM_TYPES.ELEMENT: {
-      removeElementNode(vdom)
+      await removeElementNode(vdom)
       break
     }
 
     case DOM_TYPES.FRAGMENT: {
-      removeFragmentNodes(vdom)
+      await removeFragmentNodes(vdom)
       break
     }
 
@@ -61,13 +61,15 @@ function removeTextNode(vdom) {
   el.remove()
 }
 
-function removeElementNode(vdom) {
+async function removeElementNode(vdom) {
   const { el, children, listeners } = vdom
 
   assert(el instanceof HTMLElement)
 
   el.remove()
-  children.forEach(destroyDOM)
+  for (const child of children) {
+    await destroyDOM(child)
+  }
 
   if (listeners) {
     removeEventListeners(listeners, el)
@@ -75,10 +77,12 @@ function removeElementNode(vdom) {
   }
 }
 
-function removeFragmentNodes(vdom) {
+async function removeFragmentNodes(vdom) {
   const { el, children } = vdom
 
   assert(el instanceof HTMLElement)
 
-  children.forEach(destroyDOM)
+  for (const child of children) {
+    await destroyDOM(child)
+  }
 }

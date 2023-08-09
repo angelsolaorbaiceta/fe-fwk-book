@@ -47,7 +47,7 @@ describe('Mounting and unmounting', () => {
 
   test("can't be unmounted if it wasn't mounted", () => {
     const comp = new Comp()
-    expect(() => comp.unmount()).toThrow(/not mounted/)
+    expect(() => comp.unmount()).rejects.toThrow(/not mounted/)
   })
 
   test('can be mounted after being unmounted', async () => {
