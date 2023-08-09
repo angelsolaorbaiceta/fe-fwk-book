@@ -42,7 +42,7 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
 
     case DOM_TYPES.COMPONENT: {
       createComponentNode(vdom, parentEl, index, hostComponent)
-      enqueueJob(vdom.component.onMounted)
+      enqueueJob(() => vdom.component.onMounted())
       break
     }
 

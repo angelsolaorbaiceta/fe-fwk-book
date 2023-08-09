@@ -1,7 +1,7 @@
 let isRunning = false
 const jobs = []
 
-const nextTick = Promise.resolve()
+const promise = Promise.resolve()
 
 export function enqueueJob(job) {
   jobs.push(job)
@@ -12,7 +12,7 @@ function scheduleUpdate() {
   if (isRunning) return
 
   isRunning = true
-  nextTick.then(processJobs)
+  promise.then(processJobs)
 }
 
 function processJobs() {
@@ -21,7 +21,9 @@ function processJobs() {
   let job
   while ((job = jobs.shift())) {
     Promise.resolve(job()).then(
-      () => {},
+      () => {
+        // Job completed successfully
+      },
       (error) => {
         console.error(`[scheduler] Error: ${error}`)
       }
@@ -29,4 +31,15 @@ function processJobs() {
   }
 
   isRunning = false
+}
+
+/**
+ * Returns a promise that resolves once all pending jobs have been processed.
+ *
+ * @returns {Promise<void>} A promise that resolves when all pending jobs have been processed.
+ */
+export function nextTick() {
+  scheduleUpdate()
+  console.log('nextTick')
+  return promise
 }

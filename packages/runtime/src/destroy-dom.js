@@ -34,7 +34,7 @@ export function destroyDOM(vdom) {
 
     case DOM_TYPES.COMPONENT: {
       vdom.component.unmount()
-      enqueueJob(vdom.component.onUnmounted)
+      enqueueJob(() => vdom.component.onUnmounted())
       break
     }
 
