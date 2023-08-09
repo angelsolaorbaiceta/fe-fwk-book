@@ -94,9 +94,7 @@ function createElementNode(vdom, parentEl, index, hostComponent) {
   addProps(element, vdom, hostComponent)
   vdom.el = element
 
-  for (const child of children) {
-    mountDOM(child, element, null, hostComponent)
-  }
+  children.forEach((child) => mountDOM(child, element, null, hostComponent))
 
   insert(element, parentEl, index)
 }
@@ -128,9 +126,9 @@ function createFragmentNodes(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
   vdom.el = parentEl
 
-  for (const [i, child] of children.entries()) {
+  children.forEach((child, i) => {
     mountDOM(child, parentEl, index ? index + i : null, hostComponent)
-  }
+  })
 }
 
 /**
