@@ -126,9 +126,9 @@ function createFragmentNodes(vdom, parentEl, index, hostComponent) {
   const { children } = vdom
   vdom.el = parentEl
 
-  children.forEach((child, i) => {
+  children.forEach((child, i) =>
     mountDOM(child, parentEl, index ? index + i : null, hostComponent)
-  })
+  )
 }
 
 /**

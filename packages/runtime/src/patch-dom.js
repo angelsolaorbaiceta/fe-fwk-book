@@ -33,6 +33,8 @@ import { isNotBlankOrEmptyString } from './utils/strings'
  * @param {import('./h').VNode} newVdom the new virtual dom
  * @param {Node} parentEl the parent element
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
+ *
+ * @returns {Element} the patched element
  */
 export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
   if (!areNodesEqual(oldVdom, newVdom)) {

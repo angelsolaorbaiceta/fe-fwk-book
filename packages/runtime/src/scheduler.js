@@ -1,6 +1,5 @@
 let isScheduled = false
 const jobs = []
-
 const promise = Promise.resolve()
 
 export function enqueueJob(job) {
