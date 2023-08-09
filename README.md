@@ -22,7 +22,7 @@ You can alternatively create and configure the project manually, by following th
 
 The project that you get contains three packages:
 
-- `runtime`: the runtime for your framework; the framework itself.
+- [`runtime`](./packages/runtime/README.md): the runtime for your framework; the framework itself.
 - `compiler`: the compiler that transforms HTML templates into JavaScript render functions.
 - `loader`: the Webpack loader that integrates the compiler with Webpack.
 
