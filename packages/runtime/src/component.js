@@ -11,11 +11,11 @@ const emptyFn = () => {}
 /**
  * @typedef Component
  * @type {object}
- * @property {Function} mount - Mounts the component into the DOM.
- * @property {Function} unmount - Unmounts the component from the DOM.
- * @property {Function} patch - Updates the component's virtual DOM tree and patches the DOM to reflect the changes.
- * @property {Function} updateProps - Updates all or part of the component's props.
- * @property {Function} updateState - Updates all or part of the component's state and patches the DOM.
+ * @property {function} mount - Mounts the component into the DOM.
+ * @property {function} unmount - Unmounts the component from the DOM.
+ * @property {function} patch - Updates the component's virtual DOM tree and patches the DOM to reflect the changes.
+ * @property {function} updateProps - Updates all or part of the component's props.
+ * @property {function} updateState - Updates all or part of the component's state and patches the DOM.
  */
 
 /**

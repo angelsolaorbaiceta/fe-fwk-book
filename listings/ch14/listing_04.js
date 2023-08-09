@@ -1,17 +1,19 @@
-unmount() {
-  if (!this.#isMounted) {
-    throw new Error('Component is not mounted')
+function processJobs() {
+  let job
+  while ((job = jobs.shift())) {
+    /*--add--*/const result = /*--add--*/job()
+
+    // --add--
+    Promise.resolve(result).then(
+      () => {
+        // Job completed successfully
+      },
+      (error) => {
+        console.error(`[scheduler] Error: ${error}`)
+      }
+    )
+    // --add--
   }
 
-  destroyDOM(this.#vdom)
-  this.#subscriptions.forEach((unsubscribe) => unsubscribe())
-
-  this.#vdom = null
-  this.#isMounted = false
-  this.#hostEl = null
-  this.#subscriptions = []
-
-  // --add--
-  return this.onUnmounted()
-  // --add--
+  isScheduled = false
 }

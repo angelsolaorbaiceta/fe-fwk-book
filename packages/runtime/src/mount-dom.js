@@ -95,7 +95,6 @@ function createElementNode(vdom, parentEl, index, hostComponent) {
   vdom.el = element
 
   children.forEach((child) => mountDOM(child, element, null, hostComponent))
-
   insert(element, parentEl, index)
 }
 

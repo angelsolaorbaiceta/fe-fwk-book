@@ -2,8 +2,8 @@
  * @typedef Application
  * @type {object}
  *
- * @property {(parentEl: HTMLElement) => Promise<void>} mount - Mounts the application into the DOM.
- * @property {() => Promise<void>} unmount - Unmounts the application from the DOM.
+ * @property {(parentEl: HTMLElement) => void} mount - Mounts the application into the DOM.
+ * @property {function} unmount - Unmounts the application from the DOM.
  */
 
 /**

@@ -1,16 +1,24 @@
-mount(hostEl, index = null) {
-  if (this.#isMounted) {
-    throw new Error('Component is already mounted')
+let isScheduled = false
+const jobs = []
+const promise = Promise.resolve()
+
+export function enqueueJob(job) {
+  jobs.push(job)
+  scheduleUpdate()
+}
+
+function scheduleUpdate() {
+  if (isScheduled) return
+
+  isScheduled = true
+  promise.then(processJobs)
+}
+
+function processJobs() {
+  let job
+  while ((job = jobs.shift())) {
+    job()
   }
 
-  this.#vdom = this.render()
-  mountDOM(this.#vdom, hostEl, index, this)
-  this.#wireEventHandlers()
-
-  this.#isMounted = true
-  this.#hostEl = hostEl
-
-  // --add--
-  return this.onMounted()
-  // --add--
+  isScheduled = false
 }
