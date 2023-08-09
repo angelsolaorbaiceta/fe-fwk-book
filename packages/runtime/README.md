@@ -109,7 +109,7 @@ $ git checkout ch8
 
 This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
 
-## v3.0 - Chapter 12
+## [v3.0 - Chapter 12](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch12/packages/runtime)
 
 _See the example application in the [examples/ch12 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch12)_.
 
@@ -350,7 +350,7 @@ const Counter = defineComponent({
 })
 ```
 
-## [v3.0 - Chapter 14](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch14/packages/runtime)
+## [v4.0 - Chapter 14](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch14/packages/runtime)
 
 _See the example application in the [examples/ch14 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch14)_.
 
@@ -365,11 +365,11 @@ You can react to a component being mounted and unmounted by passing the `defineC
 
 ```js
 defineComponent({
-  onMounted() {
+  async onMounted() {
     // Called when the component is mounted
   },
 
-  onUnmounted() {
+  async onUnmounted() {
     // Called when the component is unmounted
   },
 })
