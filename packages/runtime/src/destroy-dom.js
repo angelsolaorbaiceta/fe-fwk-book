@@ -60,9 +60,7 @@ function removeElementNode(vdom) {
   assert(el instanceof HTMLElement)
 
   el.remove()
-  for (const child of children) {
-    destroyDOM(child)
-  }
+  children.forEach(destroyDOM)
 
   if (listeners) {
     removeEventListeners(listeners, el)
@@ -75,7 +73,5 @@ function removeFragmentNodes(vdom) {
 
   assert(el instanceof HTMLElement)
 
-  for (const child of children) {
-    destroyDOM(child)
-  }
+  children.forEach(destroyDOM)
 }
