@@ -1,0 +1,19 @@
+{
+  "name": "fe-fwk-compiler",
+  "version": "0.0.0",
+  "description": "Compiles fe-fwk templates into JS render functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelsolaorbaiceta/fe-fwk-book.git"
+  },
+  "author": "Angel Sola Orbaiceta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
+  },
+  "homepage": "https://github.com/angelsolaorbaiceta/fe-fwk-book#readme"
+}

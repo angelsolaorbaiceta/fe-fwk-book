@@ -5,6 +5,8 @@
   "description": "Code for the book \"Build a frontend framework from scratch\".",
   "workspaces": [
     "packages/runtime",
+    "packages/compiler",
+    "packages/loader",
     "packages/cli"
   ],
   "scripts": {
