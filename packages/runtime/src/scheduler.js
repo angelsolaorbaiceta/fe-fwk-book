@@ -39,6 +39,8 @@ function processJobs() {
   isScheduled = false
 }
 
+const resolvedPromise = Promise.resolve()
+
 /**
  * Returns a promise that resolves once all pending jobs have been processed.
  * If the jobs are asynchronous, the promise will resolve before all the jobs have completed.
@@ -52,7 +54,7 @@ function processJobs() {
  */
 export function nextTick() {
   scheduleUpdate()
-  return Promise.resolve()
+  return resolvedPromise
 }
 
 /**
