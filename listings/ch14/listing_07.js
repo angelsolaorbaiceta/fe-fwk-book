@@ -1,6 +1,6 @@
 export function nextTick() {
   scheduleUpdate()
-  return promise
+  return Promise.resolve()
 }
 
 export function flushPromises() {

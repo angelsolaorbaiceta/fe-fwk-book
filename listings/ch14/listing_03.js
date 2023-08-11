@@ -1,6 +1,5 @@
 let isScheduled = false
 const jobs = []
-const promise = Promise.resolve()
 
 export function enqueueJob(job) {
   jobs.push(job)
@@ -11,7 +10,7 @@ function scheduleUpdate() {
   if (isScheduled) return
 
   isScheduled = true
-  promise.then(processJobs)
+  queueMicrotask(processJobs)
 }
 
 function processJobs() {
