@@ -5,6 +5,7 @@ import { DOM_TYPES, extractChildren } from './h'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
+import { extractSlotViews, fillSlots } from './slots'
 
 const emptyFn = () => {}
 
@@ -49,6 +50,24 @@ export function defineComponent({
     #parentComponent = null
     #dispatcher = new Dispatcher()
     #subscriptions = []
+
+    /*
+     * Flag to indicate the component needs to replace slots.
+     *
+     * After the first render of the component, when we know whether there are slots
+     * or not, we set the flag. By setting the flag to `false` we avoid traversing
+     * the whole virtual DOM tree on every render.
+     *
+     * Starts as `true` so that the first render of the component traverses the whole
+     * virtual DOM tree in to determine whether there are slots or not.
+     */
+    #hasSlots = true
+    /**
+     * @type {import('./h').VNode[]}
+     * Array of external VNodes passed to the component as children, to be inserted
+     * in place of the defined slot.
+     */
+    #children = []
 
     /**
      * Creates an instance of the component.
@@ -152,8 +171,30 @@ export function defineComponent({
       this.#patch()
     }
 
+    /**
+     * Saves the views passed as children to the vdom that defines the component.
+     * When the component render method is called, this views are placed in the
+     * corresponding slots.
+     *
+     * @param {import('./h').VNode[]} children The slot views to set
+     */
+    setExternalContent(children) {
+      this.#children = children
+    }
+
+    /**
+     * Fills in the slots of the component's virtual DOM tree with the passed
+     * in children, and returns the resulting virtual DOM tree.
+     *
+     * @returns {import('./h').VNode} the virtual DOM tree representing the component in its current state
+     */
     render() {
-      return render.call(this)
+      const vdom = render.call(this)
+      if (this.#hasSlots) {
+        fillSlots(vdom, this.#children)
+      }
+
+      return vdom
     }
 
     /**

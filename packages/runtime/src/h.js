@@ -6,6 +6,7 @@ export const DOM_TYPES = {
   ELEMENT: 'element',
   FRAGMENT: 'fragment',
   COMPONENT: 'component',
+  SLOT: 'slot',
 }
 
 /**
@@ -55,6 +56,11 @@ export const DOM_TYPES = {
 export function h(tag, props = {}, children = []) {
   const type =
     typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
+
+  assert(
+    Array.isArray(children),
+    `[vdom] h() expects an array of children, but got '${typeof children}'`
+  )
 
   return {
     tag,
@@ -108,6 +114,31 @@ export function hFragment(vNodes) {
     type: DOM_TYPES.FRAGMENT,
     children: mapTextNodes(withoutNulls(vNodes)),
   }
+}
+
+/**
+ * @typedef SlotVNode
+ * @type {object}
+ * @property {string} type - The type of the virtual node = 'slot'.
+ * @property {VNode[]} [children] - The default content of the slot.
+ */
+
+/**
+ * Creates a slot virtual node.
+ *
+ * A slot is a placeholder for external content. It can also have default
+ * content in case no external content is provided.
+ *
+ * A slot vdom node isn't intended to be mounted, so it'll throw an error
+ * if it's passed to `mountDOM()`. Slots are handled by the component, which
+ * should replace the slot vdom node with the external content at render time.
+ *
+ * @param {VNode[]} [children] the default content of the slot
+ *
+ * @returns {SlotVNode} the virtual node
+ */
+export function hSlot(children = []) {
+  return { type: DOM_TYPES.SLOT, children }
 }
 
 function mapTextNodes(children) {
