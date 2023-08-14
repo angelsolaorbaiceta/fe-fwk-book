@@ -1,3 +1,7 @@
+import { mountDOM } from './mount-dom'
+import { destroyDOM } from './destroy-dom'
+import { h } from './h'
+
 /**
  * @typedef Application
  * @type {object}
@@ -19,12 +23,12 @@
 export function createApp(RootComponent, props = {}) {
   let parentEl = null
   let isMounted = false
-  let component = null
+  let vdom = null
 
   function reset() {
     parentEl = null
     isMounted = false
-    component = null
+    vdom = null
   }
 
   return {
@@ -34,8 +38,8 @@ export function createApp(RootComponent, props = {}) {
       }
 
       parentEl = _parentEl
-      component = new RootComponent(props)
-      component.mount(parentEl)
+      vdom = h(RootComponent, props)
+      mountDOM(vdom, parentEl)
 
       isMounted = true
     },
@@ -45,7 +49,7 @@ export function createApp(RootComponent, props = {}) {
         throw new Error('The application is not mounted')
       }
 
-      component.unmount()
+      destroyDOM(vdom)
       reset()
     },
   }
