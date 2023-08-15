@@ -22,8 +22,8 @@ function scheduleUpdate() {
 }
 
 function processJobs() {
-  let job
-  while ((job = jobs.shift())) {
+  while (jobs.length > 0) {
+    const job = jobs.shift()
     const result = job()
 
     Promise.resolve(result).then(
@@ -31,7 +31,7 @@ function processJobs() {
         // Job completed successfully
       },
       (error) => {
-        console.error(`[scheduler] Error: ${error}`)
+        console.error(`[scheduler]: ${error}`)
       }
     )
   }

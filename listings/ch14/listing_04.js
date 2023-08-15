@@ -1,6 +1,6 @@
 function processJobs() {
-  let job
-  while ((job = jobs.shift())) {
+  while (jobs.length > 0) {
+    const job = jobs.shift()
     /*--add--*/const result = /*--add--*/job()
 
     // --add--
