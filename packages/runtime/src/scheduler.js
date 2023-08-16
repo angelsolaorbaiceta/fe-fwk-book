@@ -80,6 +80,6 @@ export function nextTick() {
  *
  * @returns {Promise<void>} A promise that resolves when all pending promises have been processed.
  */
-export function flushPromises() {
+function flushPromises() {
   return new Promise((resolve) => setTimeout(resolve))
 }
