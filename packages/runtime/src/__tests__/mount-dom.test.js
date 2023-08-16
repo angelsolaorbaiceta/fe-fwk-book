@@ -2,7 +2,7 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
-import { flushPromises } from '../scheduler'
+import { nextTick } from '../scheduler'
 
 beforeEach(() => {
   vi.unstubAllGlobals()
@@ -326,7 +326,7 @@ test('when onMounted() in a component throws an error, the DOM still renders cor
     h(GoodBoy),
   ])
   mountDOM(vdom, document.body)
-  await flushPromises()
+  await nextTick()
 
   expect(document.body.innerHTML).toBe(
     '<p>good</p><p>problem</p><p>good</p><p>good</p>'

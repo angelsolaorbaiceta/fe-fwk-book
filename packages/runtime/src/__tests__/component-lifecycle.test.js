@@ -2,7 +2,7 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hString } from '../h'
 import { mountDOM } from '../mount-dom'
-import { flushPromises, nextTick } from '../scheduler'
+import { nextTick } from '../scheduler'
 import { destroyDOM } from '../destroy-dom'
 
 beforeEach(() => {
@@ -56,9 +56,6 @@ test('a component reacts asynchronously to being mounted', async () => {
 
   mountDOM(h(Component, {}), document.body)
   await nextTick()
-  // The asychronicity of onMounted is resolved after the next tick finishes
-  // so we need to wait for all promises to be resolved to see the resul
-  await flushPromises()
 
   expect(onMounted).toHaveBeenCalledTimes(1)
   expect(document.body.textContent).toBe('mounted')

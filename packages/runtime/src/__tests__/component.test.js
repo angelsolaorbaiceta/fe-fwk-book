@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
-import { flushPromises } from '../scheduler'
+import { nextTick } from '../scheduler'
 import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
@@ -235,7 +235,7 @@ describe('Patching the DOM', () => {
     )
 
     document.querySelector('#plus-btn').click()
-    await flushPromises()
+    await nextTick()
     expect(document.body.innerHTML).toBe(
       '<button id="minus-btn">-</button><span>1</span><button id="plus-btn">+</button>'
     )
