@@ -13,7 +13,8 @@ const CreateTodo = defineComponent({
         id: 'todo-input',
         value: text, // --2--
         on: {
-          input: ({ target }) => this.updateState({ text: target.value }), // --3--
+          input: ({ target }) => 
+            this.updateState({ text: target.value }), // --3--
           keydown: ({ key }) => { // --4--
             if (key === 'Enter' && text.length >= 3) {
               this.addTodo()

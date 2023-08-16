@@ -2,7 +2,7 @@ import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
 // --add--
-import { enqueueJob } from './scheduler'
+import { enqueueJob } from './scheduler' // --1--
 // --add--
 import { extractPropsAndEvents } from './utils/props'
 
@@ -13,7 +13,7 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
     case DOM_TYPES.COMPONENT: {
       createComponentNode(vdom, parentEl, index, hostComponent)
       // --add--
-      enqueueJob(() => vdom.component.onMounted())
+      enqueueJob(() => vdom.component.onMounted()) // --2--
       // --add--
       break
     }
