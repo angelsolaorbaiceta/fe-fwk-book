@@ -11,9 +11,7 @@ import { assert } from './utils/assert'
  * @param {import('./h').VNode} vdom the virtual DOM node to destroy
  */
 export function destroyDOM(vdom) {
-  const { type, el } = vdom
-
-  assert(!!el, 'Can only destroy DOM nodes that have been mounted')
+  const { type } = vdom
 
   switch (type) {
     case DOM_TYPES.TEXT: {
@@ -67,9 +65,6 @@ function removeElementNode(vdom) {
 }
 
 function removeFragmentNodes(vdom) {
-  const { el, children } = vdom
-
-  assert(el instanceof HTMLElement)
-
+  const { children } = vdom
   children.forEach(destroyDOM)
 }
