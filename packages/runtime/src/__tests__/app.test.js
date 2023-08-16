@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
-import { flushPromises, nextTick } from '../scheduler'
+import { nextTick } from '../scheduler'
 import { App } from './app'
 import { singleHtmlLine } from './utils'
 
@@ -28,7 +28,7 @@ describe('when the application is mounted', () => {
 
   test('it is rendered into the parent element', async () => {
     app.mount(document.body)
-    await flushPromises()
+    await nextTick()
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`
@@ -66,12 +66,12 @@ describe('when the application is unmounted', () => {
 describe('when the user adds a todo', () => {
   beforeEach(async () => {
     app.mount(document.body)
-    await flushPromises()
+    await nextTick()
 
     writeInInput('Buy milk')
     clickAddButton()
 
-    await flushPromises()
+    await nextTick()
   })
 
   test('renders the new todo in read mode', () => {
@@ -101,7 +101,7 @@ describe('when the user adds a todo', () => {
 describe('when the user removes a todo', () => {
   beforeEach(async () => {
     app.mount(document.body)
-    await flushPromises()
+    await nextTick()
 
     clickDoneButton(0)
   })

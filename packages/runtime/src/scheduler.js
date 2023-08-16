@@ -39,8 +39,6 @@ function processJobs() {
   isScheduled = false
 }
 
-const resolvedPromise = Promise.resolve()
-
 /**
  * Returns a promise that resolves once all pending jobs have been processed.
  * If the jobs are asynchronous, the promise will resolve before all the jobs have completed.
@@ -54,7 +52,7 @@ const resolvedPromise = Promise.resolve()
  */
 export function nextTick() {
   scheduleUpdate()
-  return resolvedPromise
+  return flushPromises()
 }
 
 /**
@@ -80,7 +78,7 @@ export function nextTick() {
  * This can be useful in testing scenarios to ensure that asynchronous operations are fully
  * settled before making assertions or proceeding with further tests.
  *
- * @returns {Promise<void>} A promise that resolves when all pending jobs have been processed.
+ * @returns {Promise<void>} A promise that resolves when all pending promises have been processed.
  */
 export function flushPromises() {
   return new Promise((resolve) => setTimeout(resolve))
