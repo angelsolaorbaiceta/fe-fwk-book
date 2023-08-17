@@ -11,7 +11,6 @@ beforeEach(() => { // --1--
 
 afterEach(() => { // --2--
   app.unmount()
-  document.body.innerHTML = ''
 })
 
 test('the counter starts at 0', () => {

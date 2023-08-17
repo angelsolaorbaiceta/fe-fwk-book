@@ -61,9 +61,10 @@ export function nextTick() {
  * When you call flushPromises(), the following happens:
  *
  *  1. The `flushPromises()` function is executed.
- *  2. It creates a new promise and schedules a macro task using `setTimeout()`.
- *  3. The macro task (`setTimeout()`) is placed in the event loop and will be executed after other tasks in the call stack have been cleared.
- *  4. Once the timeout has elapsed and the macro task is executed, the `resolve()` function is called, which fulfills the promise.
+ *  2. It creates a new promise and schedules a task using `setTimeout()`.
+ *  3. The task is placed in the queue and will be executed after all pending microtasks and other tasks in the call stack have run.
+ *  4. Once the timeout has elapsed and the macro task is executed, the `resolve()` function is scheduled in the microtask queue.
+ *  5. Once it is executed, the promise is fulfilled.
  *
  * The scheduling sequence is as follows:
  *
