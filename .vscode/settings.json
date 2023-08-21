@@ -8,5 +8,5 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["filesize", "subcomponents", "vdom"]
+  "cSpell.words": ["filesize", "subcomponents", "todos", "vdom"]
 }
