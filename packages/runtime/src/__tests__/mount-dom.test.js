@@ -6,7 +6,6 @@ import { nextTick } from '../scheduler'
 
 beforeEach(() => {
   vi.unstubAllGlobals()
-  vi.unstubAllGlobals()
   document.body.innerHTML = ''
 })
 
@@ -133,7 +132,6 @@ test('mounts an element with styles', () => {
   expect(el.style.color).toBe('red')
 })
 
-test('where there is a host component, the event handlers are bound to it', () => {
 test('where there is a host component, the event handlers are bound to it', () => {
   const comp = { count: 5 }
   const vdom = hFragment([
