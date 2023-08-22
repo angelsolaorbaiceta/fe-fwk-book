@@ -1,17 +1,34 @@
 import { h, hFragment } from '../h'
 import { defineComponent } from '../component'
 
+function fetchTodos() {
+  return new Promise((resolve) => {
+    resolve(['Water the plants', 'Walk the dog'])
+  })
+}
+
 export const App = defineComponent({
   state({ todos = [] }) {
-    return { todos }
+    return { todos, isLoading: true }
+  },
+
+  async onMounted() {
+    const todos = await fetchTodos()
+    this.updateState({ todos, isLoading: false })
   },
 
   render() {
+    const { isLoading, todos } = this.state
+
+    if (isLoading) {
+      return h('p', {}, ['Loading...'])
+    }
+
     return hFragment([
       h('h1', {}, ['Todos']),
       h(AddTodo, { on: { addTodo: this.addTodo } }),
       h(TodosList, {
-        todos: this.state.todos,
+        todos: todos,
         on: { removeTodo: this.removeTodo },
       }),
     ])

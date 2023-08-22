@@ -2,9 +2,10 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
-import { flushPromises } from '../scheduler'
+import { nextTick } from '../scheduler'
 
 beforeEach(() => {
+  vi.unstubAllGlobals()
   vi.unstubAllGlobals()
   document.body.innerHTML = ''
 })
@@ -132,6 +133,7 @@ test('mounts an element with styles', () => {
   expect(el.style.color).toBe('red')
 })
 
+test('where there is a host component, the event handlers are bound to it', () => {
 test('where there is a host component, the event handlers are bound to it', () => {
   const comp = { count: 5 }
   const vdom = hFragment([
@@ -326,7 +328,7 @@ test('when onMounted() in a component throws an error, the DOM still renders cor
     h(GoodBoy),
   ])
   mountDOM(vdom, document.body)
-  await flushPromises()
+  await nextTick()
 
   expect(document.body.innerHTML).toBe(
     '<p>good</p><p>problem</p><p>good</p><p>good</p>'

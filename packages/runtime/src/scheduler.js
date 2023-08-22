@@ -22,8 +22,8 @@ function scheduleUpdate() {
 }
 
 function processJobs() {
-  let job
-  while ((job = jobs.shift())) {
+  while (jobs.length > 0) {
+    const job = jobs.shift()
     const result = job()
 
     Promise.resolve(result).then(
@@ -31,15 +31,13 @@ function processJobs() {
         // Job completed successfully
       },
       (error) => {
-        console.error(`[scheduler] Error: ${error}`)
+        console.error(`[scheduler]: ${error}`)
       }
     )
   }
 
   isScheduled = false
 }
-
-const resolvedPromise = Promise.resolve()
 
 /**
  * Returns a promise that resolves once all pending jobs have been processed.
@@ -54,7 +52,7 @@ const resolvedPromise = Promise.resolve()
  */
 export function nextTick() {
   scheduleUpdate()
-  return resolvedPromise
+  return flushPromises()
 }
 
 /**
@@ -63,9 +61,10 @@ export function nextTick() {
  * When you call flushPromises(), the following happens:
  *
  *  1. The `flushPromises()` function is executed.
- *  2. It creates a new promise and schedules a macro task using `setTimeout()`.
- *  3. The macro task (`setTimeout()`) is placed in the event loop and will be executed after other tasks in the call stack have been cleared.
- *  4. Once the timeout has elapsed and the macro task is executed, the `resolve()` function is called, which fulfills the promise.
+ *  2. It creates a new promise and schedules a task using `setTimeout()`.
+ *  3. The task is placed in the queue and will be executed after all pending microtasks and other tasks in the call stack have run.
+ *  4. Once the timeout has elapsed and the macro task is executed, the `resolve()` function is scheduled in the microtask queue.
+ *  5. Once it is executed, the promise is fulfilled.
  *
  * The scheduling sequence is as follows:
  *
@@ -80,8 +79,8 @@ export function nextTick() {
  * This can be useful in testing scenarios to ensure that asynchronous operations are fully
  * settled before making assertions or proceeding with further tests.
  *
- * @returns {Promise<void>} A promise that resolves when all pending jobs have been processed.
+ * @returns {Promise<void>} A promise that resolves when all pending promises have been processed.
  */
-export function flushPromises() {
+function flushPromises() {
   return new Promise((resolve) => setTimeout(resolve))
 }
