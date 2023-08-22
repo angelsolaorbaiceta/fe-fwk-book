@@ -25,7 +25,8 @@ export function defineComponent({ render, state, ...methods }) {
     // --add--
     #wireEventHandlers() {
       this.#subscriptions = Object.entries(this.#eventHandlers).map( // --3--
-        ([eventName, handler]) => this.#wireEventHandler(eventName, handler)
+        ([eventName, handler]) => 
+          this.#wireEventHandler(eventName, handler)
       )
     }
 

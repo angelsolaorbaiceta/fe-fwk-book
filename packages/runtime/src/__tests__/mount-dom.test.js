@@ -2,8 +2,10 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
+import { nextTick } from '../scheduler'
 
 beforeEach(() => {
+  vi.unstubAllGlobals()
   document.body.innerHTML = ''
 })
 
@@ -31,7 +33,6 @@ test('save the created text element in the vdom', () => {
 test('mount an element in a host element', () => {
   const vdom = h('div', {}, [hString('hello')])
   mountDOM(vdom, document.body)
-
   expect(document.body.innerHTML).toBe('<div>hello</div>')
 })
 
@@ -131,7 +132,7 @@ test('mounts an element with styles', () => {
   expect(el.style.color).toBe('red')
 })
 
-test('where there is a host component, the event handlers are bound to it', async () => {
+test('where there is a host component, the event handlers are bound to it', () => {
   const comp = { count: 5 }
   const vdom = hFragment([
     h(
@@ -294,5 +295,43 @@ test('mount a fragment at index', () => {
 
   expect(document.body.innerHTML).toBe(
     '<p>one</p><p>two</p><p>three</p><p>four</p><p>five</p>'
+  )
+})
+
+test('when onMounted() in a component throws an error, the DOM still renders correctly', async () => {
+  const consoleErrorMock = vi.fn()
+  vi.stubGlobal('console', { error: consoleErrorMock })
+
+  const ProblematicComponent = defineComponent({
+    onMounted() {
+      return Promise.reject(new Error('oops'))
+    },
+    render() {
+      return h('p', {}, ['problem'])
+    },
+  })
+  const GoodBoy = defineComponent({
+    onMounted() {
+      return Promise.resolve()
+    },
+    render() {
+      return h('p', {}, ['good'])
+    },
+  })
+
+  const vdom = hFragment([
+    h(GoodBoy),
+    h(ProblematicComponent),
+    h(GoodBoy),
+    h(GoodBoy),
+  ])
+  mountDOM(vdom, document.body)
+  await nextTick()
+
+  expect(document.body.innerHTML).toBe(
+    '<p>good</p><p>problem</p><p>good</p><p>good</p>'
+  )
+  expect(consoleErrorMock).toBeCalledWith(
+    expect.stringMatching(/scheduler/)
   )
 })

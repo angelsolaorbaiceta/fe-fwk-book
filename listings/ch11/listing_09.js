@@ -8,7 +8,13 @@ export function defineComponent({ render, state, ...methods }) {
     #parentComponent = null // --2--
     // --add--
 
-    constructor(props = {}/*--add--*/, eventHandlers = {}, parentComponent = null/*--add--*/) {
+    constructor(
+      props = {},
+      // --add-- 
+      eventHandlers = {}, 
+      parentComponent = null,
+      // --add--
+    ) {
       this.props = props
       this.state = state ? state(props) : {}
       // --add--

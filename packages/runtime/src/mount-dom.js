@@ -1,6 +1,7 @@
 import { setAttributes } from './attributes'
 import { addEventListeners } from './events'
 import { DOM_TYPES } from './h'
+import { enqueueJob } from './scheduler'
 import { extractPropsAndEvents } from './utils/props'
 
 /**
@@ -19,6 +20,10 @@ import { extractPropsAndEvents } from './utils/props'
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
 export function mountDOM(vdom, parentEl, index, hostComponent = null) {
+  if (parentEl == null) {
+    throw new Error('Parent element is null')
+  }
+
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl, index)
@@ -37,6 +42,7 @@ export function mountDOM(vdom, parentEl, index, hostComponent = null) {
 
     case DOM_TYPES.COMPONENT: {
       createComponentNode(vdom, parentEl, index, hostComponent)
+      enqueueJob(() => vdom.component.onMounted())
       break
     }
 

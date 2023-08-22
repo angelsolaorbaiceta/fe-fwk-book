@@ -25,7 +25,9 @@ const TodoItem = defineComponent({
     return h('li', {}, [
       h(
         'span',
-        { on: { dblclick: () => this.updateState({ isEditing: true }) } }, // --1--
+        { on: 
+          { dblclick: () => this.updateState({ isEditing: true }) } // --1--
+        },
         [original] // --2--
       ),
       h(

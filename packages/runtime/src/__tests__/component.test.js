@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
-import { singleHtmlLine } from './utils'
 import { mountDOM } from '../mount-dom'
+import { nextTick } from '../scheduler'
+import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
   document.body.innerHTML = ''
@@ -97,7 +98,7 @@ describe('Component props', () => {
     )
   })
 
-  test('Does not patch the DOM if the props are the same', () => {
+  test('does not patch the DOM if the props are the same', () => {
     const comp = new PropsComp({ pClass: 'definition' })
     comp.mount(document.body)
 
@@ -183,7 +184,7 @@ describe('Component methods', () => {
 })
 
 describe('Patching the DOM', () => {
-  test('Can add event handlers bound to the component', () => {
+  test('can add event handlers bound to the component', async () => {
     // A plus/minus counter that hides the "-" button when the count is 0.
     const Component = defineComponent({
       state() {
@@ -201,7 +202,9 @@ describe('Patching the DOM', () => {
                     // component due to lexical scoping. Make sure the binding is correctly
                     // done by the component, passing itself as a reference to the patchDOM() fn.
                     click() {
-                      this.updateState({ count: this.state.count - 1 })
+                      this.updateState({
+                        count: this.state.count - 1,
+                      })
                     },
                   },
                 },
@@ -232,6 +235,7 @@ describe('Patching the DOM', () => {
     )
 
     document.querySelector('#plus-btn').click()
+    await nextTick()
     expect(document.body.innerHTML).toBe(
       '<button id="minus-btn">-</button><span>1</span><button id="plus-btn">+</button>'
     )
@@ -283,7 +287,9 @@ describe('Child components', () => {
     )
 
     // Force a re-render of the component by adding a new item
-    comp.updateProps({ items: [...items, 'The ends of a line are points'] })
+    comp.updateProps({
+      items: [...items, 'The ends of a line are points'],
+    })
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`
@@ -300,7 +306,9 @@ describe('Child components', () => {
     const comp = new List({ items })
     comp.mount(document.body)
 
-    comp.updateProps({ items: [...items, 'The ends of a line are points'] })
+    comp.updateProps({
+      items: [...items, 'The ends of a line are points'],
+    })
 
     expect(document.body.innerHTML).toBe(
       singleHtmlLine`

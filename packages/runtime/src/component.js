@@ -6,6 +6,8 @@ import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
 
+const emptyFn = () => {}
+
 /**
  * @typedef Component
  * @type {object}
@@ -21,6 +23,8 @@ import { hasOwnProperty } from './utils/objects'
  * @type {object}
  * @property {function} render - The component's render function returning the virtual DOM tree representing the component in its current state.
  * @property {(props: Object?) => Object} state - The component's state function returning the component's initial state.
+ * @property {() => Promise<void>} onMounted - The component's onMounted lifecycle hook.
+ * @property {() => Promise<void>} onUnmounted - The component's onUnmounted lifecycle hook.
  * @property {Object<string, Function>} methods - The component's methods.
  */
 
@@ -30,7 +34,13 @@ import { hasOwnProperty } from './utils/objects'
  * @param {DefineComponentArgs} definitionArguments
  * @returns {Component}
  */
-export function defineComponent({ render, state, ...methods }) {
+export function defineComponent({
+  render,
+  state,
+  onMounted = emptyFn,
+  onUnmounted = emptyFn,
+  ...methods
+}) {
   class Component {
     #isMounted = false
     #vdom = null
@@ -53,6 +63,14 @@ export function defineComponent({ render, state, ...methods }) {
       this.state = state ? state(props) : {}
       this.#eventHandlers = eventHandlers
       this.#parentComponent = parentComponent
+    }
+
+    onMounted() {
+      return Promise.resolve(onMounted.call(this))
+    }
+
+    onUnmounted() {
+      return Promise.resolve(onUnmounted.call(this))
     }
 
     get parentComponent() {
@@ -138,6 +156,14 @@ export function defineComponent({ render, state, ...methods }) {
       return render.call(this)
     }
 
+    /**
+     * Mounts the component into the parent HTML element and wires the event handlers.
+     * Then calls the `onMounted()` lifecycle method and returns a promise that resolves
+     * when the `onMounted()` method resolves.
+     *
+     * @param {HTMLElement} hostEl the element into which the component should be mounted
+     * @param {[number]} index the index in the parent element at which the component should be mounted
+     */
     mount(hostEl, index = null) {
       if (this.#isMounted) {
         throw new Error('Component is already mounted')
@@ -167,6 +193,9 @@ export function defineComponent({ render, state, ...methods }) {
       })
     }
 
+    /**
+     * Unmounts the component from the DOM and calls the `onUnmounted()` lifecycle method.
+     */
     unmount() {
       if (!this.#isMounted) {
         throw new Error('Component is not mounted')

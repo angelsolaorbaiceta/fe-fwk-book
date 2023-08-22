@@ -109,7 +109,7 @@ $ git checkout ch8
 
 This version of the framework implements the _reconciliation algorithm_ to only update the parts of the DOM that have changed.
 
-## v3.0 - Chapter 12
+## [v3.0 - Chapter 12](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch12/packages/runtime)
 
 _See the example application in the [examples/ch12 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch12)_.
 
@@ -346,6 +346,31 @@ const Counter = defineComponent({
   // Increments the count by the given amount
   increment({ amount }) {
     this.updateState({ count: this.state.count + amount })
+  },
+})
+```
+
+## [v4.0 - Chapter 14](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch14/packages/runtime)
+
+_See the example application in the [examples/ch14 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch14)_.
+
+To checkout this version of the code:
+
+```bash
+$ git checkout ch14
+```
+
+This version of the framework implements the `onMounted()` and `onUnmounted()` _lifecycle hooks_ for components.
+You can react to a component being mounted and unmounted by passing the `defineComponent()` function you own functions:
+
+```js
+defineComponent({
+  async onMounted() {
+    // Called when the component is mounted
+  },
+
+  async onUnmounted() {
+    // Called when the component is unmounted
   },
 })
 ```
