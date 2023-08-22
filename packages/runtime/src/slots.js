@@ -1,4 +1,4 @@
-import { defaultSlotName, DOM_TYPES, hFragment } from './h'
+import { DOM_TYPES, hFragment } from './h'
 import { traverseDFS } from './traverse-dom'
 import { assert } from './utils/assert'
 

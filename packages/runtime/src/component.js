@@ -5,7 +5,7 @@ import { DOM_TYPES, extractChildren } from './h'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
-import { extractSlotViews, fillSlots } from './slots'
+import { fillSlots } from './slots'
 
 const emptyFn = () => {}
 
