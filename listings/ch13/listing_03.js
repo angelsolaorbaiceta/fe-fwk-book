@@ -1,40 +1,23 @@
-const CreateTodo = defineComponent({
-  state() {
-    return { text: '' } // --1--
-  },
+let isScheduled = false // --1--
+const jobs = [] // --2--
 
-  render() {
-    const { text } = this.state
+export function enqueueJob(job) {
+  jobs.push(job) // --3--
+  scheduleUpdate() // --4--
+}
 
-    return h('div', {}, [
-      h('label', { for: 'todo-input' }, ['New TODO']),
-      h('input', {
-        type: 'text',
-        id: 'todo-input',
-        value: text, // --2--
-        on: {
-          input: ({ target }) => 
-            this.updateState({ text: target.value }), // --3--
-          keydown: ({ key }) => { // --4--
-            if (key === 'Enter' && text.length >= 3) {
-              this.addTodo()
-            }
-          },
-        },
-      }),
-      h(
-        'button',
-        {
-          disabled: text.length < 3, // --5--
-          on: { click: this.addTodo }, // --6--
-        },
-        ['Add']
-      ),
-    ])
-  },
+function scheduleUpdate() {
+  if (isScheduled) return
 
-  addTodo() { // --7--
-    this.emit('add', this.state.text)
-    this.updateState({ text: '' })
-  },
-})
+  isScheduled = true
+  queueMicrotask(processJobs) // --5--
+}
+
+function processJobs() {
+  while (jobs.length > 0) { // --6--
+    const job = jobs.shift()
+    job()
+  }
+
+  isScheduled = false // --7--
+}

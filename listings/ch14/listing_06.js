@@ -1,28 +1,9 @@
-import { removeEventListeners } from './events'
-import { DOM_TYPES } from './h'
-// --add--
-import { enqueueJob } from './scheduler' // --1--
-// --add--
-import { assert } from './utils/assert'
+test('Shows the list of todos after the data is fetched', async () => {
+  // The `nextTick()` function is awaited for, so the onMounted() hooks
+  // finished running and the list of todos is displayed.
 
-export function destroyDOM(vdom) {
-  const { type } = vdom
+  await nextTick() // --1--
 
-  switch (type) {
-   // --snip-- //
-
-    case DOM_TYPES.COMPONENT: {
-      vdom.component.unmount()
-      // --add--
-      enqueueJob(() => vdom.component.onUnmounted()) // --2--
-      // --add--
-      break
-    }
-
-    default: {
-      throw new Error(`Can't destroy DOM of type: ${type}`)
-    }
-  }
-
-  delete vdom.el
-}
+  expect(document.body.innerHTML).toContain('Feed the cat')
+  expect(document.body.innerHTML).toContain('Mow the lawn')
+})

@@ -1,48 +1,28 @@
-const TodoItem = defineComponent({
-  state({ todo }) {
-    // --snip-- //
-  },
+import { removeEventListeners } from './events'
+import { DOM_TYPES } from './h'
+// --add--
+import { enqueueJob } from './scheduler' // --1--
+// --add--
+import { assert } from './utils/assert'
 
-  render() {
-    // --snip-- //
-  },
+export function destroyDOM(vdom) {
+  const { type } = vdom
 
-  renderInEditMode(edited) {
-    // --add--
-    return h('li', {}, [
-      h('input', {
-        value: edited, // --1--
-        on: {
-          input: ({ target }) =>
-            this.updateState({ edited: target.value }), // --2--
-        },
-      }),
-      h(
-        'button',
-        {
-          on: {
-            click: this.saveEdition, // --3--
-          },
-        },
-        ['Save']
-      ),
-      h('button', { on: { click: this.cancelEdition } }, ['Cancel']), // --4--
-    ])
-    // --add--
-  },
+  switch (type) {
+   // --snip-- //
 
-  // --add--
-  saveEdition() {
-    this.updateState({ original: this.state.edited, isEditing: false }) // --5--
-    this.emit('edit', { edited: this.state.edited, i: this.props.i }) // --6--
-  },
+    case DOM_TYPES.COMPONENT: {
+      vdom.component.unmount()
+      // --add--
+      enqueueJob(() => vdom.component.onUnmounted()) // --2--
+      // --add--
+      break
+    }
 
-  cancelEdition() {
-    this.updateState({ edited: this.state.original, isEditing: false }) // --7--
-  },
-  // --add--
+    default: {
+      throw new Error(`Can't destroy DOM of type: ${type}`)
+    }
+  }
 
-  renderInViewMode(original) {
-    // TODO: implement me
-  },
-})
+  delete vdom.el
+}
