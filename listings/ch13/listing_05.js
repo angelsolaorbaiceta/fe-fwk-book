@@ -1,25 +1,27 @@
-const TodoItem = defineComponent({
-  state({ todo }) {
-    return {
-      original: todo, // --1--
-      edited: todo, // --2--
-      isEditing: false, // --3--
+import { setAttributes } from './attributes'
+import { addEventListeners } from './events'
+import { DOM_TYPES } from './h'
+// --add--
+import { enqueueJob } from './scheduler' // --1--
+// --add--
+import { extractPropsAndEvents } from './utils/props'
+
+export function mountDOM(vdom, parentEl, index, hostComponent = null) {
+  switch (vdom.type) {
+    // --snip-- //
+
+    case DOM_TYPES.COMPONENT: {
+      createComponentNode(vdom, parentEl, index, hostComponent)
+      // --add--
+      enqueueJob(() => vdom.component.onMounted()) // --2--
+      // --add--
+      break
     }
-  },
 
-  render() {
-    const { isEditing, original, edited } = this.state
+    default: {
+      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
+    }
+  }
+}
 
-    return isEditing 
-      ? this.renderInEditMode(edited) // --4--
-      : this.renderInViewMode(original) // --5--
-  },
-
-  renderInEditMode(edited) {
-    // TODO: implement me
-  },
-
-  renderInViewMode(original) {
-    // TODO: implement me
-  },
-})
+// --snip-- //

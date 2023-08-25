@@ -1,19 +1,23 @@
-class Component {
-  // --snip-- //
+export const TodosList = defineComponent({
+  state() {
+    return {
+      isLoading: true,
+      todos: [],
+    }
+  },
 
-  constructor(props = {}, eventHandlers = {}, parentComponent = null) {
-    // --snip-- //
-  }
-
-  // --add--
-  onMounted() {
-    return Promise.resolve(onMounted.call(this))
-  }
-
-  onUnmounted() {
-    return Promise.resolve(onUnmounted.call(this))
-  }
-  // --add--
+  async onMounted() {
+    const todos = await fetch('https://api.example.com/todos')
+    this.updateState({ isLoading: false, todos })
+  },
   
-  // --snip-- //
-}
+  render() {
+    const { isLoading, todos } = this.state
+
+    if (isLoading) {
+      return h('p', {}, ['Loading...'])
+    }
+
+    return h('ul', {}, todos.map((todo) => h('li', {}, [todo])))
+  }
+})

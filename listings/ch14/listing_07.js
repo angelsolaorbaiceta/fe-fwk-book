@@ -1,10 +1,8 @@
-const resolvedPromise = Promise.resolve()
-
 export function nextTick() {
   scheduleUpdate()
-  return resolvedPromise
+  return flushPromises()
 }
 
-export function flushPromises() {
+function flushPromises() {
   return new Promise((resolve) => setTimeout(resolve))
 }

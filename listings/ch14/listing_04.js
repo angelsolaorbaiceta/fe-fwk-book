@@ -1,19 +1,6 @@
-function processJobs() {
-  while (jobs.length > 0) {
-    const job = jobs.shift()
-    /*--add--*/const result = /*--add--*/job() // --1--
+test('Shows the loading indicator while the todos are fetched', () => {
+  // If nextTick() isn't awaited for, the onMounted() hooks haven't run yet
+  // so the loading should be displayed.
 
-    // --add--
-    Promise.resolve(result).then( // --2--
-      () => { // --3--
-        // Job completed successfully
-      },
-      (error) => {
-        console.error(`[scheduler]: ${error}`) // --4--
-      }
-    )
-    // --add--
-  }
-
-  isScheduled = false
-}
+  expect(document.body.innerHTML).toContain('Loading...')
+})

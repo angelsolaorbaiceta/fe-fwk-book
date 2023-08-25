@@ -1,8 +1,17 @@
-import {
-  createApp,
+// --add--
+const emptyFn = () => {}
+// --add--
+
+export function defineComponent({
+  render,
+  state,
   // --add--
-  defineComponent,
+  onMounted = emptyFn,
+  onUnmounted = emptyFn,
   // --add--
-  h,
-  hFragment,
-} from 'https://unpkg.com/fe-fwk@/*--add--*/3/*--add--*/'
+  ...methods
+}) {
+  class Component {
+    // --snip-- //
+  }
+}
