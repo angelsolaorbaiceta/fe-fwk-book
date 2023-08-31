@@ -26,9 +26,9 @@
   "devDependencies": {
     "eslint": "^8.47.0",
     "jsdom": "^22.1.0",
-    "rollup": "^3.28.0",
+    "rollup": "^3.28.1",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-filesize": "^10.0.0",
-    "vitest": "^0.34.2"
+    "vitest": "^0.34.3"
   }
 }
