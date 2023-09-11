@@ -191,7 +191,7 @@ export function defineComponent({
     render() {
       const vdom = render.call(this)
       if (this.#hasSlots) {
-        fillSlots(vdom, this.#children)
+        this.#hasSlots = fillSlots(vdom, this.#children)
       }
 
       return vdom

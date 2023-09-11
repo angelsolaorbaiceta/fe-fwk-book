@@ -37,3 +37,17 @@ test('ignores slots whose parent is a component (they are handled by the compone
 
   expect(vdom.children).toEqual([h(Comp, {}, [content])])
 })
+
+test('Returns true if a slot is found', () => {
+  const vdom = h('div', {}, [hSlot()])
+  const result = fillSlots(vdom)
+
+  expect(result).toBe(true)
+})
+
+test('Returns false if no slot is found', () => {
+  const vdom = h('div', {}, [])
+  const result = fillSlots(vdom)
+
+  expect(result).toBe(false)
+})
