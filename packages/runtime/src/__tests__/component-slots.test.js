@@ -2,15 +2,7 @@ import { afterEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hSlot } from '../h'
 import { mountDOM } from '../mount-dom'
-import { fillSlots } from '../slots'
 import { singleHtmlLine } from './utils'
-
-vi.mock('../slots', async (importOriginal) => {
-  const { fillSlots } = await importOriginal()
-  return {
-    fillSlots: vi.fn(fillSlots),
-  }
-})
 
 afterEach(() => {
   document.body.innerHTML = ''
@@ -69,19 +61,34 @@ test('when neither external nor default content is provided, the slot is empty',
   )
 })
 
-test('when there is no slot, the slots are not filled for a second time', () => {
+test('conditionally rendered slots', () => {
   const Comp = defineComponent({
+    state() {
+      return { show: false }
+    },
     render() {
-      return h('div', {}, [h('span', {}, ['Hello'])])
+      const { show } = this.state
+
+      return h('div', {}, [show ? hSlot([h('span', {}, ['Hello'])]) : null])
     },
   })
   const vdom = h(Comp)
   mountDOM(vdom, document.body)
+
+  expect(document.body.innerHTML).toBe(
+    singleHtmlLine`
+      <div></div>
+    `
+  )
+
   const component = vdom.component
+  component.updateState({ show: true })
 
-  component.render()
-  expect(fillSlots).toHaveBeenCalledTimes(1)
-
-  component.render()
-  expect(fillSlots).toHaveBeenCalledTimes(1)
+  expect(document.body.innerHTML).toBe(
+    singleHtmlLine`
+      <div>
+        <span>Hello</span>
+      </div>
+    `
+  )
 })

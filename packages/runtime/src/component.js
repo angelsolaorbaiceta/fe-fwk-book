@@ -51,17 +51,6 @@ export function defineComponent({
     #dispatcher = new Dispatcher()
     #subscriptions = []
 
-    /*
-     * Flag to indicate the component needs to replace slots.
-     *
-     * After the first render of the component, when we know whether there are slots
-     * or not, we set the flag. By setting the flag to `false` we avoid traversing
-     * the whole virtual DOM tree on every render.
-     *
-     * Starts as `true` so that the first render of the component traverses the whole
-     * virtual DOM tree in to determine whether there are slots or not.
-     */
-    #hasSlots = true
     /**
      * @type {import('./h').VNode[]}
      * Array of external VNodes passed to the component as children, to be inserted
@@ -190,9 +179,7 @@ export function defineComponent({
      */
     render() {
       const vdom = render.call(this)
-      if (this.#hasSlots) {
-        this.#hasSlots = fillSlots(vdom, this.#children)
-      }
+      fillSlots(vdom, this.#children)
 
       return vdom
     }

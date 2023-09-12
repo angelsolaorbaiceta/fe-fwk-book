@@ -10,21 +10,17 @@ import { assert } from './utils/assert'
  *
  * @param {import("./h").VNode} vdom
  * @param {import("./h").VNode[]} slotViews - the vNodes to insert in the slots
- * @returns {boolean} true if a slot was found, false otherwise
  */
 export function fillSlots(vdom, slotViews = []) {
-  let found = false
   function processNode(node, parent, index) {
-    found ||= insertViewInSlot(node, parent, index, slotViews)
+    insertViewInSlot(node, parent, index, slotViews)
   }
 
   traverseDFS(vdom, processNode, shouldSkipBranch)
-
-  return found
 }
 
 function insertViewInSlot(node, parent, index, slotViews) {
-  if (node.type !== DOM_TYPES.SLOT) return false
+  if (node.type !== DOM_TYPES.SLOT) return
 
   assert(parent !== null, 'Slot nodes must have a parent')
   assert(index !== null, 'Slot nodes must have an index')
@@ -35,8 +31,6 @@ function insertViewInSlot(node, parent, index, slotViews) {
   assert(Array.isArray(views), 'Slot views must be an array')
 
   parent.children.splice(index, 1, hFragment(views))
-
-  return true
 }
 
 function shouldSkipBranch(node) {
