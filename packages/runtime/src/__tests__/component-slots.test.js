@@ -92,3 +92,50 @@ test('conditionally rendered slots', () => {
     `
   )
 })
+
+test('slot content updated between renders', () => {
+  const Comp = defineComponent({
+    render() {
+      return h('div', {}, [hSlot()])
+    },
+  })
+  const Container = defineComponent({
+    state() {
+      return { show: false }
+    },
+    render() {
+      const { show } = this.state
+
+      return h(
+        Comp,
+        {},
+        show
+          ? [h('p', {}, ['World']), h('span', {}, ['!'])]
+          : [h('span', {}, ['Hello'])]
+      )
+    },
+  })
+
+  const vdom = h(Container)
+  mountDOM(vdom, document.body)
+
+  expect(document.body.innerHTML).toBe(
+    singleHtmlLine`
+      <div>
+        <span>Hello</span>
+      </div>
+    `
+  )
+
+  const component = vdom.component
+  component.updateState({ show: true })
+
+  expect(document.body.innerHTML).toBe(
+    singleHtmlLine`
+      <div>
+        <p>World</p>
+        <span>!</span>
+      </div>
+    `
+  )
+})

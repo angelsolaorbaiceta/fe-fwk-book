@@ -165,6 +165,9 @@ export function defineComponent({
      * When the component render method is called, this views are placed in the
      * corresponding slots.
      *
+     * Call this method before `updateProps()` or `updateState()` to ensure that
+     * the views are rendered with the updated external content.
+     *
      * @param {import('./h').VNode[]} children The slot views to set
      */
     setExternalContent(children) {
