@@ -1,4 +1,9 @@
-export function mountDOM(vdom, parentEl, index/*--add--*/, hostComponent = null/*--add--*/) { // --1--
+export function mountDOM(
+  vdom, 
+  parentEl, 
+  index,
+  /*--add--*/hostComponent = null/*--add--*/ // --1--
+) {
   switch (vdom.type) {
     case DOM_TYPES.TEXT: {
       createTextNode(vdom, parentEl, index)
@@ -16,7 +21,7 @@ export function mountDOM(vdom, parentEl, index/*--add--*/, hostComponent = null/
     }
 
     default: {
-      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
+      throw new Error(\`Can't mount DOM of type: ${vdom.type}`)
     }
   }
 }

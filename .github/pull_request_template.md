@@ -2,11 +2,9 @@
 
 Explain the objective of the briefly.
 
-
 ## Context
 
-Expain the context of the changes.
-
+Explain the context of the changes.
 
 ## Usage / Use Cases
 

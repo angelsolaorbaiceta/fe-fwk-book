@@ -6,7 +6,12 @@ export function addEventListeners(
   const addedListeners = {}
 
   Object.entries(listeners).forEach(([eventName, handler]) => {
-    const listener = addEventListener(eventName, handler, el/*--add--*/, hostComponent/*--add--*/) // --2--
+    const listener = addEventListener(
+      eventName, 
+      handler, 
+      el/*--add--*/, 
+      hostComponent/*--add--*/
+    ) // --2--
     addedListeners[eventName] = listener
   })
 
