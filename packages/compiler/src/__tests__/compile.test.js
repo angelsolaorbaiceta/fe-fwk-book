@@ -48,3 +48,34 @@ test('Compile nested elements', () => {
       ]) )
     }`)
 })
+
+test('Compile props interpolation', () => {
+  const { code } = compiler.compile('<p>{{ props.text }}</p>')
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', {}, [ hString(\`\${this.props.text}\`) ]) )
+    }`)
+})
+
+test('Compile state interpolation', () => {
+  const { code } = compiler.compile('<p>{{ state.text }}</p>')
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', {}, [ hString(\`\${this.state.text}\`) ]) )
+    }`)
+})
+
+test('Compile props and state interpolation along with regular text', () => {
+  const { code } = compiler.compile(
+    '<p>{{ props.text }} - {{ state.text }}</p>'
+  )
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', {}, [ 
+        hString(\`\${this.props.text} - \${this.state.text}\`) 
+      ]) )
+    }`)
+})

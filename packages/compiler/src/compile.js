@@ -1,5 +1,7 @@
 import { parse } from 'node-html-parser'
 import { normalizeTagName } from './tag'
+import { extractProps } from './props'
+import { interpolateVariables } from './variables'
 
 const NODE_TYPE = {
   ELEMENT: 1,
@@ -66,7 +68,9 @@ export class TemplateCompiler {
     const { rawTagName, childNodes, attributes } = node
 
     const tag = normalizeTagName(rawTagName)
-    this.#lines.push(`h(${tag}, {}, [`)
+    const props = extractProps(attributes)
+
+    this.#lines.push(`h(${tag}, ${props}, [`)
     this.#imports.add('h')
     this.#stack.unshift(']),')
 
@@ -80,7 +84,7 @@ export class TemplateCompiler {
     const text = rawText.trim()
 
     if (text) {
-      this.#lines.push(`hString('${text}'),`)
+      this.#lines.push(`hString(${interpolateVariables(text)}),`)
       this.#imports.add('hString')
     }
   }
