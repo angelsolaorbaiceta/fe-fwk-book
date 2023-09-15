@@ -15,7 +15,7 @@ export function defineComponent({ render, state/* --add-- */, ...methods/* --add
   for (const methodName in methods) { // --2--
     if (hasOwnProperty(Component, methodName)) { // --3--
       throw new Error(
-        `Method "${methodName}()" already exists in the component. Can't override existing methods.`
+        \`Method "${methodName}()" already exists in the component.`
       )
     }
 
