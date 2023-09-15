@@ -23,3 +23,16 @@ test('Compile element with text content', () => {
       return ( h('div', {}, [ hString('Hello World'), ]) )
     }`)
 })
+
+test.only('Compile two contiguous elements inside a fragment', () => {
+  const { code, imports } = compiler.compile('<div></div><p></p>')
+
+  expect(imports).toEqual(new Set(['h', 'hFragment']))
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h(Fragment, {}, [ 
+        h('div', {}, [ ]), 
+        h('p', {}, [ ]), 
+      ]) )
+    }`)
+})

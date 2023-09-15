@@ -28,23 +28,18 @@ export class TemplateCompiler {
     this.#reset()
     const { childNodes } = parse(normalize(template))
 
+    // Top level contiguous elements are wrapped in a fragment.
+    if (childNodes.length > 1) {
+      this.#lines.push('h(Fragment, {}, [')
+      this.#imports.add('hFragment')
+      this.#stack.unshift('])')
+    }
+
     for (const node of childNodes) {
       this.#addNode(node)
     }
 
-    while (this.#stack.length) {
-      let line = this.#stack.shift()
-      const prevIdx = this.#lines.length - 1
-      const prevLine = this.#lines[prevIdx]
-
-      // Avoid the comma if the next character is a closing parenthesis.
-      // The ",)" sequence is not valid JavaScript.
-      if (prevLine.endsWith(',') && line.startsWith(')')) {
-        this.#lines[prevIdx] = prevLine.slice(0, -1)
-      }
-
-      this.#lines.push(line)
-    }
+    this.#moveStackToLines()
 
     return {
       imports: this.#imports,
@@ -71,10 +66,11 @@ export class TemplateCompiler {
     const tag = normalizeTagName(rawTagName)
     this.#lines.push(`h(${tag}, {}, [`)
     this.#imports.add('h')
+    this.#stack.unshift(']),')
 
     childNodes.forEach((node) => this.#addNode(node))
 
-    this.#stack.unshift(']),')
+    this.#addLineFromStack()
   }
 
   #addText(node) {
@@ -84,6 +80,26 @@ export class TemplateCompiler {
     if (text) {
       this.#lines.push(`hString('${text}'),`)
       this.#imports.add('hString')
+    }
+  }
+
+  #addLineFromStack() {
+    let line = this.#stack.shift()
+    const prevIdx = this.#lines.length - 1
+    const prevLine = this.#lines[prevIdx]
+
+    // Avoid the comma if the next character is a closing parenthesis.
+    // The ",)" sequence is not valid JavaScript.
+    if (prevLine.endsWith(',') && line.startsWith(')')) {
+      this.#lines[prevIdx] = prevLine.slice(0, -1)
+    }
+
+    this.#lines.push(line)
+  }
+
+  #moveStackToLines() {
+    while (this.#stack.length) {
+      this.#addLineFromStack()
     }
   }
 }
