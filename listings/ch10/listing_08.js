@@ -1,9 +1,4 @@
-export function patchDOM(
-  oldVdom, 
-  newVdom, 
-  parentEl, 
-  hostComponent = null
-) {
+export function patchDOM(oldVdom, newVdom, parentEl, hostComponent = null) {
   if (!areNodesEqual(oldVdom, newVdom)) {
     const index = findIndexInParent(parentEl, oldVdom.el)
     destroyDOM(oldVdom)

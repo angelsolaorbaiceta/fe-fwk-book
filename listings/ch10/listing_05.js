@@ -5,8 +5,6 @@ function createElementNode(vdom, parentEl, index/*--add--*/, hostComponent/*--ad
   addProps(element, props, vdom/*--add--*/, hostComponent/*--add--*/) // --2--
   vdom.el = element
 
-  children.forEach((child) => 
-    mountDOM(child, element/*--add--*/, null, hostComponent/*--add--*/) // --3--
-  )
+  children.forEach((child) => mountDOM(child, element/*--add--*/, null, hostComponent/*--add--*/)) // --3--
   insert(element, parentEl, index)
 }
