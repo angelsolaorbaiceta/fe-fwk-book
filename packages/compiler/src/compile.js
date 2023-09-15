@@ -104,69 +104,6 @@ export class TemplateCompiler {
   }
 }
 
-export function compileTemplate(template) {
-  const { childNodes } = parse(normalize(template))
-  const lines = ['function render() {', 'return (']
-  const stack = [')', '}']
-  const imports = new Set()
-
-  for (const node of childNodes) {
-    addNode(node)
-  }
-
-  if (lines[lines.length - 1].endsWith(',')) {
-    lines[lines.length - 1] = lines[lines.length - 1].slice(0, -1)
-  }
-
-  while (stack.length) {
-    addLineFromStack()
-  }
-
-  function addLineFromStack() {
-    const line = stack.shift()
-    lines.push(line)
-  }
-
-  function addNode(node) {
-    switch (node.nodeType) {
-      case NODE_TYPE.ELEMENT: {
-        addElement(node)
-        break
-      }
-      case NODE_TYPE.TEXT: {
-        addText(node)
-        break
-      }
-    }
-  }
-
-  function addElement(node) {
-    const { rawTagName, childNodes, attributes } = node
-
-    const tag = normalizeTagName(rawTagName)
-    lines.push(`h(${tag}, {}, [`)
-    imports.add('h')
-
-    childNodes.forEach(addNode)
-
-    stack.unshift(']),')
-  }
-
-  function addText(node) {
-    const { rawText } = node
-    const text = rawText.trim()
-
-    if (text) {
-      lines.push(`'${text}',`)
-    }
-  }
-
-  return {
-    imports: imports,
-    code: lines.join(' '),
-  }
-}
-
 /**
  * Removes newlines and replaces all the whitespace between tags.
  *
