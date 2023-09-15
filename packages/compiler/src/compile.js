@@ -39,7 +39,9 @@ export class TemplateCompiler {
       this.#addNode(node)
     }
 
-    this.#moveStackToLines()
+    while (this.#stack.length) {
+      this.#addLineFromStack()
+    }
 
     return {
       imports: this.#imports,
@@ -88,19 +90,13 @@ export class TemplateCompiler {
     const prevIdx = this.#lines.length - 1
     const prevLine = this.#lines[prevIdx]
 
-    // Avoid the comma if the next character is a closing parenthesis.
-    // The ",)" sequence is not valid JavaScript.
-    if (prevLine.endsWith(',') && line.startsWith(')')) {
+    // Remove the trailing comma in the previous line if the
+    // next character is a closing parenthesis or bracket.
+    if (/,\s*$/.test(prevLine) && /^\s*[\)\]]/.test(line)) {
       this.#lines[prevIdx] = prevLine.slice(0, -1)
     }
 
     this.#lines.push(line)
-  }
-
-  #moveStackToLines() {
-    while (this.#stack.length) {
-      this.#addLineFromStack()
-    }
   }
 }
 

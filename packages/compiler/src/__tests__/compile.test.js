@@ -20,11 +20,11 @@ test('Compile element with text content', () => {
   expect(imports).toEqual(new Set(['h', 'hString']))
   expect(code).toBe(singleJSLine`
     function render() {
-      return ( h('div', {}, [ hString('Hello World'), ]) )
+      return ( h('div', {}, [ hString('Hello World') ]) )
     }`)
 })
 
-test.only('Compile two contiguous elements inside a fragment', () => {
+test('Compile two contiguous elements inside a fragment', () => {
   const { code, imports } = compiler.compile('<div></div><p></p>')
 
   expect(imports).toEqual(new Set(['h', 'hFragment']))
@@ -32,7 +32,19 @@ test.only('Compile two contiguous elements inside a fragment', () => {
     function render() {
       return ( h(Fragment, {}, [ 
         h('div', {}, [ ]), 
-        h('p', {}, [ ]), 
+        h('p', {}, [ ]) 
+      ]) )
+    }`)
+})
+
+test('Compile nested elements', () => {
+  const { code, imports } = compiler.compile('<div><p>Hello</p></div>')
+
+  expect(imports).toEqual(new Set(['h', 'hString']))
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('div', {}, [ 
+        h('p', {}, [ hString('Hello') ]) 
       ]) )
     }`)
 })
