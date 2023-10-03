@@ -1,4 +1,3 @@
-const chalk = require('chalk')
 const yargs = require('yargs')
 const { hideBin } = require('yargs/helpers')
 const { init } = require('./init.cjs')
@@ -17,40 +16,26 @@ yargs(hideBin(process.argv))
       })
     },
     (argv) => {
-      console.info(
-        '🚀 Initializing the project ' +
-          chalk.blue.italic(`${argv.name}` + '...')
-      )
+      console.info(`🚀 Initializing the project ${argv.name}...`)
 
       init(argv.name)
         .then(() => {
           console.info(
-            '✅ ' +
-              chalk.green('Success!') +
-              ' Created the new project ' +
-              chalk.blue.italic(`${argv.name}`) +
-              ' 🎉🎉🎉'
+            `✅ Success! Created the new project ${argv.name} 🎉🎉🎉`
           )
           console.info(
             '\nYou can now cd into the project and install the dependencies:'
           )
-          console.info(chalk.blue(`\t$ cd ${argv.name}`))
-          console.info(chalk.blue(`\t$ npm install`))
+          console.info(`\t$ cd ${argv.name}`)
+          console.info(`\t$ npm install`)
           console.info('\n📖 Enjoy reading the book!')
           console.info(
-            '📦 ' +
-              chalk.magenta.italic(
-                'Buy your copy at http://mng.bz/aM2o and start learning now!'
-              )
+            '📦 Buy your copy at http://mng.bz/aM2o and start learning now!'
           )
         })
         .catch((err) => {
           console.error(
-            '❌ ' +
-              chalk.red('Error!') +
-              ' Failed to create the new project ' +
-              chalk.blue.italic(`${argv.name}`) +
-              ` 😢😢😢 (${err})`
+            `❌ Error! Failed to create the new project ${argv.name} 😢😢😢 (${err})`
           )
         })
     }
