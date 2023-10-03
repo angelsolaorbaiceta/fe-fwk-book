@@ -1,6 +1,6 @@
-const { copyFile, mkdir, readFile, writeFile } = require('fs/promises')
-const { join } = require('path')
-const mustache = require('mustache')
+import { copyFile, mkdir, readFile, writeFile } from 'fs/promises'
+import { join } from 'path'
+import mustache from 'mustache'
 
 const bookUrl = 'http://mng.bz/aM2o'
 const templatesDir = join(__dirname, '..', 'templates', 'init')

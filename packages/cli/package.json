@@ -1,7 +1,8 @@
 {
   "name": "fe-fwk-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
+  "type": "module",
   "keywords": [
     "frontend",
     "framework",

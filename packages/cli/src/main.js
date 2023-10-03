@@ -1,7 +1,7 @@
-const chalk = require('chalk')
-const yargs = require('yargs')
-const { hideBin } = require('yargs/helpers')
-const { init } = require('./init')
+import chalk from 'chalk'
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+import { init } from './init'
 
 yargs(hideBin(process.argv))
   .scriptName('fe-fwk')
@@ -54,7 +54,7 @@ yargs(hideBin(process.argv))
         })
     }
   )
-  .version('1.0.5')
+  .version('1.0.8')
   .demandCommand()
   .epilog('📖 You can find the book at http://mng.bz/aM2o')
   .parse()
