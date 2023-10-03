@@ -1,8 +1,7 @@
 {
   "name": "fe-fwk-cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
-  "type": "module",
   "keywords": [
     "frontend",
     "framework",
@@ -24,7 +23,7 @@
     "url": "https://github.com/angelsolaorbaiceta/fe-fwk-book/issues"
   },
   "scripts": {
-    "build": "ncc build src/main.js -m -o dist",
+    "build": "ncc build src/main.cjs -m -o dist",
     "prepack": "npm run build"
   },
   "author": "Angel Sola Orbaiceta",
