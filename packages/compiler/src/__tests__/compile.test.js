@@ -79,3 +79,52 @@ test('Compile props and state interpolation along with regular text', () => {
       ]) )
     }`)
 })
+
+test('Does not add "this" to non state/props interpolations', () => {
+  const { code } = compiler.compile('<p>Hello, {{ name }}</p>')
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', {}, [ hString(\`Hello, \${name}\`) ]) )
+    }`)
+})
+
+test('Compile expression interpolation', () => {
+  const { code } = compiler.compile('<p>{{ state.a + props.b + 5 }}</p>')
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', {}, [ hString(\`\${this.state.a + this.props.b + 5}\`) ]) )
+    }`)
+})
+
+test('Compile method call interpolation', () => {
+  const { code } = compiler.compile(
+    '<p>This is {{ state.country.toUpperCase() }}</p>'
+  )
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', {}, [ hString(\`This is \${this.state.country.toUpperCase()}\`) ]) )
+    }`)
+})
+
+test('Compile element with static attributes', () => {
+  const { code } = compiler.compile('<p class="text-center"></p>')
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', { class: 'text-center' }, [ ]) )
+    }`)
+})
+
+test('Compile attribute with props/state binding', () => {
+  const { code } = compiler.compile(
+    '<p [class]="state.text" [hidden]="props.hide"></p>'
+  )
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', { class: this.state.text, hidden: this.props.hide }, [ ]) )
+    }`)
+})
