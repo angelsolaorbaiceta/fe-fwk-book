@@ -5,13 +5,31 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
 
-  - package-ecosystem: "npm"
+  - package-ecosystem: 'npm'
     # Runtime package
-    directory: "/packages/runtime"
+    directory: '/packages/runtime'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
+
+  - package-ecosystem: 'npm'
+    # CLI package
+    directory: '/packages/cli'
+    schedule:
+      interval: 'weekly'
+
+  - package-ecosystem: 'npm'
+    # Compiler package
+    directory: '/packages/compiler'
+    schedule:
+      interval: 'weekly'
+
+  - package-ecosystem: 'npm'
+    # Loader package
+    directory: '/packages/loader'
+    schedule:
+      interval: 'weekly'
