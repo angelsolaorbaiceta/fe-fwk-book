@@ -81,7 +81,7 @@ export function h(tag, props = {}, children = []) {
  * @returns {TextVNode} the virtual node
  */
 export function hString(str) {
-  return { type: DOM_TYPES.TEXT, value: str }
+  return { type: DOM_TYPES.TEXT, value: String(str) }
 }
 
 /**
@@ -110,9 +110,22 @@ export function hFragment(vNodes) {
   }
 }
 
+/**
+ * Maps text children of VNode to TextVNode
+ * 
+ * Children of JavaScript types 'string', 'number', 'boolean',
+ * 'bigint', and 'symbol' will be mapped to TextVNode 
+ * @param {array} children the children of the VNode
+ * @returns {VNode[]} the children with text children mapped to TextVNode
+ */
 function mapTextNodes(children) {
   return children.map((child) =>
-    typeof child === 'string' ? hString(child) : child
+    (typeof child === 'string'
+      || typeof child === 'number'
+      || typeof child === 'boolean'
+      || typeof child === 'bigint'
+      || typeof child === 'symbol'
+    ) ? hString(child) : child
   )
 }
 
