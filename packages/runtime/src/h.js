@@ -111,10 +111,8 @@ export function hFragment(vNodes) {
 }
 
 /**
- * Maps text children of VNode to TextVNode
+ * Maps strings, numbers, booleans and symbos inside the array to text vNodes.
  * 
- * Children of JavaScript types 'string', 'number', 'boolean',
- * 'bigint', and 'symbol' will be mapped to TextVNode 
  * @param {array} children the children of the VNode
  * @returns {VNode[]} the children with text children mapped to TextVNode
  */
