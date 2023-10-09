@@ -50,6 +50,21 @@ test('h() maps strings to text vNodes', () => {
   })
 })
 
+test("h() maps 'number', 'boolean', 'bigint', and 'symbol' values to text vNodes", () => {
+  const vNode = h('div', {}, [0, true, BigInt(10000000000), Symbol(5)])
+  expect(vNode).toEqual({
+    tag: 'div',
+    props: {},
+    children: [ 
+        { type: DOM_TYPES.TEXT, value: '0' }, 
+        { type: DOM_TYPES.TEXT, value: 'true' },
+        { type: DOM_TYPES.TEXT, value: '10000000000' },
+        { type: DOM_TYPES.TEXT, value: 'Symbol(5)' }
+    ],
+    type: DOM_TYPES.ELEMENT,
+  })
+})
+
 test('create a fragment vNode', () => {
   const children = [h('div', { class: 'foo' }, [])]
   const vNode = hFragment(children)
