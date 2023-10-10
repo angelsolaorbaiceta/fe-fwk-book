@@ -13,15 +13,15 @@ export function createApp({ state, view, reducers = {} }) {
   
   function renderApp() {
     // --remove--
-    //if (vdom) {
-    //  destroyDOM(vdom)
-    //}
+    if (vdom) {
+      destroyDOM(vdom)
+    }
     // --remove--
     // --add--
     const newVdom = view(state, emit) // --1--
     // --add--
     // --remove--
-    //mountDOM(vdom, parentEl)
+    mountDOM(vdom, parentEl)
     // --remove--
     // --add--
     vdom = patchDOM(vdom, newVdom, parentEl) // --2--
@@ -32,7 +32,7 @@ export function createApp({ state, view, reducers = {} }) {
     mount(_parentEl) {
       parentEl = _parentEl
       // --remove--
-      //renderApp()
+      renderApp()
       // --remove--
       // --add--
       vdom = view(state, emit)
