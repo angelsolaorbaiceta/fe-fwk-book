@@ -7,7 +7,7 @@ function insert(el, parentEl, index) {
   }
 
   if (index < 0) {
-    throw new Error(\`Index must be a positive integer, got ${index}`) // --2--
+    throw new Error(`Index must be a positive integer, got ${index}`) // --2--
   }
 
   const children = parentEl.childNodes

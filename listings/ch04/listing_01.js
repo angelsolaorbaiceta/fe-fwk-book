@@ -18,7 +18,7 @@ export function mountDOM(vdom, parentEl) {
     }
 
     default: {
-      throw new Error(\`Can't mount DOM of type: ${vdom.type}`)
+      throw new Error(`Can't mount DOM of type: ${vdom.type}`)
     }
   }
 }
