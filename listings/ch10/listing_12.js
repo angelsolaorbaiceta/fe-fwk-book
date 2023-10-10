@@ -85,7 +85,7 @@ export function defineComponent({ render, state, ...methods }) {
   for (const methodName in methods) {
     if (hasOwnProperty(Component, methodName)) {
       throw new Error(
-        \`Method "${methodName}()" already exists in the component.`
+        `Method "${methodName}()" already exists in the component.`
       )
     }
 

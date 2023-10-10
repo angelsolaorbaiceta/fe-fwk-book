@@ -21,7 +21,7 @@ export function destroyDOM(vdom) {
     }
 
     default: {
-      throw new Error(\`Can't destroy DOM of type: ${type}`)
+      throw new Error(`Can't destroy DOM of type: ${type}`)
     }
   }
 
