@@ -128,3 +128,25 @@ test('Compile attribute with props/state binding', () => {
       return ( h('p', { class: this.state.text, hidden: this.props.hide }, [ ]) )
     }`)
 })
+
+test('Compile attribute binding with compound expression', () => {
+  const { code } = compiler.compile(
+    '<p [class]="state.foo + \'--\' + props.bar"></p>'
+  )
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', { class: this.state.foo + '--' + this.props.bar }, [ ]) )
+    }`)
+})
+
+test('Compile class array attribute binding', () => {
+  const { code } = compiler.compile(
+    '<p [class]="[state.foo, props.bar, \'foo\']"></p>'
+  )
+
+  expect(code).toBe(singleJSLine`
+    function render() {
+      return ( h('p', { class: [this.state.foo, this.props.bar, 'foo'] }, [ ]) )
+    }`)
+})
