@@ -153,9 +153,28 @@ test('Compile class array attribute binding', () => {
 
 test.each([
   ['handleClick', 'this.handleClick'],
+  ['handleClick()', 'this.handleClick()'],
   ['handle_click2', 'this.handle_click2'],
+  ['handle_click2()', 'this.handle_click2()'],
   ['() => handleClick()', '() => this.handleClick()'],
   ['() => handle_click2()', '() => this.handle_click2()'],
+  ['() => handleClick(foo, bar)', '() => this.handleClick(foo, bar)'],
+  [
+    '(event) => handleClick(event.target, foo, bar)',
+    '(event) => this.handleClick(event.target, foo, bar)',
+  ],
+  [
+    '(event) => handle_click2(event.target, foo, bar)',
+    '(event) => this.handle_click2(event.target, foo, bar)',
+  ],
+  [
+    '() => { handleClick(); handle_click2() }',
+    '() => { this.handleClick(); this.handle_click2() }',
+  ],
+  [
+    '() => { handleClick();\n handle_click2() }',
+    '() => { this.handleClick(); this.handle_click2() }',
+  ],
 ])('Compile "%s" event handler', (template, expected) => {
   const { code } = compiler.compile(
     `<button (click)="${template}"></button>`

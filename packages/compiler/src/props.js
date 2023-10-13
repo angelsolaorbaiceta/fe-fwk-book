@@ -1,8 +1,12 @@
 import { addThisContext } from './context'
 
 const METHOD_REF_REGEX = /^\s*[a-zA-Z0-9_]+\s*$/
-const METHOD_IN_ARROW_FUNC_REGEX = /^\(\)\s*=>\s*([a-zA-Z0-9_]+)\s*\(\)\s*$/
-const METHOD_NAME_REGEX = /\b[a-zA-Z0-9_]+\b/
+const METHOD_IN_ARROW_FUNC_REGEX =
+  /^\([^\)]*\)\s*=>\s*([a-zA-Z0-9_]+)\s*\([^\)]*\)\s*$/
+const METHOD_IN_ARROW_FUNC_BLOCK_REGEX =
+  /^\([^\)]*\)\s*=>\s*{\s*([^\}]*)}$/m
+const METHOD_CALL_REGEX = /([a-zA-Z0-9_]+)\([^\)]*\)/g
+const METHOD_CALL_EXPRESSION_REGEX = /^\s*([a-zA-Z0-9_]+)\([^\)]*\)\s*$/g
 
 export function extractProps(attributes, bindings, events) {
   const props = {}
@@ -33,9 +37,9 @@ export function extractProps(attributes, bindings, events) {
  *
  * - `"handleClick"` ➞ `"this.handleClick"`
  * - `"() => handleClick()"` ➞ `"() => this.handleClick()"`
- * - `"() => this.handleClick(foo, bar)"`
- * - `"(event) => handleClick(event)"`
- * - `"() => { ... }"`
+ * - `"() => this.handleClick(foo, bar)"` ➞ `"() => this.handleClick(foo, bar)"`
+ * - `"(event) => handleClick(event)"` ➞ `"(event) => this.handleClick(event)"`
+ * - `"() => { ... }"` ➞ All method calls are prefixed with "this."
  *
  * A special case is when a function call is used as the event handler:
  *
@@ -52,12 +56,34 @@ function formatEvent(handler) {
     return `this.${handler}`
   }
 
-  // Matches arrow functions with method calls such as "() => handleClick()"
-  if (METHOD_IN_ARROW_FUNC_REGEX.test(handler)) {
-    return handler.replace(METHOD_NAME_REGEX, 'this.$&')
+  // Matches method calls such as "handleClick()"
+  if (METHOD_CALL_EXPRESSION_REGEX.test(handler)) {
+    return handler.replace(
+      METHOD_CALL_EXPRESSION_REGEX,
+      (match) => `this.${match}`
+    )
   }
 
-  return `this.${handler}`
+  // Matches arrow functions with method calls such as "() => handleClick()"
+  if (METHOD_IN_ARROW_FUNC_REGEX.test(handler)) {
+    return handler.replace(METHOD_IN_ARROW_FUNC_REGEX, (match, group) =>
+      match.replace(group, `this.${group}`)
+    )
+  }
+
+  // Matches arrow functions inside a block such as "() => { handleClick() }"
+  if (METHOD_IN_ARROW_FUNC_BLOCK_REGEX.test(handler)) {
+    return handler
+      .replace(/\s+/g, ' ')
+      .replace(METHOD_IN_ARROW_FUNC_BLOCK_REGEX, (match, group) =>
+        match.replace(
+          group,
+          group.replace(METHOD_CALL_REGEX, (match) => `this.${match}`)
+        )
+      )
+  }
+
+  throw new Error(`Unsupported event handler: "${handler}"`)
 }
 
 /**
