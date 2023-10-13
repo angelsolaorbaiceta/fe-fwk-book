@@ -1,31 +1,63 @@
 import { addThisContext } from './context'
 
-// Matches attribute bindings (appearing between square brackets) like [foo] and [bar]
-const attributeBindingRegex = /^\[([a-zA-Z0-9_-]+)\]$/
+const METHOD_REF_REGEX = /^\s*[a-zA-Z0-9_]+\s*$/
+const METHOD_IN_ARROW_FUNC_REGEX = /^\(\)\s*=>\s*([a-zA-Z0-9_]+)\s*\(\)\s*$/
+const METHOD_NAME_REGEX = /\b[a-zA-Z0-9_]+\b/
 
-/**
- * Given an object of HTML node attributes, convert them to a string in the
- * format that a render function expects.
- *
- * @param {Object.<string, string>} attrs The HTML node attributes
- * @returns {string} The props as a string formatted for a render function
- */
-export function extractProps(attrs) {
-  console.log(attrs)
+export function extractProps(attributes, bindings, events) {
   const props = {}
 
-  for (const attrName in attrs) {
-    if (attributeBindingRegex.test(attrName)) {
-      const propName = attrName.match(attributeBindingRegex)[1]
-      props[propName] = addThisContext(attrs[attrName])
+  Object.entries(attributes).forEach(([name, value]) => {
+    props[name] = `'${value}'`
+  })
 
-      continue
-    }
+  Object.entries(bindings).forEach(([name, value]) => {
+    props[name] = addThisContext(value)
+  })
 
-    props[attrName] = `'${attrs[attrName]}'`
+  if (Object.keys(events).length) {
+    props.on = {}
+
+    Object.entries(events).forEach(([name, value]) => {
+      props.on[name] = formatEvent(value)
+    })
   }
 
   return propsToString(props)
+}
+
+/**
+ * Given an event handler definition, it adds the "this." context to it.
+ *
+ * The handler can have the following formats:
+ *
+ * - `"handleClick"` ➞ `"this.handleClick"`
+ * - `"() => handleClick()"` ➞ `"() => this.handleClick()"`
+ * - `"() => this.handleClick(foo, bar)"`
+ * - `"(event) => handleClick(event)"`
+ * - `"() => { ... }"`
+ *
+ * A special case is when a function call is used as the event handler:
+ *
+ * - `"handleClick()"` ➞ `"this.handleClick()"`
+ *
+ * In this case, it's the result of calling the function that is used as
+ * the event handler, not the function itself.
+ *
+ * @param {string} handler the event handler definition
+ */
+function formatEvent(handler) {
+  // Matches method references such as "handleClick"
+  if (METHOD_REF_REGEX.test(handler)) {
+    return `this.${handler}`
+  }
+
+  // Matches arrow functions with method calls such as "() => handleClick()"
+  if (METHOD_IN_ARROW_FUNC_REGEX.test(handler)) {
+    return handler.replace(METHOD_NAME_REGEX, 'this.$&')
+  }
+
+  return `this.${handler}`
 }
 
 /**

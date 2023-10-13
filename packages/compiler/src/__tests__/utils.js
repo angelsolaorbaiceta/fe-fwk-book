@@ -1,3 +1,7 @@
 export function singleJSLine(str) {
-  return str[0].replace(/\s+/g, ' ').trim()
+  return toSingleJSLine(str[0])
+}
+
+export function toSingleJSLine(str) {
+  return str.replace(/\s+/g, ' ').trim()
 }

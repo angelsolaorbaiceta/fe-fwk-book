@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { TemplateCompiler } from '../compile'
-import { singleJSLine } from './utils'
+import { singleJSLine, toSingleJSLine } from './utils'
 
 const compiler = new TemplateCompiler()
 
@@ -149,4 +149,22 @@ test('Compile class array attribute binding', () => {
     function render() {
       return ( h('p', { class: [this.state.foo, this.props.bar, 'foo'] }, [ ]) )
     }`)
+})
+
+test.each([
+  ['handleClick', 'this.handleClick'],
+  ['handle_click2', 'this.handle_click2'],
+  ['() => handleClick()', '() => this.handleClick()'],
+  ['() => handle_click2()', '() => this.handle_click2()'],
+])('Compile "%s" event handler', (template, expected) => {
+  const { code } = compiler.compile(
+    `<button (click)="${template}"></button>`
+  )
+
+  expect(code).toBe(
+    toSingleJSLine(`
+    function render() {
+      return ( h('button', { on: { click: ${expected} } }, [ ]) )
+    }`)
+  )
 })

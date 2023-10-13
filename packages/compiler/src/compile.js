@@ -2,6 +2,7 @@ import { parse } from 'node-html-parser'
 import { normalizeTagName } from './tag'
 import { extractProps } from './props'
 import { interpolateVariables } from './variables'
+import { splitAttributes } from './attributes'
 
 const NODE_TYPE = {
   ELEMENT: 1,
@@ -68,7 +69,13 @@ export class TemplateCompiler {
     const { rawTagName, childNodes, attributes } = node
 
     const tag = normalizeTagName(rawTagName)
-    const props = extractProps(attributes)
+    const {
+      attributes: attrs,
+      bindings,
+      events,
+      directives,
+    } = splitAttributes(attributes)
+    const props = extractProps(attrs, bindings, events)
 
     this.#lines.push(`h(${tag}, ${props}, [`)
     this.#imports.add('h')
