@@ -8,6 +8,10 @@ const FOR_OF_DIRECTIVE_REGEX =
 const FOR_OF_INDEX_DIRECTIVE_REGEX =
   /^\s*\((?<name>\w+),\s*(?<index>\w+)\)\s+of\s+(?<expression>.+)\s*$/
 
+// Matches "(<name>, <value>) of <expression>"
+const FOR_IN_DIRECTIVE_REGEX =
+  /^\s*\((?<name>\w+),\s*(?<value>\w+)\)\s+in\s+(?<expression>.+)\s*$/
+
 /**
  * Formats a for directive into a line and closing for the "for" directive.
  * The accepted formats are:
@@ -25,6 +29,10 @@ export function formatForDirective(directive) {
 
   if (FOR_OF_INDEX_DIRECTIVE_REGEX.test(directive)) {
     return formatForOfWithIndexDirective(directive)
+  }
+
+  if (FOR_IN_DIRECTIVE_REGEX.test(directive)) {
+    return formatForInDirective(directive)
   }
 
   throw new Error(`Invalid for directive: "${directive}"`)
@@ -53,13 +61,14 @@ function formatForOfWithIndexDirective(directive) {
   }
 }
 
-// function formatForInDirective(directive) {
-//   const matchGroups = directive.match(FOR_IN_DIRECTIVE_REGEX).groups
-//   const name = matchGroups.name
-//   const expression = addThisContext(matchGroups.expression)
+function formatForInDirective(directive) {
+  const matchGroups = directive.match(FOR_IN_DIRECTIVE_REGEX).groups
+  const name = matchGroups.name
+  const value = matchGroups.value
+  const expression = addThisContext(matchGroups.expression)
 
-//   return {
-//     line: `Object.keys(${expression}).map((${name}) =>`,
-//     closing: ')',
-//   }
-// }
+  return {
+    line: `Object.entries(${expression}).map(([${name}, ${value}]) =>`,
+    closing: ')',
+  }
+}

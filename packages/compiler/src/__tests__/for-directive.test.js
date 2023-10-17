@@ -40,3 +40,55 @@ test('Compile for loop iterating the elements of an array returned by a method',
       ]))
     }`)
 })
+
+test('Compile for loop iterating an array, with a key', () => {
+  const { code } = compileTemplate(
+    '<ul><li @for="item of state.items" [key]="item.id">{{ item }}</li></ul>'
+  )
+
+  expect(code.replace(/\)\s+\)/g, '))')).toBe(singleJSLine`
+    function render() {
+      return ( h('ul', {}, [ 
+        this.state.items.map((item) => h('li', { key: item.id }, [ hString(\`\${item}\`) ])) 
+      ]))
+    }`)
+})
+
+test('Compile for loop iterating the items and values of an object', () => {
+  const { code } = compileTemplate(
+    '<ul><li @for="(key, value) in state.items">{{ key }}: {{ value }}</li></ul>'
+  )
+
+  expect(code.replace(/\)\s+\)/g, '))')).toBe(singleJSLine`
+    function render() {
+      return ( h('ul', {}, [ 
+        Object.entries(this.state.items).map(([key, value]) => h('li', {}, [ hString(\`\${key}: \${value}\`) ])) 
+      ]))
+    }`)
+})
+
+test('Compile for loop iterating the items and values of an object returned by a method', () => {
+  const { code } = compileTemplate(
+    '<ul><li @for="(key, value) in getItems()">{{ key }}: {{ value }}</li></ul>'
+  )
+
+  expect(code.replace(/\)\s+\)/g, '))')).toBe(singleJSLine`
+    function render() {
+      return ( h('ul', {}, [ 
+        Object.entries(this.getItems()).map(([key, value]) => h('li', {}, [ hString(\`\${key}: \${value}\`) ])) 
+      ]))
+    }`)
+})
+
+test('Compile for loop iterating an object with a key', () => {
+  const { code } = compileTemplate(
+    '<ul><li @for="(key, value) in state.items" [key]="key">{{ value }}</li></ul>'
+  )
+
+  expect(code.replace(/\)\s+\)/g, '))')).toBe(singleJSLine`
+    function render() {
+      return ( h('ul', {}, [ 
+        Object.entries(this.state.items).map(([key, value]) => h('li', { key: key }, [ hString(\`\${value}\`) ])) 
+      ]))
+    }`)
+})
