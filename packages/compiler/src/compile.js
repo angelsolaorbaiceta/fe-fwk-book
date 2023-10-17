@@ -3,10 +3,16 @@ import { normalizeTagName } from './tag'
 import { extractProps } from './props'
 import { interpolateVariables } from './variables'
 import { splitAttributes } from './attributes'
+import { formatForDirective } from './for-directive'
 
 const NODE_TYPE = {
   ELEMENT: 1,
   TEXT: 3,
+}
+
+export function compileTemplate(template) {
+  const compiler = new TemplateCompiler()
+  return compiler.compile(template)
 }
 
 export class TemplateCompiler {
@@ -67,6 +73,7 @@ export class TemplateCompiler {
 
   #addElement(node) {
     const { rawTagName, childNodes, attributes } = node
+    let closingsCount = 1
 
     const tag = normalizeTagName(rawTagName)
     const {
@@ -77,13 +84,22 @@ export class TemplateCompiler {
     } = splitAttributes(attributes)
     const props = extractProps(attrs, bindings, events)
 
+    if ('for' in directives) {
+      const { line, closing } = formatForDirective(directives.for)
+      this.#lines.push(line)
+      this.#stack.unshift(closing)
+      closingsCount++
+    }
+
     this.#lines.push(`h(${tag}, ${props}, [`)
     this.#imports.add('h')
     this.#stack.unshift(']),')
 
     childNodes.forEach((node) => this.#addNode(node))
 
-    this.#addLineFromStack()
+    while (closingsCount--) {
+      this.#addLineFromStack()
+    }
   }
 
   #addText(node) {
