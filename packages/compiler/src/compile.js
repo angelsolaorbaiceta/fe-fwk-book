@@ -4,6 +4,7 @@ import { extractProps } from './props'
 import { interpolateVariables } from './variables'
 import { splitAttributes } from './attributes'
 import { formatForDirective } from './for-directive'
+import { addThisContext } from './context'
 
 const NODE_TYPE = {
   ELEMENT: 1,
@@ -90,6 +91,12 @@ export class TemplateCompiler {
       this.#stack.unshift(closing)
       closingsCount++
     }
+    if ('show' in directives) {
+      const condition = addThisContext(directives.show)
+      this.#lines.push(`${condition} ?`)
+      this.#stack.unshift(': null')
+      closingsCount++
+    }
 
     this.#lines.push(`h(${tag}, ${props}, [`)
     this.#imports.add('h')
@@ -117,9 +124,9 @@ export class TemplateCompiler {
     const prevIdx = this.#lines.length - 1
     const prevLine = this.#lines[prevIdx]
 
-    // Remove the trailing comma in the previous line if the
-    // next character is a closing parenthesis or bracket.
-    if (/,\s*$/.test(prevLine) && /^\s*[\)\]]/.test(line)) {
+    // Remove the trailing comma in the previous line if the next
+    // character is a closing parenthesis or bracket or colon.
+    if (/,\s*$/.test(prevLine) && /^\s*[\)\]:]/.test(line)) {
       this.#lines[prevIdx] = prevLine.slice(0, -1)
     }
 
