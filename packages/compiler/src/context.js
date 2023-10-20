@@ -1,4 +1,4 @@
-const METHOD_CALL_REGEX = /(?:^|\s+)([a-zA-Z0-9_]+)\([^\)]*\)/g
+const METHOD_CALL_REGEX = /(?<=^|\s+)([a-zA-Z0-9_]+\([^\)]*\))/g
 
 /**
  * Given a string of HTML, add "this." to state, props interpolations and
