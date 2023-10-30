@@ -35,6 +35,6 @@
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.1",
-    "rollup": "^4.1.4"
+    "rollup": "^4.1.5"
   }
 }
