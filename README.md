@@ -38,6 +38,7 @@ The last two are freely available in the [repository's Wiki](https://github.com/
 * _Part IV_—Extra features (🖥 online; coming soon)
   * [_Chapter 15_—Slots—Inserting external content](https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki/Chapter-15%E2%80%94Slots%E2%80%94Inserting-external-content)
   * _Chapter 16_—Single Page Application routing
+  * _Chapter 17_—Compiling HTML templates into render functions
     
 * _Part V_—Advanced topics (🖥 online; coming soon)
 
