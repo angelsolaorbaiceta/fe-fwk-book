@@ -30,7 +30,7 @@ The first three parts of the book are published by [Manning](http://mng.bz/aM2o)
   * [_Chapter 10_—Component methods](https://livebook.manning.com/book/build-a-frontend-web-framework-from-scratch/chapter-10)
   * [_Chapter 11_—Subcomponents—Communication via props and events](https://livebook.manning.com/book/build-a-frontend-web-framework-from-scratch/chapter-11)
   * [_Chapter 12_—Keyed lists](https://livebook.manning.com/book/build-a-frontend-web-framework-from-scratch/chapter-12)
-  * _Chapter 13_—The component lifecycle hooks and the scheduler
+  * [_Chapter 13_—The component lifecycle hooks and the scheduler](https://livebook.manning.com/book/build-a-frontend-web-framework-from-scratch/chapter-13)
   * _Chapter 14_—Testing asynchronous components
 
 The last two are freely available in the [repository's Wiki](https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki):
