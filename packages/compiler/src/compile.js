@@ -1,10 +1,10 @@
 import { parse } from 'node-html-parser'
-import { normalizeTagName } from './tag'
-import { extractProps } from './props'
-import { interpolateVariables } from './variables'
 import { splitAttributes } from './attributes'
-import { formatForDirective } from './for-directive'
-import { addThisContext } from './context'
+import { handleForDirective } from './for-directive'
+import { handleIfDirective } from './if-directive'
+import { extractProps } from './props'
+import { normalizeTagName } from './tag'
+import { interpolateVariables } from './variables'
 
 const NODE_TYPE = {
   ELEMENT: 1,
@@ -20,6 +20,7 @@ export class TemplateCompiler {
   #lines = []
   #stack = []
   #imports = new Set()
+  #directiveHandlers = [handleForDirective, handleIfDirective]
 
   #reset() {
     this.#lines = ['function render() {', 'return (']
@@ -85,26 +86,7 @@ export class TemplateCompiler {
     } = splitAttributes(attributes)
     const props = extractProps(attrs, bindings, events)
 
-    if ('for' in directives) {
-      const { line, closing } = formatForDirective(directives.for)
-
-      // -- start --
-      this.#lines[this.#lines.length - 1] = this.#lines[
-        this.#lines.length - 1
-      ].slice(0, -2)
-      this.#stack[0] = this.#stack[0].slice(1)
-      // -- end --
-
-      this.#lines.push(line)
-      this.#stack.unshift(closing)
-      closingsCount++
-    }
-    if ('show' in directives) {
-      const condition = addThisContext(directives.show)
-      this.#lines.push(`${condition} ?`)
-      this.#stack.unshift(': null')
-      closingsCount++
-    }
+    closingsCount += this.#applyDirectives(directives)
 
     this.#lines.push(`h(${tag}, ${props}, [`)
     this.#imports.add('h')
@@ -115,6 +97,21 @@ export class TemplateCompiler {
     while (closingsCount--) {
       this.#addLineFromStack()
     }
+  }
+
+  #applyDirectives(directives) {
+    return this.#directiveHandlers
+      .map((handler) =>
+        handler(
+          {
+            lines: this.#lines,
+            stack: this.#stack,
+            imports: this.#imports,
+          },
+          directives
+        )
+      )
+      .reduce((acc, count) => acc + count, 0)
   }
 
   #addText(node) {
