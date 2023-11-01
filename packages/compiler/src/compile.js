@@ -87,6 +87,14 @@ export class TemplateCompiler {
 
     if ('for' in directives) {
       const { line, closing } = formatForDirective(directives.for)
+
+      // -- start --
+      this.#lines[this.#lines.length - 1] = this.#lines[
+        this.#lines.length - 1
+      ].slice(0, -2)
+      this.#stack[0] = this.#stack[0].slice(1)
+      // -- end --
+
       this.#lines.push(line)
       this.#stack.unshift(closing)
       closingsCount++

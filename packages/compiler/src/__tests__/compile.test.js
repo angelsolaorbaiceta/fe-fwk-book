@@ -6,7 +6,7 @@ test('Compile and empty <div> element', () => {
   const { code, imports } = compileTemplate('<div></div>')
 
   expect(imports).toEqual(new Set(['h']))
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('div', {}, [ ]) )
     }`)
@@ -16,7 +16,7 @@ test('Compile element with text content', () => {
   const { code, imports } = compileTemplate('<div>Hello World</div>')
 
   expect(imports).toEqual(new Set(['h', 'hString']))
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('div', {}, [ hString('Hello World') ]) )
     }`)
@@ -26,7 +26,7 @@ test('Compile two contiguous elements inside a fragment', () => {
   const { code, imports } = compileTemplate('<div></div><p></p>')
 
   expect(imports).toEqual(new Set(['h', 'hFragment']))
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h(Fragment, {}, [ 
         h('div', {}, [ ]), 
@@ -39,7 +39,7 @@ test('Compile nested elements', () => {
   const { code, imports } = compileTemplate('<div><p>Hello</p></div>')
 
   expect(imports).toEqual(new Set(['h', 'hString']))
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('div', {}, [ 
         h('p', {}, [ hString('Hello') ]) 
@@ -50,7 +50,7 @@ test('Compile nested elements', () => {
 test('Compile props interpolation', () => {
   const { code } = compileTemplate('<p>{{ props.text }}</p>')
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', {}, [ hString(\`\${this.props.text}\`) ]) )
     }`)
@@ -59,7 +59,7 @@ test('Compile props interpolation', () => {
 test('Compile state interpolation', () => {
   const { code } = compileTemplate('<p>{{ state.text }}</p>')
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', {}, [ hString(\`\${this.state.text}\`) ]) )
     }`)
@@ -70,7 +70,7 @@ test('Compile props and state interpolation along with regular text', () => {
     '<p>{{ props.text }} - {{ state.text }}</p>'
   )
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', {}, [ 
         hString(\`\${this.props.text} - \${this.state.text}\`) 
@@ -81,7 +81,7 @@ test('Compile props and state interpolation along with regular text', () => {
 test('Does not add "this" to non state/props interpolations', () => {
   const { code } = compileTemplate('<p>Hello, {{ name }}</p>')
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', {}, [ hString(\`Hello, \${name}\`) ]) )
     }`)
@@ -90,7 +90,7 @@ test('Does not add "this" to non state/props interpolations', () => {
 test('Compile expression interpolation', () => {
   const { code } = compileTemplate('<p>{{ state.a + props.b + 5 }}</p>')
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', {}, [ hString(\`\${this.state.a + this.props.b + 5}\`) ]) )
     }`)
@@ -101,7 +101,7 @@ test('Compile method call interpolation', () => {
     '<p>This is {{ state.country.toUpperCase() }}</p>'
   )
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', {}, [ hString(\`This is \${this.state.country.toUpperCase()}\`) ]) )
     }`)
@@ -110,7 +110,7 @@ test('Compile method call interpolation', () => {
 test('Compile element with static attributes', () => {
   const { code } = compileTemplate('<p class="text-center"></p>')
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', { class: 'text-center' }, [ ]) )
     }`)
@@ -121,7 +121,7 @@ test('Compile attribute with props/state binding', () => {
     '<p [class]="state.text" [hidden]="props.hide"></p>'
   )
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', { class: this.state.text, hidden: this.props.hide }, [ ]) )
     }`)
@@ -132,7 +132,7 @@ test('Compile attribute binding with compound expression', () => {
     '<p [class]="state.foo + \'--\' + props.bar"></p>'
   )
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', { class: this.state.foo + '--' + this.props.bar }, [ ]) )
     }`)
@@ -143,7 +143,7 @@ test('Compile class array attribute binding', () => {
     '<p [class]="[state.foo, props.bar, \'foo\']"></p>'
   )
 
-  expect(code).toBe(singleJSLine`
+  expect(toSingleJSLine(code)).toBe(singleJSLine`
     function render() {
       return ( h('p', { class: [this.state.foo, this.props.bar, 'foo'] }, [ ]) )
     }`)
@@ -178,7 +178,7 @@ test.each([
     `<button (click)="${template}"></button>`
   )
 
-  expect(code).toBe(
+  expect(toSingleJSLine(code)).toBe(
     toSingleJSLine(`
     function render() {
       return ( h('button', { on: { click: ${expected} } }, [ ]) )
