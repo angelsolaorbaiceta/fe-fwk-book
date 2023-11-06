@@ -139,3 +139,52 @@ test('slot content updated between renders', () => {
     `
   )
 })
+
+test('slot in a nested component', () => {
+  const Table = defineComponent({
+    state() {
+      return {
+        titles: ['One', 'Two'],
+      }
+    },
+
+    render() {
+      return h('table', {}, [
+        h('thead', {}, [h('tr', {}, [h('th', {}, ['Title'])])]),
+        h(
+          'tbody',
+          {},
+          this.state.titles.map((title) => h(TableRow, {}, [title]))
+        ),
+      ])
+    },
+  })
+  const TableRow = defineComponent({
+    render() {
+      return h('tr', {}, [h('td', {}, [hSlot()])])
+    },
+  })
+
+  const vdom = h(Table)
+  mountDOM(vdom, document.body)
+
+  expect(document.body.innerHTML).toBe(
+    singleHtmlLine`
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>One</td>
+          </tr>
+          <tr>
+            <td>Two</td>
+          </tr>
+        </tbody>
+      </table>
+    `
+  )
+})
