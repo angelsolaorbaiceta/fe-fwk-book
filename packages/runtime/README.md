@@ -382,7 +382,7 @@ _See the example application in the [examples/ch15 folder](https://github.com/an
 To checkout this version of the code:
 
 ```bash
-$ git checkout ch14
+$ git checkout ch15
 ```
 
 This version of the framework allows to insert external content into a component using _slots_.
