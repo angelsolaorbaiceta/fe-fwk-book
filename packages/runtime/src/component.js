@@ -1,7 +1,12 @@
 import equal from 'fast-deep-equal'
 import { destroyDOM } from './destroy-dom'
 import { Dispatcher } from './dispatcher'
-import { DOM_TYPES, extractChildren } from './h'
+import {
+  DOM_TYPES,
+  didCreateSlot,
+  extractChildren,
+  resetDidCreateSlot,
+} from './h'
 import { mountDOM } from './mount-dom'
 import { patchDOM } from './patch-dom'
 import { hasOwnProperty } from './utils/objects'
@@ -182,7 +187,11 @@ export function defineComponent({
      */
     render() {
       const vdom = render.call(this)
-      fillSlots(vdom, this.#children)
+
+      if (didCreateSlot()) {
+        fillSlots(vdom, this.#children)
+        resetDidCreateSlot()
+      }
 
       return vdom
     }

@@ -131,6 +131,41 @@ export function hFragment(vNodes) {
  */
 
 /**
+ * Saves whether `hSlot()` was called.
+ *
+ * Only the vdom tree of a component that calls `hSlot()` are traversed
+ * to replace the slot vdom node with the external content. This is an
+ * optimization to avoid traversing the vdom tree of components that
+ * don't use slots.
+ *
+ * Use the `didCreateSlot()` function to check if `hSlot()` was called.
+ * After checking, reset the flag with `resetDidCreateSlot()`.
+ */
+let hSlotCalled = false
+
+/**
+ * Returns whether `hSlot()` was called.
+ *
+ * Use this function to determine if inside the component's render function
+ * a slot was created, and thus it needs to be filled with external content.
+ *
+ * Remember to call the `resetDidCreateSlot()` function after checking the
+ * flag, and this it's set to `true`.
+ *
+ * @returns {boolean} whether `hSlot()` was called
+ */
+export function didCreateSlot() {
+  return hSlotCalled
+}
+
+/**
+ * Resets the flag indicating that `hSlot()` was called, setting it to `false`.
+ */
+export function resetDidCreateSlot() {
+  hSlotCalled = false
+}
+
+/**
  * Creates a slot virtual node.
  *
  * A slot is a placeholder for external content. It can also have default
@@ -140,11 +175,16 @@ export function hFragment(vNodes) {
  * if it's passed to `mountDOM()`. Slots are handled by the component, which
  * should replace the slot vdom node with the external content at render time.
  *
+ * When this function is called, the `didCreateSlot()` function returns `true`.
+ * For every call to the `hSlot()` function, there should be a call to the
+ * `resetDidCreateSlot()` function.
+ *
  * @param {VNode[]} [children] the default content of the slot
  *
  * @returns {SlotVNode} the virtual node
  */
 export function hSlot(children = []) {
+  hSlotCalled = true
   return { type: DOM_TYPES.SLOT, children }
 }
 

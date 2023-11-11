@@ -2,6 +2,7 @@ import { afterEach, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hSlot } from '../h'
 import { mountDOM } from '../mount-dom'
+import * as Slots from '../slots'
 import { singleHtmlLine } from './utils'
 
 afterEach(() => {
@@ -187,4 +188,34 @@ test('slot in a nested component', () => {
       </table>
     `
   )
+})
+
+test('when the component has slots, the "fillSlot()" function is called', () => {
+  const fillSlotsSpy = vi.spyOn(Slots, 'fillSlots')
+
+  const Comp = defineComponent({
+    render() {
+      return h('div', {}, [hSlot()])
+    },
+  })
+
+  const vdom = h(Comp, {}, [h('span', {}, ['Hello'])])
+  mountDOM(vdom, document.body)
+
+  expect(fillSlotsSpy).toHaveBeenCalled()
+})
+
+test('when the component has no slots, the "fillSlot()" function is not called', () => {
+  const fillSlotsSpy = vi.spyOn(Slots, 'fillSlots')
+
+  const Comp = defineComponent({
+    render() {
+      return h('div', {}, [h('span', {}, ['Hello'])])
+    },
+  })
+
+  const vdom = h(Comp)
+  mountDOM(vdom, document.body)
+
+  expect(fillSlotsSpy).not.toHaveBeenCalled()
 })
