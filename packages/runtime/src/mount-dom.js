@@ -21,7 +21,7 @@ import { extractPropsAndEvents } from './utils/props'
  */
 export function mountDOM(vdom, parentEl, index, hostComponent = null) {
   if (parentEl == null) {
-    throw new Error('Parent element is null')
+    throw new Error('[mountDOM] Parent element is null')
   }
 
   switch (vdom.type) {
