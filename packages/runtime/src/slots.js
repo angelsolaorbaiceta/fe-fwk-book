@@ -9,28 +9,34 @@ import { assert } from './utils/assert'
  * no views at all.
  *
  * @param {import("./h").VNode} vdom
- * @param {import("./h").VNode[]} slotViews - the vNodes to insert in the slots
+ * @param {import("./h").VNode[]} externalContent - the vNodes to insert in the slots
  */
-export function fillSlots(vdom, slotViews = []) {
+export function fillSlots(vdom, externalContent = []) {
   function processNode(node, parent, index) {
-    insertViewInSlot(node, parent, index, slotViews)
+    insertViewInSlot(node, parent, index, externalContent)
   }
 
   traverseDFS(vdom, processNode, shouldSkipBranch)
 }
 
-function insertViewInSlot(node, parent, index, slotViews) {
+function insertViewInSlot(node, parent, index, externalContent) {
   if (node.type !== DOM_TYPES.SLOT) return
 
   assert(parent !== null, 'Slot nodes must have a parent')
   assert(index !== null, 'Slot nodes must have an index')
 
   const defaultContent = node.children
-  const views = slotViews.length > 0 ? slotViews : defaultContent
+  const views =
+    externalContent.length > 0 ? externalContent : defaultContent
 
   assert(Array.isArray(views), 'Slot views must be an array')
 
-  parent.children.splice(index, 1, hFragment(views))
+  const hasContent = views.length > 0
+  if (hasContent) {
+    parent.children.splice(index, 1, hFragment(views))
+  } else {
+    parent.children.splice(index, 1)
+  }
 }
 
 function shouldSkipBranch(node) {

@@ -2,11 +2,11 @@ import { test, expect } from 'vitest'
 import { fillSlots } from '../slots'
 import { h, hFragment, hSlot } from '../h'
 
-test('use empty fragment if no content or default content', () => {
+test('remove the slot if no content or default content', () => {
   const vdom = h('div', {}, [hSlot()])
   fillSlots(vdom)
 
-  expect(vdom.children).toEqual([hFragment([])])
+  expect(vdom).toEqual(h('div', {}, []))
 })
 
 test('set default content if no external content', () => {
