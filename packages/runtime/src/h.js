@@ -58,8 +58,12 @@ export function h(tag, props = {}, children = []) {
     typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
 
   assert(
+    typeof props === 'object' && !Array.isArray(props),
+    '[vdom] h() expects an object as props (2nd argument)'
+  )
+  assert(
     Array.isArray(children),
-    `[vdom] h() expects an array of children, but got '${typeof children}'`
+    `[vdom] h() expects an array of children (3rd argument), but got '${typeof children}'`
   )
 
   return {
