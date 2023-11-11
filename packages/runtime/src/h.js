@@ -112,7 +112,7 @@ export function hString(str) {
  * @returns {FragmentVNode} the virtual node
  */
 export function hFragment(vNodes) {
-  assert(Array.isArray(vNodes), 'hFragment expects an array of vNodes')
+  assert(Array.isArray(vNodes), 'hFragment() expects an array of vNodes')
 
   return {
     type: DOM_TYPES.FRAGMENT,
