@@ -6,6 +6,7 @@ export const DOM_TYPES = {
   ELEMENT: 'element',
   FRAGMENT: 'fragment',
   COMPONENT: 'component',
+  SLOT: 'slot',
 }
 
 /**
@@ -56,6 +57,15 @@ export function h(tag, props = {}, children = []) {
   const type =
     typeof tag === 'string' ? DOM_TYPES.ELEMENT : DOM_TYPES.COMPONENT
 
+  assert(
+    typeof props === 'object' && !Array.isArray(props),
+    '[vdom] h() expects an object as props (2nd argument)'
+  )
+  assert(
+    Array.isArray(children),
+    `[vdom] h() expects an array of children (3rd argument), but got '${typeof children}'`
+  )
+
   return {
     tag,
     props,
@@ -102,7 +112,10 @@ export function hString(str) {
  * @returns {FragmentVNode} the virtual node
  */
 export function hFragment(vNodes) {
-  assert(Array.isArray(vNodes), 'hFragment expects an array of vNodes')
+  assert(
+    Array.isArray(vNodes),
+    '[vdom] hFragment() expects an array of vNodes'
+  )
 
   return {
     type: DOM_TYPES.FRAGMENT,
@@ -111,19 +124,85 @@ export function hFragment(vNodes) {
 }
 
 /**
- * Maps strings, numbers, booleans and symbos inside the array to text vNodes.
- * 
+ * @typedef SlotVNode
+ * @type {object}
+ * @property {string} type - The type of the virtual node = 'slot'.
+ * @property {VNode[]} [children] - The default content of the slot.
+ */
+
+/**
+ * Saves whether `hSlot()` was called.
+ *
+ * Only the vdom tree of a component that calls `hSlot()` are traversed
+ * to replace the slot vdom node with the external content. This is an
+ * optimization to avoid traversing the vdom tree of components that
+ * don't use slots.
+ *
+ * Use the `didCreateSlot()` function to check if `hSlot()` was called.
+ * After checking, reset the flag with `resetDidCreateSlot()`.
+ */
+let hSlotCalled = false
+
+/**
+ * Returns whether `hSlot()` was called.
+ *
+ * Use this function to determine if inside the component's render function
+ * a slot was created, and thus it needs to be filled with external content.
+ *
+ * Remember to call the `resetDidCreateSlot()` function after checking the
+ * flag, and this it's set to `true`.
+ *
+ * @returns {boolean} whether `hSlot()` was called
+ */
+export function didCreateSlot() {
+  return hSlotCalled
+}
+
+/**
+ * Resets the flag indicating that `hSlot()` was called, setting it to `false`.
+ */
+export function resetDidCreateSlot() {
+  hSlotCalled = false
+}
+
+/**
+ * Creates a slot virtual node.
+ *
+ * A slot is a placeholder for external content. It can also have default
+ * content in case no external content is provided.
+ *
+ * A slot vdom node isn't intended to be mounted, so it'll throw an error
+ * if it's passed to `mountDOM()`. Slots are handled by the component, which
+ * should replace the slot vdom node with the external content at render time.
+ *
+ * When this function is called, the `didCreateSlot()` function returns `true`.
+ * For every call to the `hSlot()` function, there should be a call to the
+ * `resetDidCreateSlot()` function.
+ *
+ * @param {VNode[]} [children] the default content of the slot
+ *
+ * @returns {SlotVNode} the virtual node
+ */
+export function hSlot(children = []) {
+  hSlotCalled = true
+  return { type: DOM_TYPES.SLOT, children }
+}
+
+/**
+ * Maps strings, numbers, booleans and symbols inside the array to text vNodes.
+ *
  * @param {array} children the children of the VNode
  * @returns {VNode[]} the children with text children mapped to TextVNode
  */
 function mapTextNodes(children) {
   return children.map((child) =>
-    (typeof child === 'string'
-      || typeof child === 'number'
-      || typeof child === 'boolean'
-      || typeof child === 'bigint'
-      || typeof child === 'symbol'
-    ) ? hString(child) : child
+    typeof child === 'string' ||
+    typeof child === 'number' ||
+    typeof child === 'boolean' ||
+    typeof child === 'bigint' ||
+    typeof child === 'symbol'
+      ? hString(child)
+      : child
   )
 }
 

@@ -663,7 +663,7 @@ describe('patch vdom with component host', () => {
   })
 
   test('when the root node changes, bounds the component to the event handlers', async () => {
-    const oldVdom = h('button', ['Click'])
+    const oldVdom = h('button', {}, ['Click'])
     const newVdom = h('div', props, ['Click'])
 
     await patch(oldVdom, newVdom, component)

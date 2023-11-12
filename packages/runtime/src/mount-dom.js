@@ -21,7 +21,7 @@ import { extractPropsAndEvents } from './utils/props'
  */
 export function mountDOM(vdom, parentEl, index, hostComponent = null) {
   if (parentEl == null) {
-    throw new Error('Parent element is null')
+    throw new Error('[mountDOM] Parent element is null')
   }
 
   switch (vdom.type) {
@@ -148,9 +148,10 @@ function createFragmentNodes(vdom, parentEl, index, hostComponent) {
  * @param {import('./component').Component} [hostComponent] The component that the listeners are added to
  */
 function createComponentNode(vdom, parentEl, index, hostComponent) {
-  const Component = vdom.tag
+  const { tag: Component, children } = vdom
   const { props, events } = extractPropsAndEvents(vdom)
   const component = new Component(props, events, hostComponent)
+  component.setExternalContent(children)
 
   component.mount(parentEl, index)
   vdom.component = component

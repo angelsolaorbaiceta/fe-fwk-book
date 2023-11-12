@@ -1,6 +1,6 @@
 {
   "name": "fe-fwk",
-  "version": "4.0.10",
+  "version": "5.0.4",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
   "keywords": [
     "frontend",
@@ -10,9 +10,12 @@
     "web",
     "development"
   ],
+  "exports": "./dist/fe-fwk.js",
   "main": "dist/fe-fwk.js",
+  "module": "dist/fe-fwk.js",
   "files": [
-    "dist/fe-fwk.js"
+    "dist/fe-fwk.js",
+    "dist/fe-fwk.min.js"
   ],
   "homepage": "http://mng.bz/aM2o",
   "bugs": {
@@ -30,12 +33,13 @@
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.5",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "@vitest/coverage-v8": "^0.34.6",
-    "eslint": "^8.51.0",
+    "eslint": "^8.53.0",
     "jsdom": "^22.1.0",
-    "rollup": "^4.0.2",
+    "rollup": "^4.3.0",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-filesize": "^10.0.0",
     "vitest": "^0.34.6"
