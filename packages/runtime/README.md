@@ -374,3 +374,38 @@ defineComponent({
   },
 })
 ```
+
+## [v5.0 - Chapter 15](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch15/packages/runtime)
+
+_See the example application in the [examples/ch15 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch15)_.
+
+To checkout this version of the code:
+
+```bash
+$ git checkout ch15
+```
+
+This version of the framework allows to insert external content into a component using _slots_.
+A component can define where the external content should be inserted by using the `hSlot()` function:
+
+```js
+const Comp = defineComponent({
+  render() {
+    return h('div', {}, [hSlot()])
+  },
+})
+```
+
+Then, when mounting the component, you can pass the external content as the third argument to the `h()` function:
+
+```js
+h(Comp, {}, [h('span', {}, ['Hello'])])
+```
+
+The result of mounting the component above will be:
+
+```html
+<div>
+  <span>Hello</span>
+</div>
+```
