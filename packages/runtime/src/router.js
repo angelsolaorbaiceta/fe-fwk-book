@@ -16,6 +16,11 @@ export class HashRouter {
     return this.#params
   }
 
+  #query = {}
+  get query() {
+    return this.#query
+  }
+
   constructor(routes = []) {
     assert(Array.isArray(routes), 'Routes must be an array')
     this.#matchers = routes.map(makeRouteMatcher)
@@ -111,9 +116,11 @@ export class HashRouter {
     if (matcher) {
       this.#matchedRoute = matcher.route
       this.#params = matcher.extractParams(path)
+      this.#query = matcher.extractQuery(path)
     } else {
       this.#matchedRoute = null
       this.#params = {}
+      this.#query = {}
     }
   }
 }

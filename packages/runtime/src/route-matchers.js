@@ -11,6 +11,7 @@
  * @property {Route} route - The route that this matcher matches.
  * @property {(path: string) => boolean} checkMatch - Function that checks whether a route matches a path.
  * @property {(path: string) => object} extractParams - Function that extracts the parameters from a path.
+ * @property {(path: string) => object} extractQuery - Function that extracts the query parameters from a path.
  */
 
 const CATCH_ALL_ROUTE = '*'
@@ -53,6 +54,7 @@ function makeMatcherWithParams(route) {
       const { groups } = regex.exec(path)
       return groups
     },
+    extractQuery,
   }
 }
 
@@ -76,6 +78,7 @@ function makeMatcherWithoutParams(route) {
     extractParams() {
       return {}
     },
+    extractQuery,
   }
 }
 
@@ -85,4 +88,16 @@ function makeRouteWithoutParamsRegex({ path }) {
   }
 
   return new RegExp(`^${path}$`)
+}
+
+function extractQuery(path) {
+  const queryIndex = path.indexOf('?')
+
+  if (queryIndex === -1) {
+    return {}
+  }
+
+  const search = new URLSearchParams(path.slice(queryIndex + 1))
+
+  return Object.fromEntries(search.entries())
 }

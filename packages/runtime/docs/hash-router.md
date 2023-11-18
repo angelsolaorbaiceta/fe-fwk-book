@@ -36,3 +36,4 @@ const searchParams = new URLSearchParams(params)
 ## References
 
 - [MDN: Anatomy of a URL](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL)
+- [MDN: pushState function](https://developer.mozilla.org/en-US/docs/Web/API/History/pushState)

@@ -164,7 +164,7 @@ describe('When a route with parameters is navigated to', () => {
     })
   })
 
-  describe('When the route is changed to one without parameters', () => {
+  describe('and the route is changed to one without parameters', () => {
     beforeEach(() => {
       router.navigateTo('/one')
     })
@@ -175,6 +175,45 @@ describe('When a route with parameters is navigated to', () => {
 
     test('the params are cleared', () => {
       expect(router.params).toEqual({})
+    })
+  })
+})
+
+describe('When a route with query parameters is navigated to', () => {
+  let router
+
+  beforeEach(() => {
+    router = new HashRouter(routes)
+    router.init()
+    router.navigateTo('/two/123/page/456?foo=bar&baz=qux')
+  })
+
+  test('matches the route', () => {
+    expect(router.matchedRoute.component).toBe(Two)
+  })
+
+  test('modifies the URL hash', () => {
+    expect(window.location.hash).toBe('#/two/123/page/456?foo=bar&baz=qux')
+  })
+
+  test('extracts the query parameters', () => {
+    expect(router.query).toEqual({
+      foo: 'bar',
+      baz: 'qux',
+    })
+  })
+
+  describe('and the route is changed to one without query parameters', () => {
+    beforeEach(() => {
+      router.navigateTo('/one')
+    })
+
+    test('matches the route', () => {
+      expect(router.matchedRoute.component).toBe(One)
+    })
+
+    test('the query params are cleared', () => {
+      expect(router.query).toEqual({})
     })
   })
 })
