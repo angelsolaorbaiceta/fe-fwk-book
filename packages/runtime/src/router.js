@@ -21,6 +21,9 @@ export class HashRouter {
     return this.#query
   }
 
+  // Saved to a variable to be able to remove the event listener in the destroy() method.
+  #onPopState = () => this.#matchCurrentRoute()
+
   constructor(routes = []) {
     assert(Array.isArray(routes), 'Routes must be an array')
     this.#matchers = routes.map(makeRouteMatcher)
@@ -52,8 +55,12 @@ export class HashRouter {
       window.history.replaceState({}, '', '#/')
     }
 
-    window.addEventListener('popstate', () => this.#matchCurrentRoute())
+    window.addEventListener('popstate', this.#onPopState)
     this.#matchCurrentRoute()
+  }
+
+  destroy() {
+    window.removeEventListener('popstate', this.#onPopState)
   }
 
   /**

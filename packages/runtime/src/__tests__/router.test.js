@@ -1,4 +1,4 @@
-import { test, expect, afterEach, describe, beforeEach } from 'vitest'
+import { vi, test, expect, afterEach, describe, beforeEach } from 'vitest'
 import { HashRouter } from '../router'
 import { defineComponent } from '../component'
 import { h, hString } from '../h'
@@ -217,3 +217,59 @@ describe('When a route with query parameters is navigated to', () => {
     })
   })
 })
+
+describe('When the user writes the URL in the address bar', () => {
+  let router
+
+  beforeEach(() => {
+    router = new HashRouter(routes)
+    router.init()
+  })
+
+  test('matches the route', () => {
+    browserNavigateTo('/one')
+
+    expect(router.matchedRoute.component).toBe(One)
+  })
+
+  test('extracts the parameters', () => {
+    browserNavigateTo('/two/123/page/456')
+
+    expect(router.params).toEqual({
+      userId: '123',
+      pageId: '456',
+    })
+  })
+
+  test('extracts the query parameters', () => {
+    browserNavigateTo('/two/123/page/456?foo=bar&baz=qux')
+
+    expect(router.query).toEqual({
+      foo: 'bar',
+      baz: 'qux',
+    })
+  })
+})
+
+describe('When the router is destroyed, it stops listening to popstate events', () => {
+  let router
+
+  beforeEach(() => {
+    router = new HashRouter(routes)
+    vi.spyOn(window, 'removeEventListener')
+    router.init()
+    router.destroy()
+  })
+
+  test('removes the event listener', () => {
+    expect(window.removeEventListener).toHaveBeenCalledWith(
+      'popstate',
+      expect.any(Function)
+    )
+  })
+})
+
+function browserNavigateTo(path) {
+  window.history.pushState({}, '', `/#${path}`)
+  window.dispatchEvent(new PopStateEvent('popstate'))
+}
