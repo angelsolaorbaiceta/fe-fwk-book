@@ -1,4 +1,4 @@
-import { isCatchAllRoute, makeRouteMatcher } from './route-matchers'
+import { makeRouteMatcher } from './route-matchers'
 import { assert } from './utils/assert'
 
 export class HashRouter {

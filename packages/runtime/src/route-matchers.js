@@ -16,16 +16,6 @@
 const CATCH_ALL_ROUTE = '*'
 
 /**
- * Returns whether a route is the catch-all route.
- *
- * @param {Route} route - The route to check.
- * @returns {boolean} Whether the route is the catch-all route.
- */
-export function isCatchAllRoute({ path }) {
-  return path === CATCH_ALL_ROUTE
-}
-
-/**
  * Creates a `RouteMatcher` object for a given route.
  * Routes start with a `/` and have one or more path segments.
  * URL parameters can be specified by prefixing the parameter name with a `:`.
