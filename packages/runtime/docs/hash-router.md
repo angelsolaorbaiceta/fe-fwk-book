@@ -3,7 +3,7 @@
 A hash router stores the location in the has part of the URL.
 
 ```
-https: // example.com : 8080 /something/ ?query=abc123 #fooBarBaz
+https: // example.com : 8080 /something/ ?query=abc123 #/fooBarBaz
 
 ⎣____⎦    ⎣__________⎦  ⎣__⎦ ⎣________⎦ ⎣____________⎦ ⎣________⎦
 protocol     domain     port    path      parameters      hash

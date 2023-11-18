@@ -9,7 +9,6 @@
  * @typedef RouteMatcher
  * @type {object}
  * @property {Route} route - The route that this matcher matches.
- * @property {boolean} hasParams - Whether the route has parameters.
  * @property {(path: string) => boolean} checkMatch - Function that checks whether a route matches a path.
  * @property {(path: string) => object} extractParams - Function that extracts the parameters from a path.
  */
@@ -43,31 +42,54 @@ export function isCatchAllRoute({ path }) {
  * @returns {RouteMatcher} The route matcher.
  */
 export function makeRouteMatcher(route) {
-  return makeMatcherWithoutParams(route)
+  return routeHasParams(route)
+    ? makeMatcherWithParams(route)
+    : makeMatcherWithoutParams(route)
 }
 
-function makeMatcherWithoutParams(route) {
-  const regex = makeRouteRegex(route)
+function routeHasParams({ path }) {
+  return path.includes(':')
+}
+
+function makeMatcherWithParams(route) {
+  const regex = makeRouteWithParamsRegex(route)
 
   return {
     route,
-
     checkMatch(path) {
       return regex.test(path)
     },
-
-    hasParams: false,
-    get params() {
-      return {}
+    extractParams(path) {
+      const { groups } = regex.exec(path)
+      return groups
     },
+  }
+}
 
-    get query() {
+function makeRouteWithParamsRegex({ path }) {
+  const regex = path.replace(
+    /:([^/]+)/g,
+    (_, paramName) => `(?<${paramName}>[^/]+)`
+  )
+
+  return new RegExp(`^${regex}$`)
+}
+
+function makeMatcherWithoutParams(route) {
+  const regex = makeRouteWithoutParamsRegex(route)
+
+  return {
+    route,
+    checkMatch(path) {
+      return regex.test(path)
+    },
+    extractParams() {
       return {}
     },
   }
 }
 
-function makeRouteRegex({ path }) {
+function makeRouteWithoutParamsRegex({ path }) {
   if (path === CATCH_ALL_ROUTE) {
     return new RegExp('^.*$')
   }

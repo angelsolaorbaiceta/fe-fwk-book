@@ -11,6 +11,11 @@ export class HashRouter {
     return this.#matchedRoute
   }
 
+  #params = {}
+  get params() {
+    return this.#params
+  }
+
   constructor(routes = []) {
     assert(Array.isArray(routes), 'Routes must be an array')
     this.#matchers = routes.map(makeRouteMatcher)
@@ -50,20 +55,42 @@ export class HashRouter {
    * Navigates to the given route path, matching it to a component
    * and pushing it to the browser's history.
    *
+   * When there isn't a "catch-all" route defined in the router and an unknown
+   * path is navigated to, the router doesn't change the URL, it simply
+   * ignores the navigation, as there isn't a route to match the path to.
+   *
+   * On the other hand, when there is a "catch-all" route, it matches the
+   * path to the catch-all route and pushes it to the browser's history.
+   * In this case, the Browser's URL will point to the unknown path.
+   *
    * @param {object} route The route's path or name to navigate to.
    */
   navigateTo(path) {
     this.#matchRoute(path)
 
-    if (!this.#matchedRoute) {
-      return
-    }
-
-    if (isCatchAllRoute(this.#matchedRoute)) {
-      window.history.pushState({}, '', `#${path}`)
+    if (this.#matchedRoute) {
+      this.#pushState(path)
     } else {
-      window.history.pushState({}, '', `#${this.matchedRoute.path}`)
+      console.warn(`[Router] No route matches path "${path}"`)
     }
+  }
+
+  /**
+   * A convenience method to push a path to the browser's history.
+   * The path is always added to the hash portion of the URL.
+   *
+   * Note that the `pushState()` requires a second argument which is unused,
+   * but required by the API. According to the MDN docs, it should be an empty string:
+   *
+   * > This parameter exists for historical reasons, and cannot be omitted;
+   * > passing an empty string is safe against future changes to the method.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/History/pushState
+   *
+   * @param {string} path - The path to push to the browser's history.
+   */
+  #pushState(path) {
+    window.history.pushState({}, '', `#${path}`)
   }
 
   #matchCurrentRoute() {
@@ -83,8 +110,10 @@ export class HashRouter {
 
     if (matcher) {
       this.#matchedRoute = matcher.route
+      this.#params = matcher.extractParams(path)
     } else {
       this.#matchedRoute = null
+      this.#params = {}
     }
   }
 }

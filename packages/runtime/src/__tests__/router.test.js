@@ -13,6 +13,11 @@ const One = defineComponent({
     return h('h1', {}, [hString('One')])
   },
 })
+const Two = defineComponent({
+  render() {
+    return h('h1', {}, [hString('Two')])
+  },
+})
 const NotFound = defineComponent({
   render() {
     return h('h1', {}, [hString('Not found')])
@@ -27,6 +32,10 @@ const routes = [
   {
     path: '/one',
     component: One,
+  },
+  {
+    path: '/two/:userId/page/:pageId',
+    component: Two,
   },
 ]
 
@@ -128,5 +137,44 @@ describe('When an unknown route is navigated to and there is a catch-all route',
 
   test('keeps the "unknown" route in the URL hash', () => {
     expect(window.location.hash).toBe('#/unknown')
+  })
+})
+
+describe('When a route with parameters is navigated to', () => {
+  let router
+
+  beforeEach(() => {
+    router = new HashRouter(routes)
+    router.init()
+    router.navigateTo('/two/123/page/456')
+  })
+
+  test('matches the route', () => {
+    expect(router.matchedRoute.component).toBe(Two)
+  })
+
+  test('modifies the URL hash', () => {
+    expect(window.location.hash).toBe('#/two/123/page/456')
+  })
+
+  test('extracts the parameters', () => {
+    expect(router.params).toEqual({
+      userId: '123',
+      pageId: '456',
+    })
+  })
+
+  describe('When the route is changed to one without parameters', () => {
+    beforeEach(() => {
+      router.navigateTo('/one')
+    })
+
+    test('matches the route', () => {
+      expect(router.matchedRoute.component).toBe(One)
+    })
+
+    test('the params are cleared', () => {
+      expect(router.params).toEqual({})
+    })
   })
 })
