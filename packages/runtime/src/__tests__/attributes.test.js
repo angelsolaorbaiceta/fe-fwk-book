@@ -72,8 +72,8 @@ describe('attributes of an <input type="text">', () => {
     { name: 'disabled', values: [true, false], whenRemoved: false },
     { name: 'required', values: [true, false], whenRemoved: false },
     { name: 'readOnly', values: [true, false], whenRemoved: false },
-    { name: 'minLength', values: [1, 2], whenRemoved: 0 },
-    { name: 'maxLength', values: [1, 2], whenRemoved: 524288 },
+    { name: 'minLength', values: [1, 2], whenRemoved: -1 },
+    { name: 'maxLength', values: [1, 2], whenRemoved: -1 },
     { name: 'size', values: [1, 2], whenRemoved: 20 },
     {
       name: 'autocomplete',
