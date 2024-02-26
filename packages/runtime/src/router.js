@@ -1,22 +1,86 @@
 import { makeRouteMatcher } from './route-matchers'
 import { assert } from './utils/assert'
 
+/**
+ * Implements the `HashRouter` to navigate between pages without requesting them to the server.
+ * In a hash router, the location is kept in the hash portion or the URL:
+ *
+ * ```
+ * https: // example.com : 8080 /something/ ?query=abc123 #/fooBarBaz
+ *
+ * ⎣____⎦    ⎣__________⎦  ⎣__⎦ ⎣________⎦ ⎣____________⎦ ⎣________⎦
+ * protocol     domain     port    path      parameters      hash
+ * ```
+ *
+ * The router is initialized with a list of routes, each with a path and a component.
+ * Routes can contain parameters, which are extracted from the path and made available.
+ * Parameters are defined in the path with a colon, like `/user/:id`.
+ * A catch-all route can be defined with a path of `*`.
+ *
+ * The router starts listening to the browser's popstate events when initialized.
+ * To initialize the router, call the `init()` method.
+ *
+ * Example:
+ *
+ * ```javascript
+ * const routes = [
+ *  { path: '/', component: Home },
+ *  { path: '/one', component: One },
+ *  { path: '/two/:userId/page/:pageId', component: Two },
+ *  { path: '*', component: NotFound },
+ * ]
+ *
+ * const router = new HashRouter(routes)
+ * router.init()
+ * ```
+ */
 export class HashRouter {
   /** @type {import('./route-matchers').RouteMatcher[]} */
   #matchers = []
 
   /** @type {import('./route-matchers').Route | null} */
   #matchedRoute = null
+
+  /**
+   * The `Route` object that matches the current route or `null` if no route matches.
+   */
   get matchedRoute() {
     return this.#matchedRoute
   }
 
+  /** @type {Object<string, string>} */
   #params = {}
+
+  /**
+   * The parameters extracted from the current route's path, in an object.
+   *
+   * Example:
+   *
+   * ```javascript
+   * // Given the route defined as `/users/:userId`
+   * // And the URL: https://example.com/#/users/123
+   * router.params
+   * // => { userId: '123' }
+   * ```
+   */
   get params() {
     return this.#params
   }
 
+  /** @type {Object<string, string>} */
   #query = {}
+
+  /**
+   * The query parameters extracted from the current route's path, in an object.
+   *
+   * Example:
+   *
+   * ```javascript
+   * // Given the URL: https://example.com/#/path?query=abc123&foo=bar
+   * router.query
+   * // => { query: 'abc123', foo: 'bar' }
+   * ```
+   */
   get query() {
     return this.#query
   }
@@ -45,22 +109,46 @@ export class HashRouter {
     return hash.slice(1)
   }
 
+  // Whether the router is initialized or not.
+  // Saved to avoid initializing the router multiple times.
+  #isInitialized = false
+
   /**
    * Initializes the router by matching the current route to a component and
    * listening for the browser's popstate events.
+   *
    * If there is no hash in the URL, it adds one.
+   *
+   * If the router is already initialized, calling this method again has no effect.
    */
   init() {
+    if (this.#isInitialized) {
+      return
+    }
+
     if (document.location.hash === '') {
       window.history.replaceState({}, '', '#/')
     }
 
     window.addEventListener('popstate', this.#onPopState)
     this.#matchCurrentRoute()
+
+    this.#isInitialized = true
   }
 
+  /**
+   * Stops listening to the browser's popstate events. If the router is not
+   * initialized, calling this method has no effect.
+   *
+   * Call this method to clean up the router when it's no longer needed.
+   */
   destroy() {
+    if (!this.#isInitialized) {
+      return
+    }
+
     window.removeEventListener('popstate', this.#onPopState)
+    this.#isInitialized = false
   }
 
   /**
@@ -75,7 +163,7 @@ export class HashRouter {
    * path to the catch-all route and pushes it to the browser's history.
    * In this case, the Browser's URL will point to the unknown path.
    *
-   * @param {object} route The route's path or name to navigate to.
+   * @param {string} path The route's path or name to navigate to.
    */
   navigateTo(path) {
     this.#matchRoute(path)

@@ -10,8 +10,8 @@
  * @type {object}
  * @property {Route} route - The route that this matcher matches.
  * @property {(path: string) => boolean} checkMatch - Function that checks whether a route matches a path.
- * @property {(path: string) => object} extractParams - Function that extracts the parameters from a path.
- * @property {(path: string) => object} extractQuery - Function that extracts the query parameters from a path.
+ * @property {(path: string) => Object<string, string>} extractParams - Function that extracts the parameters from a path.
+ * @property {(path: string) => Object<string, string>} extractQuery - Function that extracts the query parameters from a path.
  */
 
 const CATCH_ALL_ROUTE = '*'

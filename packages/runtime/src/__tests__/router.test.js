@@ -39,6 +39,11 @@ const routes = [
   },
 ]
 
+beforeEach(() => {
+  // Stub the `console.warn` method to avoid polluting the test output
+  vi.stubGlobal('console', { warn: vi.fn() })
+})
+
 afterEach(() => {
   window.history.replaceState({}, '', '/')
 })
