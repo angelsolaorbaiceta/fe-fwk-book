@@ -5,6 +5,7 @@ export default defineConfig({
     include: ['**/__tests__/**/*.test.js'],
     reporters: 'verbose',
     environment: 'jsdom',
+    testTimeout: 2000,
     coverage: {
       provider: 'v8',
     },

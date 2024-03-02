@@ -176,6 +176,28 @@ export class HashRouter {
   }
 
   /**
+   * Navigates to the previous page in the browser's history.
+   *
+   * It uses the `window.history.back()` method to navigate back.
+   * This is an asynchronous method. We need to listen to the popstate event to know when
+   * the back action is completed.
+   */
+  back() {
+    window.history.back()
+  }
+
+  /**
+   * Navigates to the next page in the browser's history.
+   *
+   * It uses the `window.history.forward()` method to navigate forward.
+   * This is an asynchronous method. We need to listen to the popstate event to know when
+   * the forward action is completed.
+   */
+  forward() {
+    window.history.forward()
+  }
+
+  /**
    * A convenience method to push a path to the browser's history.
    * The path is always added to the hash portion of the URL.
    *

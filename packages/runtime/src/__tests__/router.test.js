@@ -1,7 +1,8 @@
-import { vi, test, expect, afterEach, describe, beforeEach } from 'vitest'
-import { HashRouter } from '../router'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { defineComponent } from '../component'
 import { h, hString } from '../h'
+import { HashRouter } from '../router'
+import { flushPromises } from '../utils/promises'
 
 const Home = defineComponent({
   render() {
@@ -41,7 +42,7 @@ const routes = [
 
 beforeEach(() => {
   // Stub the `console.warn` method to avoid polluting the test output
-  vi.stubGlobal('console', { warn: vi.fn() })
+  vi.stubGlobal('console', { warn: vi.fn(), log: console.log })
 })
 
 afterEach(() => {
@@ -272,6 +273,64 @@ describe('When the router is destroyed, it stops listening to popstate events', 
       expect.any(Function)
     )
   })
+})
+
+describe('Going back and forward', () => {
+  let router
+  let listenerFn
+
+  beforeEach(() => {
+    window.removeEventListener('popstate', listenerFn)
+    listenerFn = null
+
+    router = new HashRouter(routes)
+    router.init()
+  })
+
+  test('can go back', () =>
+    new Promise((done) => {
+      router.navigateTo('/one')
+      router.navigateTo('/two/123/page/456')
+
+      expect(router.matchedRoute.component).toEqual(Two)
+
+      // subscribe to popstate to check if the router goes back
+      listenerFn = function () {
+        expect(router.matchedRoute.component).toEqual(One)
+        done()
+      }
+      window.addEventListener('popstate', listenerFn)
+
+      router.back()
+    }))
+
+  test('can go forward', () =>
+    new Promise((done) => {
+      router.navigateTo('/one')
+      router.navigateTo('/two/123/page/456')
+
+      let times = 0
+
+      // subscribe to popstate to check if the router goes forward
+      listenerFn = function () {
+        times++
+
+        if (times === 1) {
+          expect(router.matchedRoute.component).toEqual(One)
+        }
+        if (times === 2) {
+          expect(router.matchedRoute.component).toEqual(Two)
+          done()
+        }
+      }
+      window.addEventListener('popstate', listenerFn)
+
+      router.back()
+      flushPromises().then(() => {
+        // Only run forward() after back() has finished
+        router.forward()
+      })
+    }))
 })
 
 function browserNavigateTo(path) {
