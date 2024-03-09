@@ -1,5 +1,25 @@
+import { Dispatcher } from './dispatcher'
 import { makeRouteMatcher } from './route-matchers'
 import { assert } from './utils/assert'
+
+/**
+ * The object passed as an argument to the route change handler.
+ *
+ * @typedef {Object} RouteChangeHandlerParams
+ * @property {import('./route-matchers').Route} from
+ * @property {import('./route-matchers').Route} to
+ * @property {HashRouter} router
+ */
+
+/**
+ * A function that handles route changes.
+ *
+ * @callback RouteChangeHandler
+ * @param {RouteChangeHandlerParams} params
+ * @returns {void}
+ */
+
+const ROUTER_EVENT = 'router-event'
 
 /**
  * Implements the `HashRouter` to navigate between pages without requesting them to the server.
@@ -40,6 +60,10 @@ export class HashRouter {
 
   /** @type {import('./route-matchers').Route | null} */
   #matchedRoute = null
+
+  #dispatcher = new Dispatcher()
+  #subscriptions = new WeakMap()
+  #subscriberFns = new Set()
 
   /**
    * The `Route` object that matches the current route or `null` if no route matches.
@@ -148,6 +172,7 @@ export class HashRouter {
     }
 
     window.removeEventListener('popstate', this.#onPopState)
+    Array.from(this.#subscriberFns).forEach(this.unsubscribe, this)
     this.#isInitialized = false
   }
 
@@ -198,6 +223,33 @@ export class HashRouter {
   }
 
   /**
+   * Subscribes a handler function to the router's route change events.
+   * The handler is called every time the route changes, and the handler is passed an object
+   * with the `from` and `to` routes and the router itself.
+   *
+   * @param {RouteChangeHandler} handler
+   */
+  subscribe(handler) {
+    const unsubscribe = this.#dispatcher.subscribe(ROUTER_EVENT, handler)
+    this.#subscriptions.set(handler, unsubscribe)
+    this.#subscriberFns.add(handler)
+  }
+
+  /**
+   * Unsubscribes a handler function from the router's route change events.
+   *
+   * @param {RouteChangeHandler} handler
+   */
+  unsubscribe(handler) {
+    const unsubscribe = this.#subscriptions.get(handler)
+    if (unsubscribe) {
+      unsubscribe()
+      this.#subscriptions.delete(handler)
+      this.#subscriberFns.delete(handler)
+    }
+  }
+
+  /**
    * A convenience method to push a path to the browser's history.
    * The path is always added to the hash portion of the URL.
    *
@@ -223,6 +275,8 @@ export class HashRouter {
    * Matches the given path to a route. If no route is matched, the `matchedRoute`
    * property is set to `null`. The first route that matches the path is used.
    *
+   * If a new route is matched, the router dispatches a route change event.
+   *
    * @param {string} path The path to match.
    */
   #matchRoute(path) {
@@ -231,9 +285,14 @@ export class HashRouter {
     )
 
     if (matcher) {
+      const from = this.#matchedRoute
+      const to = matcher.route
+
       this.#matchedRoute = matcher.route
       this.#params = matcher.extractParams(path)
       this.#query = matcher.extractQuery(path)
+
+      this.#dispatcher.dispatch(ROUTER_EVENT, { from, to, router: this })
     } else {
       this.#matchedRoute = null
       this.#params = {}

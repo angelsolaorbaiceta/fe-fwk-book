@@ -333,6 +333,74 @@ describe('Going back and forward', () => {
     }))
 })
 
+describe('External functions can be subscribed to route changes', () => {
+  let router
+
+  beforeEach(() => {
+    router = new HashRouter(routes)
+    router.init()
+  })
+
+  afterEach(() => {
+    router.destroy()
+  })
+
+  test('when a route is matched for the first time, the previous route is the default route', () => {
+    const subscriber = vi.fn()
+    router.subscribe(subscriber)
+    router.navigateTo('/one')
+
+    const expectedPayload = {
+      from: { path: '/', component: Home },
+      to: { path: '/one', component: One },
+      router,
+    }
+
+    expect(subscriber).toHaveBeenCalledWith(expectedPayload)
+  })
+
+  test('when a new route is matched, the previous and new route are passed as arguments', () => {
+    const subscriber = vi.fn()
+    router.navigateTo('/one')
+    router.subscribe(subscriber)
+    router.navigateTo('/two/123/page/456')
+
+    const expectedPayload = {
+      from: { path: '/one', component: One },
+      to: { path: '/two/:userId/page/:pageId', component: Two },
+      router,
+    }
+
+    expect(subscriber).toHaveBeenCalledWith(expectedPayload)
+  })
+
+  test("when no route is matched, it doesn't call the subscriber", () => {
+    const subscriber = vi.fn()
+    router.subscribe(subscriber)
+    router.navigateTo('/unknown')
+
+    expect(subscriber).not.toHaveBeenCalled()
+  })
+
+  test('can unsubscribe', () => {
+    const subscriber = vi.fn()
+    router.subscribe(subscriber)
+    router.unsubscribe(subscriber)
+    router.navigateTo('/one')
+
+    expect(subscriber).not.toHaveBeenCalled()
+  })
+
+  test('on destroy, all subscribers are unsubscribed', () => {
+    const subscriber = vi.fn()
+    router.subscribe(subscriber)
+    router.destroy()
+    router.navigateTo('/one')
+
+    expect(subscriber).not.toHaveBeenCalled()
+  })
+})
+
 function browserNavigateTo(path) {
   window.history.pushState({}, '', `/#${path}`)
   window.dispatchEvent(new PopStateEvent('popstate'))
