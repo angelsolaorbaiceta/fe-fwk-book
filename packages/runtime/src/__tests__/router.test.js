@@ -440,6 +440,21 @@ describe('A route can be guarded', () => {
 
     expect(router.matchedRoute.component).toBe(Home)
   })
+
+  test('a guard can return a new route to navigate to', async () => {
+    router.addGuard((from, to) => {
+      if (from === '/one' && to === '/two/:userId/page/:pageId') {
+        return { path: '/', component: Home }
+      }
+
+      return true
+    })
+
+    await router.navigateTo('/one')
+    await router.navigateTo('/two/123/page/456')
+
+    expect(router.matchedRoute.component).toBe(Home)
+  })
 })
 
 function browserNavigateTo(path) {

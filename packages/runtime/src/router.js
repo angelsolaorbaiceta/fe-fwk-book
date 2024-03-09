@@ -6,9 +6,9 @@ import { assert } from './utils/assert'
  * The object passed as an argument to the route change handler.
  *
  * @typedef {Object} RouteChangeHandlerParams
- * @property {import('./route-matchers').Route} from
- * @property {import('./route-matchers').Route} to
- * @property {HashRouter} router
+ * @property {import('./route-matchers').Route} from the source route, where the navigation is coming from
+ * @property {import('./route-matchers').Route} to the target route, where the navigation is going to
+ * @property {HashRouter} router the router instance
  */
 
 /**
@@ -21,14 +21,25 @@ import { assert } from './utils/assert'
 
 /**
  * A guard asynchronous function that can be used to prevent route changes.
- * Every guard function should return a boolean indicating whether the route change should be allowed.
+ * Every guard function should return a boolean indicating whether the route change should be allowed
+ * or a route where the navigation should be redirected to.
+ *
  * A lack of value results in an `undefined` which is treated as `true`. In other words,
  * only a `false` value prevents the route change.
  *
  * @callback RouteGuard
  * @param {string} from the route path, as defined in the router
  * @param {string} to the route path, as defined in the router
- * @returns {Promise<boolean>} whether the route change should be allowed
+ * @returns {Promise<boolean|import('./route-matchers').Route>} whether the route change should be allowed
+ */
+
+/**
+ * Result of a navigation attempt after the guards have been checked.
+ *
+ * @typedef {Object} NavigationGuardResult
+ * @property {boolean} shouldNavigate whether the route change should be allowed
+ * @property {boolean} shouldRedirect whether the route change should be redirected
+ * @property {(string|null)} redirectPath the path to redirect to
  */
 
 const ROUTER_EVENT = 'router-event'
@@ -228,8 +239,14 @@ export class HashRouter {
 
     const from = this.#matchedRoute
     const to = matcher.route
+    const { shouldNavigate, shouldRedirect, redirectPath } =
+      await this.#canChangeRoute(from?.path, to?.path)
 
-    if (await this.#canRouteChange(from?.path, to?.path)) {
+    if (shouldRedirect) {
+      return this.navigateTo(redirectPath)
+    }
+
+    if (shouldNavigate) {
       this.#matchedRoute = matcher.route
       this.#params = matcher.extractParams(path)
       this.#query = matcher.extractQuery(path)
@@ -323,19 +340,37 @@ export class HashRouter {
 
   /**
    * Checks whether the route change should be allowed by all guard functions.
+   * The first guard that returns a false value prevents the route change.
+   * If a guard returns a route object, the navigation is redirected to the route's path.
    *
    * @param {string} from the source route path, as defined in the router
    * @param {string} to the target route path, as defined in the router
-   * @returns {Promise<boolean>} whether the route change should be allowed
+   * @returns {Promise<NavigationGuardResult>} whether the route change should be allowed
    */
-  async #canRouteChange(from, to) {
+  async #canChangeRoute(from, to) {
     for (const guard of this.#guards) {
       const result = await guard(from, to)
       if (result === false) {
-        return false
+        return {
+          shouldRedirect: false,
+          shouldNavigate: false,
+          redirectPath: null,
+        }
+      }
+
+      if (typeof result.path === 'string') {
+        return {
+          shouldRedirect: true,
+          shouldNavigate: false,
+          redirectPath: result.path,
+        }
       }
     }
 
-    return true
+    return {
+      shouldRedirect: false,
+      shouldNavigate: true,
+      redirectPath: null,
+    }
   }
 }
