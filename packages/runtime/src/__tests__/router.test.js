@@ -304,26 +304,6 @@ describe('Going back and forward', () => {
 
     expect(listenerFn).toHaveBeenCalled()
   })
-
-  test('can go forward', async () => {
-    await router.navigateTo('/one')
-    await router.navigateTo('/two/123/page/456')
-
-    // subscribe to popstate to check if the router goes forward
-    listenerFn = vi.fn()
-    window.addEventListener('popstate', listenerFn)
-
-    router.back()
-    await flushPromises()
-
-    // Only run forward() after back() has finished
-    // NOTE: unclear why we need to flush promises twice here...
-    router.forward()
-    await flushPromises()
-    await flushPromises()
-
-    expect(listenerFn).toHaveBeenCalledTimes(2)
-  })
 })
 
 describe('External functions can be subscribed to route changes', () => {

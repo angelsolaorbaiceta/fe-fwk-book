@@ -127,7 +127,8 @@ export class HashRouter {
   }
 
   // Saved to a variable to be able to remove the event listener in the destroy() method.
-  #onPopState = () => this.#matchCurrentRoute()
+  #onPopState = () =>
+    this.#matchCurrentRoute().then(() => console.log('popstate...'))
 
   constructor(routes = []) {
     assert(Array.isArray(routes), 'Routes must be an array')
@@ -208,12 +209,32 @@ export class HashRouter {
    * @param {string} path The route's path or name to navigate to.
    */
   async navigateTo(path) {
-    await this.#matchRoute(path)
+    // await this.#matchRoute(path)
+    const matcher = this.#matchers.find((matcher) =>
+      matcher.checkMatch(path)
+    )
 
-    if (this.#matchedRoute) {
-      this.#pushState(path)
-    } else {
+    // Warn if no route matches the path, reset the matched route and return.
+    if (matcher == null) {
       console.warn(`[Router] No route matches path "${path}"`)
+
+      this.#matchedRoute = null
+      this.#params = {}
+      this.#query = {}
+
+      return
+    }
+
+    const from = this.#matchedRoute
+    const to = matcher.route
+
+    if (await this.#canRouteChange(from?.path, to?.path)) {
+      this.#matchedRoute = matcher.route
+      this.#params = matcher.extractParams(path)
+      this.#query = matcher.extractQuery(path)
+      this.#pushState(path)
+
+      this.#dispatcher.dispatch(ROUTER_EVENT, { from, to, router: this })
     }
   }
 
@@ -296,41 +317,8 @@ export class HashRouter {
   }
 
   #matchCurrentRoute() {
-    return this.#matchRoute(this.#currentRouteHash)
-  }
-
-  /**
-   * Matches the given path to a route. If no route is matched, the `matchedRoute`
-   * property is set to `null`. The first route that matches the path is used.
-   *
-   * If a new route is matched, the router dispatches a route change event.
-   *
-   * Before a route can be matched, the router checks whether the route change should be allowed
-   * by all guard functions. Guard functions are asynchronous, and each of them is awaited.
-   *
-   * @param {string} path The path to match.
-   */
-  async #matchRoute(path) {
-    const matcher = this.#matchers.find((matcher) =>
-      matcher.checkMatch(path)
-    )
-
-    if (matcher) {
-      const from = this.#matchedRoute
-      const to = matcher.route
-
-      if (await this.#canRouteChange(from?.path, to?.path)) {
-        this.#matchedRoute = matcher.route
-        this.#params = matcher.extractParams(path)
-        this.#query = matcher.extractQuery(path)
-
-        this.#dispatcher.dispatch(ROUTER_EVENT, { from, to, router: this })
-      }
-    } else {
-      this.#matchedRoute = null
-      this.#params = {}
-      this.#query = {}
-    }
+    console.log('matching...', this.#currentRouteHash)
+    return this.navigateTo(this.#currentRouteHash)
   }
 
   /**
