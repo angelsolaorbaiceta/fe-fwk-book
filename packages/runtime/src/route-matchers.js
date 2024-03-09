@@ -39,6 +39,10 @@ export function validateRoute(route) {
       'Route path must start with a "/" or be the catch-all route "*"'
     )
   }
+
+  if (route.redirect && route.path === route.redirect) {
+    throw new Error("A redirect route can't redirect to itself")
+  }
 }
 
 /**
@@ -58,6 +62,8 @@ export function validateRoute(route) {
  * @returns {RouteMatcher} The route matcher.
  */
 export function makeRouteMatcher(route) {
+  validateRoute(route)
+
   return routeHasParams(route)
     ? makeMatcherWithParams(route)
     : makeMatcherWithoutParams(route)

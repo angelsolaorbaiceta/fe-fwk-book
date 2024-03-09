@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { makeRouteMatcher, validateRoute } from '../route-matchers'
 
 describe('Validate a route', () => {
@@ -25,6 +25,12 @@ describe('Validate a route', () => {
     )
     expect(() => validateRoute({ path: '/test' })).not.toThrow()
     expect(() => validateRoute({ path: '*' })).not.toThrow()
+  })
+
+  test("a redirect can't redirect to itself (avoid infinite loops)", () => {
+    expect(() =>
+      validateRoute({ path: '/test', redirect: '/test' })
+    ).toThrow("A redirect route can't redirect to itself")
   })
 })
 

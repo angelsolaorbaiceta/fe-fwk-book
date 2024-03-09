@@ -1,5 +1,5 @@
 import { Dispatcher } from './dispatcher'
-import { makeRouteMatcher, validateRoute } from './route-matchers'
+import { makeRouteMatcher } from './route-matchers'
 import { assert } from './utils/assert'
 
 /**
@@ -131,7 +131,6 @@ export class HashRouter {
 
   constructor(routes = []) {
     assert(Array.isArray(routes), 'Routes must be an array')
-    routes.forEach(validateRoute)
     this.#matchers = routes.map(makeRouteMatcher)
   }
 
