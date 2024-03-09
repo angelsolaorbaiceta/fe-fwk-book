@@ -5,7 +5,7 @@ import { assert } from './utils/assert'
 /**
  * The object passed as an argument to the route change handler.
  *
- * @typedef {Object} RouteChangeHandlerParams
+ * @typedef {object} RouteChangeHandlerParams
  * @property {import('./route-matchers').Route} from the source route, where the navigation is coming from
  * @property {import('./route-matchers').Route} to the target route, where the navigation is going to
  * @property {HashRouter} router the router instance
@@ -14,9 +14,7 @@ import { assert } from './utils/assert'
 /**
  * A function that handles route changes.
  *
- * @callback RouteChangeHandler
- * @param {RouteChangeHandlerParams} params the route change parameters
- * @returns {void}
+ * @typedef {(params: RouteChangeHandler) => void} RouteChangeHandler
  */
 
 /**
@@ -282,6 +280,12 @@ export class HashRouter {
    * Subscribes a handler function to the router's route change events.
    * The handler is called every time the route changes, and the handler is passed an object
    * with the `from` and `to` routes and the router itself.
+   *
+   * ```javascript
+   * router.subscribe(({ from, to, router }) => {
+   *  // Do something with the routes
+   * })
+   * ```
    *
    * @param {RouteChangeHandler} handler
    */
