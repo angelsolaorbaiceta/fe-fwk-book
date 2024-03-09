@@ -15,8 +15,20 @@ import { assert } from './utils/assert'
  * A function that handles route changes.
  *
  * @callback RouteChangeHandler
- * @param {RouteChangeHandlerParams} params
+ * @param {RouteChangeHandlerParams} params the route change parameters
  * @returns {void}
+ */
+
+/**
+ * A guard asynchronous function that can be used to prevent route changes.
+ * Every guard function should return a boolean indicating whether the route change should be allowed.
+ * A lack of value results in an `undefined` which is treated as `true`. In other words,
+ * only a `false` value prevents the route change.
+ *
+ * @callback RouteGuard
+ * @param {string} from the route path, as defined in the router
+ * @param {string} to the route path, as defined in the router
+ * @returns {Promise<boolean>} whether the route change should be allowed
  */
 
 const ROUTER_EVENT = 'router-event'
@@ -62,8 +74,13 @@ export class HashRouter {
   #matchedRoute = null
 
   #dispatcher = new Dispatcher()
+  /** @type {WeakMap<RouteChangeHandler, () => void>} */
   #subscriptions = new WeakMap()
+  /** @type {Set<RouteChangeHandler>} */
   #subscriberFns = new Set()
+
+  /** @type {RouteGuard[]} */
+  #guards = []
 
   /**
    * The `Route` object that matches the current route or `null` if no route matches.
@@ -145,7 +162,7 @@ export class HashRouter {
    *
    * If the router is already initialized, calling this method again has no effect.
    */
-  init() {
+  async init() {
     if (this.#isInitialized) {
       return
     }
@@ -155,7 +172,7 @@ export class HashRouter {
     }
 
     window.addEventListener('popstate', this.#onPopState)
-    this.#matchCurrentRoute()
+    await this.#matchCurrentRoute()
 
     this.#isInitialized = true
   }
@@ -190,8 +207,8 @@ export class HashRouter {
    *
    * @param {string} path The route's path or name to navigate to.
    */
-  navigateTo(path) {
-    this.#matchRoute(path)
+  async navigateTo(path) {
+    await this.#matchRoute(path)
 
     if (this.#matchedRoute) {
       this.#pushState(path)
@@ -250,6 +267,17 @@ export class HashRouter {
   }
 
   /**
+   * Adds a guard function to the router. The guard function is called every time
+   * the route changes, and it's passed the `from` and `to` routes. If the guard
+   * function returns `false`, the route change is prevented.
+   *
+   * @param {RouteGuard} guard
+   */
+  addGuard(guard) {
+    this.#guards.push(guard)
+  }
+
+  /**
    * A convenience method to push a path to the browser's history.
    * The path is always added to the hash portion of the URL.
    *
@@ -268,7 +296,7 @@ export class HashRouter {
   }
 
   #matchCurrentRoute() {
-    this.#matchRoute(this.#currentRouteHash)
+    return this.#matchRoute(this.#currentRouteHash)
   }
 
   /**
@@ -277,9 +305,12 @@ export class HashRouter {
    *
    * If a new route is matched, the router dispatches a route change event.
    *
+   * Before a route can be matched, the router checks whether the route change should be allowed
+   * by all guard functions. Guard functions are asynchronous, and each of them is awaited.
+   *
    * @param {string} path The path to match.
    */
-  #matchRoute(path) {
+  async #matchRoute(path) {
     const matcher = this.#matchers.find((matcher) =>
       matcher.checkMatch(path)
     )
@@ -288,15 +319,35 @@ export class HashRouter {
       const from = this.#matchedRoute
       const to = matcher.route
 
-      this.#matchedRoute = matcher.route
-      this.#params = matcher.extractParams(path)
-      this.#query = matcher.extractQuery(path)
+      if (await this.#canRouteChange(from?.path, to?.path)) {
+        this.#matchedRoute = matcher.route
+        this.#params = matcher.extractParams(path)
+        this.#query = matcher.extractQuery(path)
 
-      this.#dispatcher.dispatch(ROUTER_EVENT, { from, to, router: this })
+        this.#dispatcher.dispatch(ROUTER_EVENT, { from, to, router: this })
+      }
     } else {
       this.#matchedRoute = null
       this.#params = {}
       this.#query = {}
     }
+  }
+
+  /**
+   * Checks whether the route change should be allowed by all guard functions.
+   *
+   * @param {string} from the source route path, as defined in the router
+   * @param {string} to the target route path, as defined in the router
+   * @returns {Promise<boolean>} whether the route change should be allowed
+   */
+  async #canRouteChange(from, to) {
+    for (const guard of this.#guards) {
+      const result = await guard(from, to)
+      if (result === false) {
+        return false
+      }
+    }
+
+    return true
   }
 }

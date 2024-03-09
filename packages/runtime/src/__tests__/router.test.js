@@ -50,32 +50,32 @@ afterEach(() => {
 })
 
 describe('On initialization', () => {
-  test('does not match any route when there are no routes', () => {
+  test('does not match any route when there are no routes', async () => {
     const router = new HashRouter()
-    router.init()
+    await router.init()
 
     expect(router.matchedRoute).toBeNull()
   })
 
-  test('loads the home page by default when there is one', () => {
+  test('loads the home page by default when there is one', async () => {
     const router = new HashRouter(routes)
-    router.init()
+    await router.init()
 
     expect(router.matchedRoute.component).toBe(Home)
   })
 
-  test('if there is no hash, it adds one to the URL', () => {
+  test('if there is no hash, it adds one to the URL', async () => {
     const router = new HashRouter(routes)
-    router.init()
+    await router.init()
 
     expect(window.location.hash).toBe('#/')
   })
 
-  test('loads the given page after the hash', () => {
+  test('loads the given page after the hash', async () => {
     window.history.pushState({}, '', '/#/one')
 
     const router = new HashRouter(routes)
-    router.init()
+    await router.init()
 
     expect(router.matchedRoute.component).toBe(One)
   })
@@ -84,10 +84,10 @@ describe('On initialization', () => {
 describe('When a known route is navigated to', () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter(routes)
-    router.init()
-    router.navigateTo('/one')
+    await router.init()
+    await router.navigateTo('/one')
   })
 
   test('matches the route', () => {
@@ -95,9 +95,9 @@ describe('When a known route is navigated to', () => {
     expect(window.location.hash).toBe('#/one')
   })
 
-  test('modifies the URL hash', () => {
+  test('modifies the URL hash', async () => {
     const router = new HashRouter(routes)
-    router.navigateTo('/one')
+    await router.navigateTo('/one')
 
     expect(router.matchedRoute.component).toBe(One)
     expect(window.location.hash).toBe('#/one')
@@ -107,10 +107,10 @@ describe('When a known route is navigated to', () => {
 describe("When an unknown route is navigated to and there isn't a catch-all route", () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter(routes)
-    router.init()
-    router.navigateTo('/unknown')
+    await router.init()
+    await router.navigateTo('/unknown')
   })
 
   test('does not match any route', () => {
@@ -125,7 +125,7 @@ describe("When an unknown route is navigated to and there isn't a catch-all rout
 describe('When an unknown route is navigated to and there is a catch-all route', () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter([
       ...routes,
       {
@@ -133,8 +133,8 @@ describe('When an unknown route is navigated to and there is a catch-all route',
         component: NotFound,
       },
     ])
-    router.init()
-    router.navigateTo('/unknown')
+    await router.init()
+    await router.navigateTo('/unknown')
   })
 
   test('matches the catch-all route', () => {
@@ -149,10 +149,10 @@ describe('When an unknown route is navigated to and there is a catch-all route',
 describe('When a route with parameters is navigated to', () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter(routes)
-    router.init()
-    router.navigateTo('/two/123/page/456')
+    await router.init()
+    await router.navigateTo('/two/123/page/456')
   })
 
   test('matches the route', () => {
@@ -171,8 +171,8 @@ describe('When a route with parameters is navigated to', () => {
   })
 
   describe('and the route is changed to one without parameters', () => {
-    beforeEach(() => {
-      router.navigateTo('/one')
+    beforeEach(async () => {
+      await router.navigateTo('/one')
     })
 
     test('matches the route', () => {
@@ -227,19 +227,19 @@ describe('When a route with query parameters is navigated to', () => {
 describe('When the user writes the URL in the address bar', () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter(routes)
-    router.init()
+    await router.init()
   })
 
-  test('matches the route', () => {
-    browserNavigateTo('/one')
+  test('matches the route', async () => {
+    await browserNavigateTo('/one')
 
     expect(router.matchedRoute.component).toBe(One)
   })
 
-  test('extracts the parameters', () => {
-    browserNavigateTo('/two/123/page/456')
+  test('extracts the parameters', async () => {
+    await browserNavigateTo('/two/123/page/456')
 
     expect(router.params).toEqual({
       userId: '123',
@@ -247,8 +247,8 @@ describe('When the user writes the URL in the address bar', () => {
     })
   })
 
-  test('extracts the query parameters', () => {
-    browserNavigateTo('/two/123/page/456?foo=bar&baz=qux')
+  test('extracts the query parameters', async () => {
+    await browserNavigateTo('/two/123/page/456?foo=bar&baz=qux')
 
     expect(router.query).toEqual({
       foo: 'bar',
@@ -260,10 +260,10 @@ describe('When the user writes the URL in the address bar', () => {
 describe('When the router is destroyed, it stops listening to popstate events', () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter(routes)
     vi.spyOn(window, 'removeEventListener')
-    router.init()
+    await router.init()
     router.destroy()
   })
 
@@ -279,76 +279,69 @@ describe('Going back and forward', () => {
   let router
   let listenerFn
 
-  beforeEach(() => {
+  beforeEach(async () => {
     window.removeEventListener('popstate', listenerFn)
     listenerFn = null
 
     router = new HashRouter(routes)
-    router.init()
+    await router.init()
   })
 
-  test('can go back', () =>
-    new Promise((done) => {
-      router.navigateTo('/one')
-      router.navigateTo('/two/123/page/456')
+  test('can go back', async () => {
+    await router.navigateTo('/one')
+    await router.navigateTo('/two/123/page/456')
 
-      expect(router.matchedRoute.component).toEqual(Two)
+    expect(router.matchedRoute.component).toEqual(Two)
 
-      // subscribe to popstate to check if the router goes back
-      listenerFn = function () {
-        expect(router.matchedRoute.component).toEqual(One)
-        done()
-      }
-      window.addEventListener('popstate', listenerFn)
+    // subscribe to popstate to check if the router goes back
+    listenerFn = vi.fn()
+    window.addEventListener('popstate', listenerFn)
 
-      router.back()
-    }))
+    router.back()
+    // NOTE: unclear why we need to flush promises twice here...
+    await flushPromises()
+    await flushPromises()
 
-  test('can go forward', () =>
-    new Promise((done) => {
-      router.navigateTo('/one')
-      router.navigateTo('/two/123/page/456')
+    expect(listenerFn).toHaveBeenCalled()
+  })
 
-      let times = 0
+  test('can go forward', async () => {
+    await router.navigateTo('/one')
+    await router.navigateTo('/two/123/page/456')
 
-      // subscribe to popstate to check if the router goes forward
-      listenerFn = function () {
-        times++
+    // subscribe to popstate to check if the router goes forward
+    listenerFn = vi.fn()
+    window.addEventListener('popstate', listenerFn)
 
-        if (times === 1) {
-          expect(router.matchedRoute.component).toEqual(One)
-        }
-        if (times === 2) {
-          expect(router.matchedRoute.component).toEqual(Two)
-          done()
-        }
-      }
-      window.addEventListener('popstate', listenerFn)
+    router.back()
+    await flushPromises()
 
-      router.back()
-      flushPromises().then(() => {
-        // Only run forward() after back() has finished
-        router.forward()
-      })
-    }))
+    // Only run forward() after back() has finished
+    // NOTE: unclear why we need to flush promises twice here...
+    router.forward()
+    await flushPromises()
+    await flushPromises()
+
+    expect(listenerFn).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe('External functions can be subscribed to route changes', () => {
   let router
 
-  beforeEach(() => {
+  beforeEach(async () => {
     router = new HashRouter(routes)
-    router.init()
+    await router.init()
   })
 
   afterEach(() => {
     router.destroy()
   })
 
-  test('when a route is matched for the first time, the previous route is the default route', () => {
+  test('when a route is matched for the first time, the previous route is the default route', async () => {
     const subscriber = vi.fn()
     router.subscribe(subscriber)
-    router.navigateTo('/one')
+    await router.navigateTo('/one')
 
     const expectedPayload = {
       from: { path: '/', component: Home },
@@ -359,11 +352,11 @@ describe('External functions can be subscribed to route changes', () => {
     expect(subscriber).toHaveBeenCalledWith(expectedPayload)
   })
 
-  test('when a new route is matched, the previous and new route are passed as arguments', () => {
+  test('when a new route is matched, the previous and new route are passed as arguments', async () => {
     const subscriber = vi.fn()
-    router.navigateTo('/one')
+    await router.navigateTo('/one')
     router.subscribe(subscriber)
-    router.navigateTo('/two/123/page/456')
+    await router.navigateTo('/two/123/page/456')
 
     const expectedPayload = {
       from: { path: '/one', component: One },
@@ -374,34 +367,84 @@ describe('External functions can be subscribed to route changes', () => {
     expect(subscriber).toHaveBeenCalledWith(expectedPayload)
   })
 
-  test("when no route is matched, it doesn't call the subscriber", () => {
+  test("when no route is matched, it doesn't call the subscriber", async () => {
     const subscriber = vi.fn()
     router.subscribe(subscriber)
-    router.navigateTo('/unknown')
+    await router.navigateTo('/unknown')
 
     expect(subscriber).not.toHaveBeenCalled()
   })
 
-  test('can unsubscribe', () => {
+  test('can unsubscribe', async () => {
     const subscriber = vi.fn()
     router.subscribe(subscriber)
     router.unsubscribe(subscriber)
-    router.navigateTo('/one')
+    await router.navigateTo('/one')
 
     expect(subscriber).not.toHaveBeenCalled()
   })
 
-  test('on destroy, all subscribers are unsubscribed', () => {
+  test('on destroy, all subscribers are unsubscribed', async () => {
     const subscriber = vi.fn()
     router.subscribe(subscriber)
     router.destroy()
-    router.navigateTo('/one')
+    await router.navigateTo('/one')
 
     expect(subscriber).not.toHaveBeenCalled()
+  })
+})
+
+describe('A route can be guarded', () => {
+  let router
+
+  beforeEach(async () => {
+    router = new HashRouter(routes)
+    await router.init()
+  })
+
+  afterEach(() => {
+    router.destroy()
+  })
+
+  test('a guard can prevent the route from being matched', async () => {
+    router.addGuard((from, to) => {
+      if (from === '/one' && to === '/two/:userId/page/:pageId') {
+        return false
+      }
+
+      return true
+    })
+
+    await router.navigateTo('/one')
+    await router.navigateTo('/two/123/page/456')
+
+    expect(router.matchedRoute.component).toBe(One)
+  })
+
+  test('guards can be async functions which are executed in order and awaited for', async () => {
+    const fnOne = vi.fn()
+    const fnTwo = vi.fn()
+
+    router.addGuard(async () => {
+      await new Promise((resolve) => setTimeout(resolve))
+      fnOne()
+      return true
+    })
+
+    router.addGuard(async () => {
+      await new Promise((resolve) => setTimeout(resolve))
+      fnTwo()
+      return false
+    })
+
+    await router.navigateTo('/one')
+
+    expect(router.matchedRoute.component).toBe(Home)
   })
 })
 
 function browserNavigateTo(path) {
   window.history.pushState({}, '', `/#${path}`)
   window.dispatchEvent(new PopStateEvent('popstate'))
+  return flushPromises()
 }
