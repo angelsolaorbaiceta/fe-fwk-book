@@ -38,6 +38,10 @@ const routes = [
     path: '/two/:userId/page/:pageId',
     component: Two,
   },
+  {
+    path: '/three',
+    redirect: '/one',
+  },
 ]
 
 beforeEach(() => {
@@ -371,6 +375,21 @@ describe('External functions can be subscribed to route changes', () => {
     await router.navigateTo('/one')
 
     expect(subscriber).not.toHaveBeenCalled()
+  })
+})
+
+describe('Redirect routes', () => {
+  let router
+
+  beforeEach(async () => {
+    router = new HashRouter(routes)
+    await router.init()
+  })
+
+  test('when redirect route is matched, it navigates to the new route', async () => {
+    await router.navigateTo('/three')
+
+    expect(router.matchedRoute.component).toBe(One)
   })
 })
 

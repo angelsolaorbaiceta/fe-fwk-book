@@ -1,5 +1,5 @@
 import { Dispatcher } from './dispatcher'
-import { makeRouteMatcher } from './route-matchers'
+import { makeRouteMatcher, validateRoute } from './route-matchers'
 import { assert } from './utils/assert'
 
 /**
@@ -127,11 +127,11 @@ export class HashRouter {
   }
 
   // Saved to a variable to be able to remove the event listener in the destroy() method.
-  #onPopState = () =>
-    this.#matchCurrentRoute().then(() => console.log('popstate...'))
+  #onPopState = () => this.#matchCurrentRoute()
 
   constructor(routes = []) {
     assert(Array.isArray(routes), 'Routes must be an array')
+    routes.forEach(validateRoute)
     this.#matchers = routes.map(makeRouteMatcher)
   }
 
@@ -209,12 +209,10 @@ export class HashRouter {
    * @param {string} path The route's path or name to navigate to.
    */
   async navigateTo(path) {
-    // await this.#matchRoute(path)
     const matcher = this.#matchers.find((matcher) =>
       matcher.checkMatch(path)
     )
 
-    // Warn if no route matches the path, reset the matched route and return.
     if (matcher == null) {
       console.warn(`[Router] No route matches path "${path}"`)
 
@@ -223,6 +221,10 @@ export class HashRouter {
       this.#query = {}
 
       return
+    }
+
+    if (matcher.isRedirect) {
+      return this.navigateTo(matcher.route.redirect)
     }
 
     const from = this.#matchedRoute
@@ -317,7 +319,6 @@ export class HashRouter {
   }
 
   #matchCurrentRoute() {
-    console.log('matching...', this.#currentRouteHash)
     return this.navigateTo(this.#currentRouteHash)
   }
 

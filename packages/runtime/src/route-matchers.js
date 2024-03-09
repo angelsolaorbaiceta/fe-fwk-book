@@ -1,3 +1,5 @@
+import { isNotBlankOrEmptyString } from './utils/strings'
+
 /**
  * @typedef Route
  * @type {object}
@@ -9,12 +11,35 @@
  * @typedef RouteMatcher
  * @type {object}
  * @property {Route} route - The route that this matcher matches.
+ * @property {boolean} isRedirect - Whether the route is a redirect.
  * @property {(path: string) => boolean} checkMatch - Function that checks whether a route matches a path.
  * @property {(path: string) => Object<string, string>} extractParams - Function that extracts the parameters from a path.
  * @property {(path: string) => Object<string, string>} extractQuery - Function that extracts the query parameters from a path.
  */
 
 const CATCH_ALL_ROUTE = '*'
+
+/**
+ * Validates the route to ensure it's a valid one.
+ *
+ * @param {Route} route the route to validate
+ * @throws {Error} if the route is invalid
+ */
+export function validateRoute(route) {
+  if (typeof route.path !== 'string') {
+    throw new Error('Route path must be a string')
+  }
+
+  if (isNotBlankOrEmptyString(route.path) === false) {
+    throw new Error('Route path must not be empty')
+  }
+
+  if (route.path[0] !== '/' && route.path !== CATCH_ALL_ROUTE) {
+    throw new Error(
+      'Route path must start with a "/" or be the catch-all route "*"'
+    )
+  }
+}
 
 /**
  * Creates a `RouteMatcher` object for a given route.
@@ -42,11 +67,19 @@ function routeHasParams({ path }) {
   return path.includes(':')
 }
 
+/**
+ * Creates a `RouteMatcher` object for a given route that has parameters.
+ *
+ * @param {Route} route the route to create a matcher for
+ * @returns {RouteMatcher} the route matcher
+ */
 function makeMatcherWithParams(route) {
   const regex = makeRouteWithParamsRegex(route)
+  const isRedirect = typeof route.redirect === 'string'
 
   return {
     route,
+    isRedirect,
     checkMatch(path) {
       return regex.test(path)
     },
@@ -67,11 +100,19 @@ function makeRouteWithParamsRegex({ path }) {
   return new RegExp(`^${regex}$`)
 }
 
+/**
+ * Creates a `RouteMatcher` object for a given route that doesn't have any parameters.
+ *
+ * @param {Route} route the route to create a matcher for
+ * @returns {RouteMatcher} the route matcher
+ */
 function makeMatcherWithoutParams(route) {
   const regex = makeRouteWithoutParamsRegex(route)
+  const isRedirect = typeof route.redirect === 'string'
 
   return {
     route,
+    isRedirect,
     checkMatch(path) {
       return regex.test(path)
     },
