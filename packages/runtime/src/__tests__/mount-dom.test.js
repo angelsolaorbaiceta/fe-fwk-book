@@ -289,33 +289,100 @@ test('when a component with multiple elements is mounted, the vdom keeps a refer
   expect(vdom.el).toBe(document.querySelector('p#one'))
 })
 
-test('mount a fragment at index', () => {
-  document.body.innerHTML = '<p>one</p><p>two</p><p>five</p>'
-  const vdom = hFragment([h('p', {}, ['three']), h('p', {}, ['four'])])
-  mountDOM(vdom, document.body, 2)
-
-  expect(document.body.innerHTML).toBe(singleHtmlLine`
-    <p>one</p>
-    <p>two</p>
-    <p>three</p>
-    <p>four</p>
-    <p>five</p>
-  `)
+const FragComp = defineComponent({
+  render() {
+    return hFragment([h('p', {}, ['three']), h('p', {}, ['four'])])
+  },
+})
+const NestedFragComp = defineComponent({
+  render() {
+    return hFragment([h(FragComp), h('p', {}, ['five'])])
+  },
 })
 
-test('mount nested fragments at a given index', () => {
-  document.body.innerHTML = '<p>one</p><p>two</p><p>seven</p>'
-  const vdom = hFragment([
-    h('p', {}, ['three']),
-    hFragment([
-      h('p', {}, ['four']),
+/**
+ * Tests several kinds of fragment insertion, always resulting in the same
+ * HTML structure with paragraphs with the numbers from 1 to 7 (in order).
+ */
+test.each([
+  {
+    body: '<p>one</p><p>two</p>',
+    description: 'nested with component',
+    vdom: hFragment([
+      h(FragComp),
       h('p', {}, ['five']),
-      hFragment([h('p', {}, ['six'])]),
+      hFragment([h('p', {}, ['six']), h('p', {}, ['seven'])]),
     ]),
-  ])
-  mountDOM(vdom, document.body, 2)
+    index: 2,
+  },
+  {
+    body: '<p>one</p><p>two</p>',
+    description: 'nested with nested component',
+    vdom: hFragment([
+      h(NestedFragComp),
+      hFragment([h('p', {}, ['six']), h('p', {}, ['seven'])]),
+    ]),
+    index: 2,
+  },
+  {
+    body: '<p>one</p><p>two</p><p>five</p><p>six</p><p>seven</p>',
+    description: 'non-nested',
+    vdom: hFragment([h('p', {}, ['three']), h('p', {}, ['four'])]),
+    index: 2,
+  },
+  {
+    body: '<p>one</p><p>two</p><p>seven</p>',
+    description: 'single nested',
+    vdom: hFragment([
+      h('p', {}, ['three']),
+      hFragment([
+        h('p', {}, ['four']),
+        h('p', {}, ['five']),
+        h('p', {}, ['six']),
+      ]),
+    ]),
+    index: 2,
+  },
+  {
+    body: '<p>one</p><p>two</p><p>seven</p>',
+    description: 'double nested',
+    vdom: hFragment([
+      h('p', {}, ['three']),
+      hFragment([
+        h('p', {}, ['four']),
+        h('p', {}, ['five']),
+        hFragment([h('p', {}, ['six'])]),
+      ]),
+    ]),
+    index: 2,
+  },
+  {
+    body: '<p>five</p><p>six</p><p>seven</p>',
+    description: 'single nested',
+    vdom: hFragment([
+      h('p', {}, ['one']),
+      hFragment([h('p', {}, ['two']), h('p', {}, ['three'])]),
+      h('p', {}, ['four']),
+    ]),
+    index: 0,
+  },
+  {
+    body: '<p>one</p><p>two</p>',
+    description: 'single nested',
+    vdom: hFragment([
+      hFragment([h('p', {}, ['three']), h('p', {}, ['four'])]),
+      h('p', {}, ['five']),
+      hFragment([h('p', {}, ['six']), h('p', {}, ['seven'])]),
+    ]),
+    index: null,
+  },
+])(
+  'mount $description fragment at index $index',
+  ({ body, vdom, index }) => {
+    document.body.innerHTML = body
+    mountDOM(vdom, document.body, index)
 
-  expect(document.body.innerHTML).toBe(singleHtmlLine`
+    expect(document.body.innerHTML).toBe(singleHtmlLine`
     <p>one</p>
     <p>two</p>
     <p>three</p>
@@ -324,7 +391,8 @@ test('mount nested fragments at a given index', () => {
     <p>six</p>
     <p>seven</p>
   `)
-})
+  }
+)
 
 test('when onMounted() in a component throws an error, the DOM still renders correctly', async () => {
   const consoleErrorMock = vi.fn()
