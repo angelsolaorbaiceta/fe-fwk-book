@@ -3,6 +3,7 @@ import { defineComponent } from '../component'
 import { h, hFragment, hString } from '../h'
 import { mountDOM } from '../mount-dom'
 import { nextTick } from '../scheduler'
+import { singleHtmlLine } from './utils'
 
 beforeEach(() => {
   vi.unstubAllGlobals()
@@ -293,9 +294,36 @@ test('mount a fragment at index', () => {
   const vdom = hFragment([h('p', {}, ['three']), h('p', {}, ['four'])])
   mountDOM(vdom, document.body, 2)
 
-  expect(document.body.innerHTML).toBe(
-    '<p>one</p><p>two</p><p>three</p><p>four</p><p>five</p>'
-  )
+  expect(document.body.innerHTML).toBe(singleHtmlLine`
+    <p>one</p>
+    <p>two</p>
+    <p>three</p>
+    <p>four</p>
+    <p>five</p>
+  `)
+})
+
+test('mount nested fragments at a given index', () => {
+  document.body.innerHTML = '<p>one</p><p>two</p><p>seven</p>'
+  const vdom = hFragment([
+    h('p', {}, ['three']),
+    hFragment([
+      h('p', {}, ['four']),
+      h('p', {}, ['five']),
+      hFragment([h('p', {}, ['six'])]),
+    ]),
+  ])
+  mountDOM(vdom, document.body, 2)
+
+  expect(document.body.innerHTML).toBe(singleHtmlLine`
+    <p>one</p>
+    <p>two</p>
+    <p>three</p>
+    <p>four</p>
+    <p>five</p>
+    <p>six</p>
+    <p>seven</p>
+  `)
 })
 
 test('when onMounted() in a component throws an error, the DOM still renders correctly', async () => {
