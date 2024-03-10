@@ -21,6 +21,11 @@ describe('when the application is mounted', () => {
     app.unmount()
   })
 
+  test("can't be mounted again", () => {
+    app.mount(document.body)
+    expect(() => app.mount(document.body)).toThrow()
+  })
+
   test('it shows a loading message', () => {
     app.mount(document.body)
     expect(document.body.innerHTML).toBe(singleHtmlLine`<p>Loading...</p>`)
@@ -53,6 +58,11 @@ describe('when the application is unmounted', () => {
   beforeEach(async () => {
     app.mount(document.body)
     await nextTick()
+  })
+
+  test("it can't be unmounted again", () => {
+    app.unmount()
+    expect(() => app.unmount()).toThrow()
   })
 
   test('it is removed from the parent element', async () => {
