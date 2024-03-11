@@ -39,6 +39,7 @@ beforeEach(async () => {
 
   link = new RouterLink({ to: '/one' })
   link.setAppContext({ router })
+  link.setExternalContent([h('p', {}, ['Click me'])])
   link.mount(document.body)
 })
 
@@ -46,6 +47,10 @@ afterEach(() => {
   router.destroy()
   link.unmount()
   document.body.innerHTML = ''
+})
+
+test('renders an anchor element with the external content', () => {
+  expect(document.body.innerHTML).toBe('<a href="/one"><p>Click me</p></a>')
 })
 
 test('when the link is clicked, it navigates to the route', async () => {

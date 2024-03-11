@@ -1,5 +1,5 @@
 import { defineComponent } from './component'
-import { h } from './h'
+import { h, hSlot } from './h'
 
 /**
  * A component that renders the component for the current route.
@@ -51,13 +51,18 @@ export const RouterLink = defineComponent({
   render() {
     const { tag = 'a', to } = this.props
 
-    return h(tag, {
-      on: {
-        click: (e) => {
-          e.preventDefault()
-          this.appContext.router.navigateTo(to)
+    return h(
+      tag,
+      {
+        href: to,
+        on: {
+          click: (e) => {
+            e.preventDefault()
+            this.appContext.router.navigateTo(to)
+          },
         },
       },
-    })
+      [hSlot()]
+    )
   },
 })

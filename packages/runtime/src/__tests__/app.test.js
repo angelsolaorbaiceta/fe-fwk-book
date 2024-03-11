@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createApp } from '../app'
 import { nextTick } from '../scheduler'
 import { App } from './app'
@@ -8,6 +8,9 @@ import { singleHtmlLine } from './utils'
 let app
 
 beforeEach(() => {
+  // stub console.warn to avoid polluting the test output
+  vi.stubGlobal('console', { warn: vi.fn(), log: console.log })
+
   app = createApp(App, { todos: ['Water the plants'] })
 })
 

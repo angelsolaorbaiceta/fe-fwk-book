@@ -93,16 +93,8 @@ export function defineComponent({
 
     /**
      * The application context is the shared context for all the components in the application.
-     *
-     * If the component doesn't have an application context, it asks its parent component for it.
-     * It goes all the way up until some component has an application context or no parent component is found.
-     * Only in the latter case, it returns `null`.
      */
     get appContext() {
-      if (this.#appContext == null && this.#parentComponent != null) {
-        this.#appContext = this.#parentComponent.appContext
-      }
-
       return this.#appContext
     }
 

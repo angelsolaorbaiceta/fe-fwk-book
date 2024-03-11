@@ -1,6 +1,7 @@
-import { mountDOM } from './mount-dom'
 import { destroyDOM } from './destroy-dom'
 import { h } from './h'
+import { mountDOM } from './mount-dom'
+import { HashRouter } from './router'
 
 /**
  * @typedef Application
@@ -11,19 +12,31 @@ import { h } from './h'
  */
 
 /**
+ * @typedef AppOptions
+ * @type {object}
+ *
+ * @property {import('./router').Route[]} routes - The routes of the application
+ */
+
+/**
  * Creates an application with the given root component (the top-level component in the view tree).
  * When the application is mounted, the root component is instantiated with the given props
  * and mounted into the DOM.
  *
  * @param {import('./component').Component} RootComponent the top-level component of the application's view tree
  * @param {Object.<string, Any>} props the top-level component's props
+ * @param {AppOptions} options the options of the application
  *
  * @returns {Application} the app object
  */
-export function createApp(RootComponent, props = {}) {
+export function createApp(RootComponent, props = {}, { routes } = {}) {
   let parentEl = null
   let isMounted = false
   let vdom = null
+
+  const context = {
+    router: new HashRouter(routes ?? []),
+  }
 
   function reset() {
     parentEl = null
@@ -39,7 +52,9 @@ export function createApp(RootComponent, props = {}) {
 
       parentEl = _parentEl
       vdom = h(RootComponent, props)
-      mountDOM(vdom, parentEl)
+      mountDOM(vdom, parentEl, null, { appContext: context })
+
+      context.router.init()
 
       isMounted = true
     },
@@ -50,6 +65,7 @@ export function createApp(RootComponent, props = {}) {
       }
 
       destroyDOM(vdom)
+      context.router.destroy()
       reset()
     },
   }
