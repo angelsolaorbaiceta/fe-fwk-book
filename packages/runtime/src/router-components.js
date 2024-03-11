@@ -45,14 +45,13 @@ export const RouterOutlet = defineComponent({
  *
  * Props:
  * - to (string): the path to navigate to
- * - tag (string): the tag name of the element to render (default: 'a')
  */
 export const RouterLink = defineComponent({
   render() {
-    const { tag = 'a', to } = this.props
+    const { to } = this.props
 
     return h(
-      tag,
+      'a',
       {
         href: to,
         on: {
