@@ -1,9 +1,10 @@
-import { afterEach, beforeEach, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { createApp } from '../app'
 import { flushPromises } from '../utils/promises'
 import { App, routes } from './app-router'
 import { singleHtmlLine } from './utils'
 
+/** @type {import('../app').Application} */
 let app
 
 beforeEach(async () => {
@@ -13,7 +14,9 @@ beforeEach(async () => {
   await flushPromises()
 })
 
-afterEach(() => {
+afterEach(async () => {
+  app.unmount()
+  await flushPromises()
   document.body.innerHTML = ''
 })
 
@@ -32,4 +35,47 @@ test('when the application is mounted, loads the home route', () => {
   `)
 })
 
-// test('the application in injects the context in the root component', () => {})
+describe('when the user navigates to the about/ route', () => {
+  beforeEach(async () => {
+    document.querySelector('a[href="/about"]').click()
+    await flushPromises()
+  })
+
+  test('loads the about/ route', () => {
+    expect(document.body.innerHTML).toBe(singleHtmlLine`
+    <header>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+      </nav>
+    </header>
+    <div id="router-outlet">
+      <div>This is about</div>
+    </div>
+    <footer>Footer</footer>
+    `)
+  })
+})
+
+describe('when the user navigates to a non-existing route by writing the URL in the browser', () => {
+  beforeEach(() => {
+    // Simulate URL change
+    window.history.pushState({}, '', '#/non-existing')
+    window.dispatchEvent(new Event('popstate'))
+  })
+
+  test('loads the not found route', () => {
+    expect(document.body.innerHTML).toBe(singleHtmlLine`
+    <header>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+      </nav>
+    </header>
+    <div id="router-outlet">
+      <div>Not found</div>
+    </div>
+    <footer>Footer</footer>
+    `)
+  })
+})
