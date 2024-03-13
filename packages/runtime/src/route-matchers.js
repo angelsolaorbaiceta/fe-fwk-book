@@ -5,6 +5,8 @@ import { isNotBlankOrEmptyString } from './utils/strings'
  * @type {object}
  * @property {string} path - The path of the route.
  * @property {import('./component').Component} component - The component to render when the route is matched.
+ * @property {string} [redirect] - The path to redirect to when the route is matched.
+ * @property {(from: string, to: string) => Promise<boolean|string>} [beforeEnter] - The function to call before the navigation, and which can be used to cancel the navigation or redirect to another route.
  */
 
 /**

@@ -29,6 +29,12 @@ const About = defineComponent({
   },
 })
 
+const Secret = defineComponent({
+  render() {
+    return h('div', {}, ['This is a secret'])
+  },
+})
+
 const NotFound = defineComponent({
   render() {
     return h('div', {}, ['Not found'])
@@ -38,5 +44,6 @@ const NotFound = defineComponent({
 export const routes = [
   { path: '/', component: Home },
   { path: '/about', component: About },
+  { path: '/secret', component: Secret },
   { path: '*', component: NotFound },
 ]

@@ -18,20 +18,6 @@ import { assert } from './utils/assert'
  */
 
 /**
- * A guard asynchronous function that can be used to prevent route changes.
- * Every guard function should return a boolean indicating whether the route change should be allowed
- * or a route where the navigation should be redirected to.
- *
- * A lack of value results in an `undefined` which is treated as `true`. In other words,
- * only a `false` value prevents the route change.
- *
- * @callback RouteGuard
- * @param {string} from the route path, as defined in the router
- * @param {string} to the route path, as defined in the router
- * @returns {Promise<boolean|import('./route-matchers').Route>} whether the route change should be allowed
- */
-
-/**
  * Result of a navigation attempt after the guards have been checked.
  *
  * @typedef {Object} NavigationGuardResult
@@ -87,9 +73,6 @@ export class HashRouter {
   #subscriptions = new WeakMap()
   /** @type {Set<RouteChangeHandler>} */
   #subscriberFns = new Set()
-
-  /** @type {RouteGuard[]} */
-  #guards = []
 
   /**
    * The `Route` object that matches the current route or `null` if no route matches.
@@ -238,7 +221,7 @@ export class HashRouter {
     const from = this.#matchedRoute
     const to = matcher.route
     const { shouldNavigate, shouldRedirect, redirectPath } =
-      await this.#canChangeRoute(from?.path, to?.path)
+      await this.#canChangeRoute(from, to)
 
     if (shouldRedirect) {
       return this.navigateTo(redirectPath)
@@ -310,17 +293,6 @@ export class HashRouter {
   }
 
   /**
-   * Adds a guard function to the router. The guard function is called every time
-   * the route changes, and it's passed the `from` and `to` routes. If the guard
-   * function returns `false`, the route change is prevented.
-   *
-   * @param {RouteGuard} guard
-   */
-  addGuard(guard) {
-    this.#guards.push(guard)
-  }
-
-  /**
    * A convenience method to push a path to the browser's history.
    * The path is always added to the hash portion of the URL.
    *
@@ -343,31 +315,39 @@ export class HashRouter {
   }
 
   /**
-   * Checks whether the route change should be allowed by all guard functions.
-   * The first guard that returns a false value prevents the route change.
-   * If a guard returns a route object, the navigation is redirected to the route's path.
+   * Checks whether the route change is allowed by the matched route's guard,
+   * if there is one. If a guard returns a route path (a string), the navigation
+   * is redirected to the route's path.
    *
-   * @param {string} from the source route path, as defined in the router
-   * @param {string} to the target route path, as defined in the router
+   * @param {import('./route-matchers').Route} from the source route, as defined in the router
+   * @param {import('./route-matchers').Route} to the target route, the one that's matched
    * @returns {Promise<NavigationGuardResult>} whether the route change should be allowed
    */
   async #canChangeRoute(from, to) {
-    for (const guard of this.#guards) {
-      const result = await guard(from, to)
-      if (result === false) {
-        return {
-          shouldRedirect: false,
-          shouldNavigate: false,
-          redirectPath: null,
-        }
-      }
+    const guard = to.beforeEnter
 
-      if (typeof result.path === 'string') {
-        return {
-          shouldRedirect: true,
-          shouldNavigate: false,
-          redirectPath: result.path,
-        }
+    if (typeof guard !== 'function') {
+      return {
+        shouldRedirect: false,
+        shouldNavigate: true,
+        redirectPath: null,
+      }
+    }
+
+    const result = await guard(from?.path, to?.path)
+    if (result === false) {
+      return {
+        shouldRedirect: false,
+        shouldNavigate: false,
+        redirectPath: null,
+      }
+    }
+
+    if (typeof result === 'string') {
+      return {
+        shouldRedirect: true,
+        shouldNavigate: false,
+        redirectPath: result,
       }
     }
 

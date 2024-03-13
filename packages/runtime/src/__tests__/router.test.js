@@ -394,10 +394,30 @@ describe('Redirect routes', () => {
 })
 
 describe('A route can be guarded', () => {
+  const guardedRoutes = [
+    {
+      path: '/',
+      component: Home,
+    },
+    {
+      path: '/one',
+      component: One,
+    },
+    {
+      path: '/two/:userId/page/:pageId',
+      component: Two,
+      beforeEnter: (from) => from !== '/one',
+    },
+    {
+      path: '/three',
+      component: One,
+      beforeEnter: () => Promise.resolve('/'),
+    },
+  ]
   let router
 
   beforeEach(async () => {
-    router = new HashRouter(routes)
+    router = new HashRouter(guardedRoutes)
     await router.init()
   })
 
@@ -406,52 +426,15 @@ describe('A route can be guarded', () => {
   })
 
   test('a guard can prevent the route from being matched', async () => {
-    router.addGuard((from, to) => {
-      if (from === '/one' && to === '/two/:userId/page/:pageId') {
-        return false
-      }
-
-      return true
-    })
-
     await router.navigateTo('/one')
     await router.navigateTo('/two/123/page/456')
 
     expect(router.matchedRoute.component).toBe(One)
   })
 
-  test('guards can be async functions which are executed in order and awaited for', async () => {
-    const fnOne = vi.fn()
-    const fnTwo = vi.fn()
-
-    router.addGuard(async () => {
-      await new Promise((resolve) => setTimeout(resolve))
-      fnOne()
-      return true
-    })
-
-    router.addGuard(async () => {
-      await new Promise((resolve) => setTimeout(resolve))
-      fnTwo()
-      return false
-    })
-
-    await router.navigateTo('/one')
-
-    expect(router.matchedRoute.component).toBe(Home)
-  })
-
   test('a guard can return a new route to navigate to', async () => {
-    router.addGuard((from, to) => {
-      if (from === '/one' && to === '/two/:userId/page/:pageId') {
-        return { path: '/', component: Home }
-      }
-
-      return true
-    })
-
     await router.navigateTo('/one')
-    await router.navigateTo('/two/123/page/456')
+    await router.navigateTo('/three')
 
     expect(router.matchedRoute.component).toBe(Home)
   })
