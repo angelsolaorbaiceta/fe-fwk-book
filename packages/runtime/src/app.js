@@ -1,7 +1,7 @@
 import { destroyDOM } from './destroy-dom'
 import { h } from './h'
 import { mountDOM } from './mount-dom'
-import { HashRouter } from './router'
+import { NoopRouter } from './router'
 
 /**
  * @typedef Application
@@ -15,7 +15,7 @@ import { HashRouter } from './router'
  * @typedef AppOptions
  * @type {object}
  *
- * @property {import('./router').Route[]} routes - The routes of the application
+ * @property {import('./router').Router} [router] - The router to use. If not provided, a no-op router is used.
  */
 
 /**
@@ -29,13 +29,15 @@ import { HashRouter } from './router'
  *
  * @returns {Application} the app object
  */
-export function createApp(RootComponent, props = {}, { routes } = {}) {
+export function createApp(RootComponent, props = {}, options = {}) {
   let parentEl = null
   let isMounted = false
   let vdom = null
 
+  // The application context is injected into every component mounted in the app.
+  // This gives components access to objects that are global to the application.
   const context = {
-    router: new HashRouter(routes ?? []),
+    router: options.router || new NoopRouter(),
   }
 
   function reset() {

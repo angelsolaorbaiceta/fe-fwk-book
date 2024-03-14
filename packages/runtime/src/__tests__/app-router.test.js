@@ -3,12 +3,14 @@ import { createApp } from '../app'
 import { flushPromises } from '../utils/promises'
 import { App, routes } from './app-router'
 import { singleHtmlLine } from './utils'
+import { HashRouter } from '../router'
 
 /** @type {import('../app').Application} */
 let app
 
 beforeEach(async () => {
-  app = createApp(App, {}, { routes })
+  const router = new HashRouter(routes)
+  app = createApp(App, {}, { router })
   app.mount(document.body)
 
   await flushPromises()

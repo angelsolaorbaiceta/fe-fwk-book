@@ -3,6 +3,24 @@ import { makeRouteMatcher } from './route-matchers'
 import { assert } from './utils/assert'
 
 /**
+ * @typedef {Object} Router
+ *
+ * @property {import('./route-matchers').Route} matchedRoute The `Route` object that matches the current route or `null` if no route matches.
+ * @property {Object<string, string>} params The parameters extracted from the current route's path, in an object.
+ * @property {Object<string, string>} query The query parameters extracted from the current route's path, in an object.
+ *
+ * @property {()=> Promise<void>} init Initializes the router by matching the current route to a component and listening for the browser's popstate events.
+ * @property {() => void} destroy Stops listening to the browser's popstate events. If the router is not initialized, calling this method has no effect.
+ *
+ * @property {(path: string) => Promise<void>} navigateTo Navigates to the given route path, matching it to a component and pushing it to the browser's history.
+ * @property {() => void} back Navigates to the previous page in the browser's history.
+ * @property {() => void} forward Navigates to the next page in the browser's history.
+ *
+ * @property {(handler: RouteChangeHandler) => void} subscribe Subscribes a handler function to the router's route change events.
+ * @property {(handler: RouteChangeHandler) => void} unsubscribe Unsubscribes a handler function from the router's route change events.
+ */
+
+/**
  * The object passed as an argument to the route change handler.
  *
  * @typedef {object} RouteChangeHandlerParams
@@ -357,4 +375,18 @@ export class HashRouter {
       redirectPath: null,
     }
   }
+}
+
+/**
+ * A router that doesn't do anything.
+ * It's used as a fallback when no router is provided to the app.
+ */
+export class NoopRouter {
+  init() {}
+  destroy() {}
+  navigateTo() {}
+  back() {}
+  forward() {}
+  subscribe() {}
+  unsubscribe() {}
 }
