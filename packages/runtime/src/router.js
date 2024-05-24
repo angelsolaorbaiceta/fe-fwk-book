@@ -78,6 +78,53 @@ const ROUTER_EVENT = 'router-event'
  * const router = new HashRouter(routes)
  * router.init()
  * ```
+ *
+ * ## Routes
+ *
+ * A route is an object with the following properties:
+ *
+ * - `path` (`string`): The path of the route.
+ * - `component` (`Component`): The component to render when the route is matched. Use the '*' path to match any route.
+ * - `redirect?` (`string`): The path to redirect to when the route is matched.
+ * - `beforeEnter?` (`(from: string, to: string) => Promise<boolean|string>`): The function to call before the navigation, and which can be used to cancel the navigation or redirect to another route.
+ *
+ * A simple route has a `path` and a `component`:
+ *
+ * ```javascript
+ * { path: '/users', component: Users }
+ * ```
+ *
+ * This route matches the `/users` path and renders the `Users` component.
+ * The path can include parameters by prefixing the parameter name with a colon ('`:`').
+ * These parameters are extracted from the path and made available in the `params`
+ * property of the router:
+ *
+ * ```javascript
+ * { path: '/users/:userId', component: User }
+ * ```
+ *
+ * This route matches the `/users/123` path and renders the `User` component.
+ * The `params` property of the router will contain `{ userId: '123' }`.
+ *
+ * Routes can define a redirect path:
+ *
+ * ```javascript
+ * { path: '/old-users', redirect: '/users' }
+ * ```
+ *
+ * This route matches the `/old-users` path and redirects to the `/users` path.
+ *
+ * Routes can define a guard function that is called before the navigation, and decides
+ * whether the navigation should be allowed or not:
+ *
+ * ```javascript
+ * { path: '/users', component: Users, beforeEnter: (from, to) => Promise<boolean|string> }
+ * ```
+ *
+ * The guard function receives the path of the source route and the target route.
+ * If it returns `false`, the navigation is canceled.
+ * If it returns a string, the navigation is redirected to the returned path.
+ * If it returns `true` or nothing, the navigation is allowed.
  */
 export class HashRouter {
   /** @type {import('./route-matchers').RouteMatcher[]} */
