@@ -38,7 +38,7 @@ The first three parts of the book are published by [Manning](http://mng.bz/aM2o)
 
 The last two are freely available in the [repository's Wiki](https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki):
 
-* _Part IV_—Extra features (🖥 online; coming soon)
+* _Part IV_—Extra features (🖥 online; WIP)
   * [_Chapter 15_—Slots—Inserting external content](https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki/Chapter-15%E2%80%94Slots%E2%80%94Inserting-external-content)
   * [_Chapter 16_—Single Page Application routing](https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki/Chapter-16%E2%80%94Single-Page-Application-routing)
   * [_Chapter 17_—Implementing a hash router](https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki/Chapter-17%E2%80%94Implementing-a-hash-router)
