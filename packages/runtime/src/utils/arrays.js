@@ -1,3 +1,5 @@
+import { makeCountMap, mapsDiff } from './maps'
+
 /**
  * If the given value is an array, it returns it. Otherwise, it returns an array
  * containing the given value.
@@ -25,12 +27,39 @@ export function withoutNulls(arr) {
  *
  * @param {any[]} oldArray the old array
  * @param {any[]} newArray the new array
- * @returns {{added: any[], removed: any[]}}}
+ * @returns {{added: any[], removed: any[]}}
  */
 export function arraysDiff(oldArray, newArray) {
+  const oldsCount = makeCountMap(oldArray)
+  const newsCount = makeCountMap(newArray)
+  const diff = mapsDiff(oldsCount, newsCount)
+
+  // Added items repeated as many times as they appear in the new array
+  const added = diff.added.flatMap((key) =>
+    Array(newsCount.get(key)).fill(key)
+  )
+
+  // Removed items repeated as many times as they appeared in the old array
+  const removed = diff.removed.flatMap((key) =>
+    Array(oldsCount.get(key)).fill(key)
+  )
+
+  // Updated items have to check the difference in counts
+  for (const key of diff.updated) {
+    const oldCount = oldsCount.get(key)
+    const newCount = newsCount.get(key)
+    const diff = newCount - oldCount
+
+    if (diff > 0) {
+      added.push(...Array(diff).fill(key))
+    } else {
+      removed.push(...Array(-diff).fill(key))
+    }
+  }
+
   return {
-    added: newArray.filter((newItem) => !oldArray.includes(newItem)),
-    removed: oldArray.filter((oldItem) => !newArray.includes(oldItem)),
+    added,
+    removed,
   }
 }
 
