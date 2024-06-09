@@ -48,12 +48,12 @@ export function arraysDiff(oldArray, newArray) {
   for (const key of diff.updated) {
     const oldCount = oldsCount.get(key)
     const newCount = newsCount.get(key)
-    const diff = newCount - oldCount
+    const delta = newCount - oldCount
 
-    if (diff > 0) {
-      added.push(...Array(diff).fill(key))
+    if (delta > 0) {
+      added.push(...Array(delta).fill(key))
     } else {
-      removed.push(...Array(-diff).fill(key))
+      removed.push(...Array(-delta).fill(key))
     }
   }
 
