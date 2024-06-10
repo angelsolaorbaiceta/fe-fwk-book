@@ -1,3 +1,5 @@
+import { makeCountMap, mapsDiff } from './maps'
+
 /**
  * If the given value is an array, it returns it. Otherwise, it returns an array
  * containing the given value.
@@ -23,14 +25,47 @@ export function withoutNulls(arr) {
  * Given two arrays, it returns the items that have been added to the new array
  * and the items that have been removed from the old array.
  *
+ * NOTE TO READERS: your implementation of this function if you followed along
+ * with the book's chapter 7 listing is different from what's here. The version
+ * I wrote in the book has a bug, as it doesn't deal with duplicated items.
+ *
+ * @see https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki/Errata#bug-in-the-arraysdiff-function check the errata for more information
+ *
  * @param {any[]} oldArray the old array
  * @param {any[]} newArray the new array
- * @returns {{added: any[], removed: any[]}}}
+ * @returns {{added: any[], removed: any[]}}
  */
 export function arraysDiff(oldArray, newArray) {
+  const oldsCount = makeCountMap(oldArray)
+  const newsCount = makeCountMap(newArray)
+  const diff = mapsDiff(oldsCount, newsCount)
+
+  // Added items repeated as many times as they appear in the new array
+  const added = diff.added.flatMap((key) =>
+    Array(newsCount.get(key)).fill(key)
+  )
+
+  // Removed items repeated as many times as they appeared in the old array
+  const removed = diff.removed.flatMap((key) =>
+    Array(oldsCount.get(key)).fill(key)
+  )
+
+  // Updated items have to check the difference in counts
+  for (const key of diff.updated) {
+    const oldCount = oldsCount.get(key)
+    const newCount = newsCount.get(key)
+    const delta = newCount - oldCount
+
+    if (delta > 0) {
+      added.push(...Array(delta).fill(key))
+    } else {
+      removed.push(...Array(-delta).fill(key))
+    }
+  }
+
   return {
-    added: newArray.filter((newItem) => !oldArray.includes(newItem)),
-    removed: oldArray.filter((oldItem) => !newArray.includes(oldItem)),
+    added,
+    removed,
   }
 }
 
