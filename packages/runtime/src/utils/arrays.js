@@ -25,6 +25,12 @@ export function withoutNulls(arr) {
  * Given two arrays, it returns the items that have been added to the new array
  * and the items that have been removed from the old array.
  *
+ * NOTE TO READERS: your implementation of this function if you followed along
+ * with the book's chapter 7 listing is different from what's here. The version
+ * I wrote in the book has a bug, as it doesn't deal with duplicated items.
+ *
+ * @see https://github.com/angelsolaorbaiceta/fe-fwk-book/wiki/Errata#bug-in-the-arraysdiff-function check the errata for more information
+ *
  * @param {any[]} oldArray the old array
  * @param {any[]} newArray the new array
  * @returns {{added: any[], removed: any[]}}
