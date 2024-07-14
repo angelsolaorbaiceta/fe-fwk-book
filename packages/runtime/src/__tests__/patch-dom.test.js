@@ -929,7 +929,7 @@ describe('patch keyed component list', () => {
  * At mounting time, that offset is the passed index to the `mount()` method.
  * But things can move around, and the component can be moved to a different position.
  */
-describe('Components inside children arrays', () => {
+describe('components inside children arrays', () => {
   const SwapComponent = defineComponent({
     state() {
       return { swap: false }
@@ -1054,6 +1054,37 @@ test('patch component where the top-level element changes between renders', asyn
 
   expect(document.body.innerHTML).toBe('<span>B</span>')
   expect(newVdom.el).toBeInstanceOf(HTMLSpanElement)
+})
+
+/**
+ * As reported by @Raven-79 in Issue #267 (https://github.com/angelsolaorbaiceta/fe-fwk-book/issues/267)
+ * when two components whose top level element is a fragment are swapped, the patching algorithm
+ * doesn't work as expected, even when the keys are provided.
+ */
+test.only('patch two keyed components with top level fragments', async () => {
+  const Component = defineComponent({
+    render() {
+      return hFragment([h('span', {}, ['A']), h('span', {}, ['B'])])
+    },
+  })
+
+  const oldVdom = hFragment([
+    h(Component, { key: 'a' }),
+    h(Component, { key: 'b' }),
+  ])
+  const newVdom = hFragment([
+    h(Component, { key: 'b' }),
+    h(Component, { key: 'a' }),
+  ])
+
+  await patch(oldVdom, newVdom)
+
+  expect(document.body.innerHTML).toBe(
+    singleHtmlLine`
+      <span>A</span><span>B</span>
+      <span>A</span><span>B</span>
+    `
+  )
 })
 
 async function patch(oldVdom, newVdom, hostComponent = null) {
