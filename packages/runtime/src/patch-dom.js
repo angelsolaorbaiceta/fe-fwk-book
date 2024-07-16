@@ -345,9 +345,18 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
       case ARRAY_DIFF_OP.MOVE: {
         const oldChild = oldChildren[originalIndex]
         const newChild = newChildren[index]
-        // const el = oldChild.el
         const elAtTargetIndex = parentEl.childNodes[index + offset]
 
+        // Note to readers:
+        //
+        // If you are following along with the code in the book, you will notice that the `elementsToMove` variable
+        // isn't defined in the book. The original code had a bug that caused only the first element of a component
+        // using a top-level fragment to be moved. This bug was fixed by adding the `elementsToMove` variable and
+        // using it to move all the elements of a component when the component is a top-level fragment.
+        //
+        // For more information see:
+        //  - The bug report: https://github.com/angelsolaorbaiceta/fe-fwk-book/issues/267
+        //  - The PR fixing the issue: https://github.com/angelsolaorbaiceta/fe-fwk-book/pull/269
         const elementsToMove = isComponent(oldChild)
           ? oldChild.component.elements
           : [oldChild.el]
