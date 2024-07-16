@@ -6,7 +6,7 @@ import {
 } from './attributes'
 import { destroyDOM } from './destroy-dom'
 import { addEventListener } from './events'
-import { DOM_TYPES, extractChildren } from './h'
+import { DOM_TYPES, extractChildren, isComponent } from './h'
 import { mountDOM } from './mount-dom'
 import { areNodesEqual } from './nodes-equal'
 import {
@@ -345,11 +345,17 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
       case ARRAY_DIFF_OP.MOVE: {
         const oldChild = oldChildren[originalIndex]
         const newChild = newChildren[index]
-        const el = oldChild.el
+        // const el = oldChild.el
         const elAtTargetIndex = parentEl.childNodes[index + offset]
 
-        parentEl.insertBefore(el, elAtTargetIndex)
-        patchDOM(oldChild, newChild, parentEl, hostComponent)
+        const elementsToMove = isComponent(oldChild)
+          ? oldChild.component.elements
+          : [oldChild.el]
+
+        elementsToMove.forEach((el) => {
+          parentEl.insertBefore(el, elAtTargetIndex)
+          patchDOM(oldChild, newChild, parentEl, hostComponent)
+        })
 
         break
       }

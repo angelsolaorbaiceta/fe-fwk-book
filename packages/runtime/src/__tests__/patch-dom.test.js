@@ -1061,7 +1061,7 @@ test('patch component where the top-level element changes between renders', asyn
  * when two components whose top level element is a fragment are swapped, the patching algorithm
  * doesn't work as expected, even when the keys are provided.
  */
-test.only('patch two keyed components with top level fragments', async () => {
+test('patch two keyed components with top level fragments', async () => {
   const Component = defineComponent({
     render() {
       return hFragment([h('span', {}, ['A']), h('span', {}, ['B'])])
