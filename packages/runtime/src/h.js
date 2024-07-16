@@ -75,6 +75,16 @@ export function h(tag, props = {}, children = []) {
 }
 
 /**
+ * Given a virtual node, determines whether it represents a component.
+ *
+ * @param {ElementVNode} vNode the virtual node to check
+ * @returns {boolean} whether the virtual node represents a component
+ */
+export function isComponent({ tag }) {
+  return typeof tag === 'function'
+}
+
+/**
  * @typedef TextVNode
  * @type {object}
  * @property {string} type - The type of the virtual node = 'text'.
