@@ -7,7 +7,7 @@ export function extractChildren(vdom) {
 
   for (const child of vdom.children) { // --2--
     if (child.type === DOM_TYPES.FRAGMENT) {
-      children.push(...extractChildren(child, children)) // --3--
+      children.push(...extractChildren(child)) // --3--
     } else {
       children.push(child) // --4--
     }
