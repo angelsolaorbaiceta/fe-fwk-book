@@ -127,6 +127,10 @@ const ROUTER_EVENT = 'router-event'
  * If it returns `true` or nothing, the navigation is allowed.
  */
 export class HashRouter {
+  // Whether the router is initialized or not.
+  // Saved to avoid initializing the router multiple times.
+  #isInitialized = false
+
   /** @type {import('./route-matchers').RouteMatcher[]} */
   #matchers = []
 
@@ -183,14 +187,6 @@ export class HashRouter {
     return this.#query
   }
 
-  // Saved to a variable to be able to remove the event listener in the destroy() method.
-  #onPopState = () => this.#matchCurrentRoute()
-
-  constructor(routes = []) {
-    assert(Array.isArray(routes), 'Routes must be an array')
-    this.#matchers = routes.map(makeRouteMatcher)
-  }
-
   /**
    * Returns the current route's hash portion without the leading `#`.
    * If the hash is empty, `/` is returned.
@@ -207,9 +203,13 @@ export class HashRouter {
     return hash.slice(1)
   }
 
-  // Whether the router is initialized or not.
-  // Saved to avoid initializing the router multiple times.
-  #isInitialized = false
+  // Saved to a variable to be able to remove the event listener in the destroy() method.
+  #onPopState = () => this.#matchCurrentRoute()
+
+  constructor(routes = []) {
+    assert(Array.isArray(routes), 'Routes must be an array')
+    this.#matchers = routes.map(makeRouteMatcher)
+  }
 
   /**
    * Initializes the router by matching the current route to a component and
