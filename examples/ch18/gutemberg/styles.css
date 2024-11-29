@@ -1,0 +1,68 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  width: 800px;
+  margin: 2em auto 0;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.header {
+  padding-bottom: 1em;
+  border-bottom: 1px solid;
+  margin-bottom: 2em;
+}
+
+.table-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2em;
+}
+
+.filters-box {
+  padding: 1em 2em;
+  border: 1px solid var(--text-main);
+  border-radius: 0.5em;
+}
+
+.footer {
+  margin-top: 3em;
+  padding: 2em 2em;
+  background: var(--background);
+  font-style: italic;
+}
+
+.book-title {
+  font-size: 3em;
+}
+
+.book-bookshelf {
+  padding: 0.5em 2em;
+  background: blueviolet;
+  border-radius: 8px;
+  font-size: small;
+  margin-right: 1em;
+}
+
+.book-twocols {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2em;
+}
+
+.book-cover {
+  width: 270px;
+}

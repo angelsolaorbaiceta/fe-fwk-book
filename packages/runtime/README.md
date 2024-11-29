@@ -409,3 +409,115 @@ The result of mounting the component above will be:
   <span>Hello</span>
 </div>
 ```
+
+## [v6.0 - Chapter 18](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/ch18/packages/runtime)
+
+_See the example application in the [examples/ch18 folder](https://github.com/angelsolaorbaiceta/fe-fwk-book/tree/main/examples/ch18)_.
+
+To checkout this version of the code:
+
+```bash
+$ git checkout ch18
+```
+
+This version of the framework includes the `HashRouter` router to handle routing in a single-page application.
+In a hash router, the location is kept in the hash portion or the URL:
+
+```
+https: // example.com : 8080 /something/ ?query=abc123 #/fooBarBaz
+
+⎣____⎦    ⎣__________⎦  ⎣__⎦ ⎣________⎦ ⎣____________⎦ ⎣________⎦
+protocol     domain     port    path      parameters      hash
+```
+
+The `createApp()` function accepts a third parameter, which is an `options` object. This `options` object includes a `router` property to pass an instance of a `HashRouter` to the application:
+
+```javascript
+const router = new HashRouter(routes)
+createApp(RootComponent, {}, { router })
+```
+
+The routes map route paths to the component that should be rendered inside the `RouterOutlet` component.
+Routes are defined as follow:
+
+```javascript
+const routes = [
+  {
+    // Matches 'yourapp.com/#/'
+    path: '/',
+    component: Home,
+  },
+  // Matches 'yourapp.com/#/one'
+  {
+    path: '/one',
+    component: One,
+  },
+  {
+    // Matches 'yourapp.com/#/two/?/bar/?'
+    // Path variables can be defined by prepending them with a ":"
+    path: '/two/:foo/bar/:bazz',
+    component: Two,
+  },
+  {
+    // Matches 'yourapp.com/#/three'
+    // Paths can be set a redirect to a different route
+    path: '/three',
+    redirect: '/one',
+  },
+  {
+    // A catch-all route can be defined to handle all unmatched routes
+    path: '*',
+    component: NotFound,
+  },
+]
+```
+
+Here are the rules for defining routes:
+
+- Route paths must either start with a `/` or be the catch-all route (`*`)
+- A route must have a component to handle it, or be a redirection (both can't happen at the same time)
+- Path variables can be defined by prepending a `:` to the variable name
+- Nested routes aren't supported
+
+### Router Outlet
+
+The content matched by the application's router is rendered in the `RouterOutlet` component:
+
+```javascript
+const App = defineComponent({
+  render() {
+    return h('main', {}, [RouterOutlet()])
+  },
+})
+```
+
+Using more than one `RouterOutlet` in the application results in the component matched by the router being injected in all the outlets.
+Nested outlets isn't supported (if you nest outlets, they'll all contain the same component).
+
+The `RouterOutlet` component inserts the matched component inside a `<div>` element with an id attribute of `'router-outlet'`:
+
+```html
+<div id="router-outlet">...</div>
+```
+
+### Router Links
+
+The `RouterLink` component can be used to add links that route to a particular route:
+
+```javascript
+const Navigation = defineComponent({
+  render() {
+    return h('nav', {}, [
+      h(RouterLink, { to: '/' }, ['Home']),
+      h(RouterLink, { to: '/about' }, ['About']),
+    ])
+  },
+})
+```
+
+The `RouterLink` expects one prop:
+
+- `to`: the path name where the link will redirect the user to
+
+The `RouterLink` handles the `click` event by first preventing it's default action of requesting the page to the server.
+Then handles the navigation by accessing the application's router and programatically navigate to the route.
