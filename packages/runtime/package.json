@@ -36,7 +36,7 @@
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
-    "@vitest/coverage-v8": "^2.1.5",
+    "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^9.16.0",
     "jsdom": "^25.0.1",
     "rollup": "^4.28.1",
