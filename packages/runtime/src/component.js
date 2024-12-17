@@ -55,6 +55,7 @@ export function defineComponent({
     #parentComponent = null
     #dispatcher = new Dispatcher()
     #subscriptions = []
+    #appContext = null
 
     /**
      * @type {import('./h').VNode[]}
@@ -84,6 +85,17 @@ export function defineComponent({
 
     onUnmounted() {
       return Promise.resolve(onUnmounted.call(this))
+    }
+
+    setAppContext(appContext) {
+      this.#appContext = appContext
+    }
+
+    /**
+     * The application context is the shared context for all the components in the application.
+     */
+    get appContext() {
+      return this.#appContext
     }
 
     get parentComponent() {
