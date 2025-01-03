@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createApp } from '../app'
 import { nextTick } from '../scheduler'
 import { App } from './app'
@@ -8,6 +8,9 @@ import { singleHtmlLine } from './utils'
 let app
 
 beforeEach(() => {
+  // stub console.warn to avoid polluting the test output
+  vi.stubGlobal('console', { warn: vi.fn(), log: console.log })
+
   app = createApp(App, { todos: ['Water the plants'] })
 })
 
@@ -19,6 +22,11 @@ describe('when the application is mounted', () => {
   afterEach(async () => {
     await nextTick()
     app.unmount()
+  })
+
+  test("can't be mounted again", () => {
+    app.mount(document.body)
+    expect(() => app.mount(document.body)).toThrow()
   })
 
   test('it shows a loading message', () => {
@@ -53,6 +61,11 @@ describe('when the application is unmounted', () => {
   beforeEach(async () => {
     app.mount(document.body)
     await nextTick()
+  })
+
+  test("it can't be unmounted again", () => {
+    app.unmount()
+    expect(() => app.unmount()).toThrow()
   })
 
   test('it is removed from the parent element', async () => {

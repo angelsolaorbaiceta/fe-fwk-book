@@ -524,6 +524,19 @@ describe('Offset', () => {
   })
 })
 
+describe('App context', () => {
+  test('An application context can be added to a component', () => {
+    const appContext = {
+      foo: 'bar',
+    }
+
+    const component = new Comp()
+    component.setAppContext(appContext)
+
+    expect(component.appContext).toEqual(appContext)
+  })
+})
+
 // References from Euclid's Elements, Book I
 // http://aleph0.clarku.edu/~djoyce/elements/bookI/bookI.html#defs
 
