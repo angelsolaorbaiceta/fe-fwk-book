@@ -34,7 +34,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.1",
-    "rollup": "^4.21.2"
+    "@vercel/ncc": "^0.38.3",
+    "rollup": "^4.29.1"
   }
 }
