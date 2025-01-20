@@ -167,6 +167,7 @@ function createComponentNode(vdom, parentEl, index, hostComponent) {
   const { props, events } = extractPropsAndEvents(vdom)
   const component = new Component(props, events, hostComponent)
   component.setExternalContent(children)
+  component.setAppContext(hostComponent?.appContext ?? {})
 
   component.mount(parentEl, index)
   vdom.component = component

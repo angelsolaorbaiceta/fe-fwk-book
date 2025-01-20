@@ -12,3 +12,8 @@ export async function getAllBooks(page = 1, filters = {}) {
   const res = await fetch(`${baseUrl}/books/?${searchParams}`)
   return res.json()
 }
+
+export async function getBook(id) {
+  const res = await fetch(`${baseUrl}/books/${id}`)
+  return res.json()
+}
