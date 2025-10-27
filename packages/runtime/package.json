@@ -33,7 +33,7 @@
   "author": "Angel Sola Orbaiceta",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.8",
+    "@rollup/plugin-commonjs": "^28.0.9",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@vitest/coverage-v8": "^3.2.4",
