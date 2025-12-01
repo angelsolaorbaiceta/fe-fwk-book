@@ -322,6 +322,39 @@ describe('patch event handlers', () => {
     expect(oldHandler).not.toHaveBeenCalled()
     expect(newVdom.listeners).toStrictEqual({})
   })
+
+  test('unchanged event handler preserves listener reference', async () => {
+    const handler = vi.fn()
+    const oldVdom = h('button', { on: { click: handler } }, ['Click me'])
+    const newVdom = h('button', { on: { click: handler } }, ['Click me'])
+
+    await patch(oldVdom, newVdom)
+
+    expect(newVdom.listeners.click).toBe(oldVdom.listeners.click)
+
+    document.body.querySelector('button').click()
+    expect(handler).toHaveBeenCalledTimes(1)
+  })
+
+  test('multiple patches with unchanged handlers do not accumulate listeners', async () => {
+    const handler = vi.fn()
+
+    const vdom1 = h('button', { on: { click: handler } }, ['Click me'])
+    await mountDOM(vdom1, document.body)
+    const vdom2 = h('button', { on: { click: handler } }, ['Click me'])
+    patchDOM(vdom1, vdom2, document.body)
+    const vdom3 = h('button', { on: { click: handler } }, ['Click me'])
+    patchDOM(vdom2, vdom3, document.body)
+    const vdom4 = h('button', { on: { click: handler } }, ['Click me'])
+    patchDOM(vdom3, vdom4, document.body)
+    
+    document.body.querySelector('button').click()
+    
+    expect(handler).toHaveBeenCalledTimes(1)
+    expect(vdom2.listeners.click).toBe(vdom1.listeners.click)
+    expect(vdom3.listeners.click).toBe(vdom2.listeners.click)
+    expect(vdom4.listeners.click).toBe(vdom3.listeners.click)
+  })
 })
 
 describe('patch children', () => {
