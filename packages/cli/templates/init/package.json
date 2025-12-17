@@ -9,7 +9,7 @@
     "packages/runtime"
   ],
   "scripts": {
-    "serve:examples": "npx http-server . -o ./examples/ -bg"
+    "serve:examples": "npx http-server . -o ./examples/ -bg -c-1"
   },
   "keywords": [
     "js",
