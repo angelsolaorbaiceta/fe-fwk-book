@@ -677,6 +677,78 @@ describe('patch children', () => {
       )
     })
   })
+
+  describe('child component with fragment vnode as top node and an offset > 0', () => {
+
+    test('moves children of a nested element vnode correctly', () => {
+      const Child = defineComponent({
+        render() {
+          const children = this.props.swapped 
+            ? [h("h2"), h("h1"), h("h3"), h("h4")]
+            : [h("h1"), h("h2"), h("h3"), h("h4")]
+          
+            return hFragment([
+              h("p"),
+              h("div", {}, children),
+              h("span"),
+            ])
+        },
+      })
+
+      const Root = defineComponent({
+        render() {
+          return hFragment([
+            h("p"), h("p"), h("p"), h("p"), h(Child, { swapped: this.props.swapped }), h("p"),
+          ])
+        },
+      })
+
+      const root = new Root({ swapped: false })
+      root.mount(document.body)
+
+      expect(document.body.innerHTML).toBe(
+        singleHtmlLine`
+          <p></p>
+          <p></p>
+          <p></p>
+          <p></p>
+          <p></p>
+          <div>
+            <h1></h1>
+            <h2></h2>
+            <h3></h3>
+            <h4></h4>
+          </div>
+          <span></span>
+          <p></p>
+        `
+      )
+
+      root.updateProps({ swapped: true })
+      
+      expect(document.body.innerHTML).toBe(
+        singleHtmlLine`
+          <p></p>
+          <p></p>
+          <p></p>
+          <p></p>
+          <p></p>
+          <div>
+            <h2></h2>
+            <h1></h1>
+            <h3></h3>
+            <h4></h4>
+          </div>
+          <span></span>
+          <p></p>
+        `
+      )
+
+
+
+    })
+
+  })
 })
 
 describe('patch vdom with component host', () => {
