@@ -329,7 +329,7 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
 
   for (const operation of diffSeq) {
     const { originalIndex, index, item } = operation
-    const offset = hostComponent?.offset ?? 0
+    const offset = computeChildrenOffset(oldVdom, hostComponent)
 
     switch (operation.op) {
       case ARRAY_DIFF_OP.ADD: {
@@ -380,4 +380,16 @@ function patchChildren(oldVdom, newVdom, hostComponent) {
       }
     }
   }
+}
+
+function computeChildrenOffset(oldVdom, hostComponent = null) {
+  if (hostComponent == null) {
+    return 0
+  }
+
+  if (oldVdom.el === hostComponent.hostEl) {
+    return hostComponent.offset
+  }
+
+  return 0
 }

@@ -149,6 +149,13 @@ export function defineComponent({
       return 0
     }
 
+    get hostEl() {
+      if (!this.#isMounted) {
+        throw new Error(`Cannot get host element of unmounted component`)
+      }
+      return this.#hostEl
+    }
+
     /**
      * Updates all or part of the component's props and patches the DOM to reflect the changes.
      * This method shouldn't be called from within the component's code, as a component
